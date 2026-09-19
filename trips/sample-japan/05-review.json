@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "id": "days_fit",
+      "label": "Fits in 5 days",
+      "pass": true,
+      "reason": "Exactly five day headings, numbered Day 1 to Day 5, no gaps and no repeats. Days 1 to 4 carry 3 slots each, day 5 carries 2 (Fushimi Inari plus the departure block), so no day is empty."
+    },
+    {
+      "id": "cities_included",
+      "label": "Includes Tokyo, Kyoto",
+      "pass": true,
+      "reason": "Tokyo gets full days 1 and 2 with 2 nights in Nishiasakusa. Kyoto gets full days 4 and 5 with 2 nights in Shimogyo. Day 3 is the transfer day and still lands two Kyoto slots."
+    },
+    {
+      "id": "within_budget",
+      "label": "Within $3000",
+      "pass": true,
+      "reason": "Recomputed from the budget lines: stay 380.00 + transport 133.48 + food 212.50 + activities 30.00 = 755.98 subtotal, buffer 10% = 75.60, total $831.58 against the $3,000 limit, 27.7% of budget. The stated total matches the recomputation to the cent."
+    },
+    {
+      "id": "matches_likes",
+      "label": "Matches food, temples",
+      "pass": true,
+      "reason": "All 5 days carry at least one food or temple slot. Day 1 Tsukiji (food) and Senso-ji (temple), day 2 Nezu Shrine and Meiji Jingu (temple) plus Yakitori Alley (food), day 3 chao chao gyoza and Shinkyogoku (food), day 4 Kiyomizu-dera and Kodaiji (temple) plus Nishiki Market (food), day 5 Fushimi Inari Taisha (temple). 6 temple slots and 6 food slots across the trip."
+    },
+    {
+      "id": "avoids_crowds",
+      "label": "Avoids crowds",
+      "pass": true,
+      "reason": "All 12 venue slots carry a tactic with a specific time or place, not a generic line. Examples: Fushimi Inari at 06:00 or hike past the second rest house, Kiyomizu-dera at 07:30 opening, Nezu Shrine on a weekday afternoon outside the April azalea dates, Yakitori Alley at 17:30 opening. The two 'n/a, not a venue' entries sit on the Shinkansen leg and the day 5 packing block. Warning, not a fail: the Shinkansen leg does have a real tactic (reserved Nozomi seats, crowd section item 4) that was not carried into the slot row."
+    },
+    {
+      "id": "travel_time_realistic",
+      "label": "Travel time realistic",
+      "pass": true,
+      "reason": "Day 3 allots 195 min for the inter-city move, which is the 135 min Nozomi duration from the logistics table plus a 60 min station buffer, exactly the required allowance. The largest intra-city leg anywhere in the plan is 31 min (day 4, Kiyomizu-dera to Nishiki Market), well under the 90 min ceiling. Warning, not a fail: the day 3 afternoon row repeats 195 in the transit column, which restates the same Tokyo to Kyoto leg instead of giving the short Kyoto Station to Nakagyo hop."
+    }
+  ],
+  "failures": []
+}
