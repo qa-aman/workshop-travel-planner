@@ -1665,7 +1665,7 @@ The planning procedure lives in `.claude/skills/plan-trip/SKILL.md`. Both the te
 
 - [ ] **Step 4: Dry-run the flow once in the terminal**
 
-Run: `claude` in repo root, then `/plan-trip Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.`
+Run: `claude --model sonnet` in repo root, then `/plan-trip Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.`
 Expected: three subagents launch in one message, four worker files plus `05-review.json`, `itinerary.md` and `itinerary.json` appear under `trips/japan-tokyo-kyoto-<hash>/`. Note wall time. If the fan-out is sequential, edit Step 2 wording to "You must call the Agent tool three times in a single response".
 
 - [ ] **Step 5: Commit**
@@ -2267,6 +2267,7 @@ export async function POST(req: Request) {
           options: {
             cwd: REPO_ROOT,
             settingSources: ["project"],
+            model: "claude-sonnet-5",
             skills: ["plan-trip"],
             forwardSubagentText: true,
             permissionMode: "acceptEdits",
