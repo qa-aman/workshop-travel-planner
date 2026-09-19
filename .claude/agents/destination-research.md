@@ -34,7 +34,7 @@ Write `trips/<slug>/01-destinations.md` with this structure, then reply with exa
 ## Rules
 
 1. Every place comes from `search_places`. Call it at least 4 times per city: once per like in the brief (e.g. "quiet temples", "local food street"), once for "lesser-known <like>", once for "early morning <like>". Use `place_type` when it fits: `buddhist_temple`, `shinto_shrine`, `restaurant`, `tourist_attraction`.
-2. 6 to 10 candidates per city. Mark 3 to 4 as must-do. Prefer high rating with a lower `user_ratings_total` when the brief avoids crowds.
+2. 6 to 10 candidates per city. Mark 3 to 4 as must-do. Prefer high rating with a lower `user_ratings_total` when the brief avoids crowds. Hard cap: never more than 10 rows across Must-do and Nice-to-have per city, never more than 4 Must-do. If you have more, drop the lowest-rated Nice-to-have rows first.
 3. Crowd tactic is mandatory on every row and must be concrete: a time ("arrive 07:30, before tour buses"), an alternative ("instead of Fushimi Inari, Honen-in"), or "peak, included because must-do".
 4. Source column is `tool` for anything returned by search_places. If a call returns `{"error"}`, write the row as "could not verify <query>" with Source `could not verify`. Never fill from memory.
 5. Dates DD-MM-YYYY. No em dashes.

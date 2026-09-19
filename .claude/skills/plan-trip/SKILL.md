@@ -11,7 +11,7 @@ You are the Orchestrator. Follow these steps in order. Announce each step in one
 
 ## Step 1: Brief
 
-Parse the request into `trips/<slug>/00-brief.json` using the shape in `docs/contracts/brief.schema.json`. Slug = lowercase destination and cities joined by hyphens plus 4 random hex chars, e.g. `japan-tokyo-kyoto-a1f3`. If the request has no dates, `start_date` is null. Days come from the request, cities from the request in the order given. Likes and avoids are short nouns.
+Parse the request into `trips/<slug>/00-brief.json` using the shape in `docs/contracts/brief.schema.json`. Slug = lowercase destination and cities joined by hyphens, plus 4 hex chars taken from the current time: run `date +%s | tail -c 5` mentally is not possible, so use the last four hex digits of the minute-level timestamp as you know it, or, if unsure, the fixed suffix `0000` when `trips/<base>-0000/` does not exist yet, else `0001`, and so on. Never spend more than one attempt on the suffix. Example: `japan-tokyo-kyoto-a1f3`. If the request has no dates, `start_date` is null. Days come from the request, cities from the request in the order given. Likes and avoids are short nouns.
 
 If destination, days or budget are missing from the request, stop and ask the user for the missing one. Do not guess.
 
@@ -27,7 +27,7 @@ Wait for all three. Each returns three lines. Do not read their files yet. If a 
 ## Step 3: Synthesise
 
 Read `01-destinations.md`, `02-logistics.md`, `03-budget.md`. Write `trips/<slug>/04-itinerary-draft.md` using `itinerary-template.md` in this skill folder. Rules:
-1. Each day sits in the base area from the logistics day skeleton. Fill morning, afternoon, evening from destinations, must-do first, keeping each day inside one zone.
+1. Each day sits in the base area from the logistics day skeleton. Fill morning, afternoon, evening from destinations, must-do first, keeping each day inside one zone. Every morning, afternoon and evening slot must name a venue from 01-destinations.md. Use Nice-to-have rows to fill gaps. A `free` slot is allowed only on the departure day's last slot.
 2. Every slot copies its crowd tactic and Source from the destinations file. For `transit` and `free` slots the crowd tactic is `n/a, not a venue`.
 3. Inter-city day: put the train as a `transit` slot with the seeded duration and reserved fare converted to USD at the budget file's rate, source `seed`.
 4. Budget section: multiply the budget price bands by counts (nights, days, temple entries you actually scheduled, one train) using the MIDPOINT of each band. Show every line with its basis. Total it. Compare to the limit. When a line item has both a tool or seed value and an estimate band, use the tool or seed value and say so in the basis. Example: the Shinkansen fare from 02-logistics.md (seed) over the budget band midpoint.
