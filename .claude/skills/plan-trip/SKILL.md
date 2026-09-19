@@ -11,7 +11,7 @@ You are the Orchestrator. Follow these steps in order. Announce each step in one
 
 ## Step 1: Brief
 
-Parse the request into `trips/<slug>/00-brief.json` using the shape in `docs/contracts/brief.schema.json`. Slug = lowercase destination and cities joined by hyphens, plus 4 hex chars taken from the current time: run `date +%s | tail -c 5` mentally is not possible, so use the last four hex digits of the minute-level timestamp as you know it, or, if unsure, the fixed suffix `0000` when `trips/<base>-0000/` does not exist yet, else `0001`, and so on. Never spend more than one attempt on the suffix. Example: `japan-tokyo-kyoto-a1f3`. If the request has no dates, `start_date` is null. Days come from the request, cities from the request in the order given. Likes and avoids are short nouns.
+Parse the request into `trips/<slug>/00-brief.json` using the shape in `docs/contracts/brief.schema.json`. Slug = lowercase destination and cities joined by hyphens, plus 4 hex chars taken from the current time: use the last four hex digits of the minute-level timestamp as you know it, or, if unsure, the fixed suffix `0000` when `trips/<base>-0000/` does not exist yet, else `0001`, and so on. Never spend more than one attempt on the suffix. Example: `japan-tokyo-kyoto-a1f3`. If the request has no dates, `start_date` is null. Days come from the request, cities from the request in the order given. Likes and avoids are short nouns.
 
 If destination, days or budget are missing from the request, stop and ask the user for the missing one. Do not guess.
 
@@ -28,7 +28,7 @@ Wait for all three. Each returns three lines. Do not read their files yet. If a 
 
 Read `01-destinations.md`, `02-logistics.md`, `03-budget.md`. Write `trips/<slug>/04-itinerary-draft.md` using `itinerary-template.md` in this skill folder. Rules:
 1. Each day sits in the base area from the logistics day skeleton. Fill morning, afternoon, evening from destinations, must-do first, keeping each day inside one zone. Every morning, afternoon and evening slot must name a venue from 01-destinations.md. Use Nice-to-have rows to fill gaps. A `free` slot is allowed only on the departure day's last slot.
-2. Every slot copies its crowd tactic and Source from the destinations file. For `transit` and `free` slots the crowd tactic is `n/a, not a venue`.
+2. Every slot copies its crowd tactic and Source from the destinations file. For `transit` and `free` slots the crowd tactic is `n/a, not a venue`. Schedule each venue in the slot its crowd tactic names: a tactic that says arrive at opening, 06:30, 07:00 or before 09:00 goes in the morning slot, a tactic that names lunch or early afternoon goes in the afternoon slot, an evening tactic goes in the evening slot. If the tactic and the slot cannot agree, pick another venue.
 3. Inter-city day: put the train as a `transit` slot with the seeded duration and reserved fare converted to USD at the budget file's rate, source `seed`.
 4. Budget section: multiply the budget price bands by counts (nights, days, temple entries you actually scheduled, one train) using the MIDPOINT of each band. Show every line with its basis. Total it. Compare to the limit. When a line item has both a tool or seed value and an estimate band, use the tool or seed value and say so in the basis. Example: the Shinkansen fare from 02-logistics.md (seed) over the budget band midpoint.
 5. Anything "could not verify" stays labelled so.
@@ -50,7 +50,7 @@ Whether it passes or not now, continue. Do not loop again.
 1. Copy the draft to `trips/<slug>/itinerary.md`. If the last review still fails, add a `## Warnings` section at the top listing each failing check's reason. If the total is under 75% of the limit, add a `## Headroom` section after Budget listing the budget file's spend-here lines.
 2. Write `trips/<slug>/itinerary.json` matching `docs/contracts/itinerary.schema.json`. `generated_on` is today in DD-MM-YYYY. Map the draft to the schema as follows:
    - `title`: the H1 of the draft.
-   - `days[]`: one per `## Day N` section; `slots[]` from the table rows, `when` from the first column, `kind` from the Kind column, `crowd_tactic` from the Crowd tactic column, `transit_min_from_prev` from the transit column (integer or null), `est_cost_usd` from the Est. USD column (number or null), `source` from the Source column.
+   - `days[]`: one per `## Day N` section; `slots[]` from the table rows, `when` from the first column, `kind` from the Kind column, `crowd_tactic` from the Crowd tactic column, `transit_min_from_prev` from the transit column ONLY (integer or null, and a transit cell reading "could not verify" makes `transit_min_from_prev` null and never changes `source`), `est_cost_usd` from the Est. USD column (number or null), `source` from the Source column ONLY. Never copy text from the transit column into `source`.
    - `stays[]`: from the "Where you stay" table; `examples[]` split the "Example hotels (rating, price level)" cell into `name`, `rating` (number or null), `price_level` (string or null).
    - `intercity[]`: from the "Getting between cities" table, `fare_usd` converted at the budget FX rate.
    - `budget.lines[]`: from the Budget table, `basis` verbatim; `budget.fx` always present, `rate` null when FX could not verify.

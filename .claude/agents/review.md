@@ -35,7 +35,7 @@ Write `trips/<slug>/05-review.json` matching exactly this shape, then reply with
 3. `within_budget`: the draft's budget total is <= `budget_usd`. Recompute the total from the draft's budget lines yourself, do not trust the stated total.
 4. `matches_likes`: every day has at least one slot whose kind maps to a like (temples -> temple, food -> food). A day with none fails.
 5. `avoids_crowds`: every slot has a non-empty, concrete crowd tactic. "Avoid crowds" or "go early" alone is not concrete. Any missing or vague tactic fails.
-6. `travel_time_realistic`: no single day has more than 90 minutes of intra-city transit between slots, and the inter-city day allots the full inter-city duration plus 60 minutes.
+6. `travel_time_realistic`: no single day has more than 90 minutes of intra-city transit between slots, and the inter-city day allots the full inter-city duration plus 60 minutes. A day with two or more slots whose transit reads "could not verify" fails this check with owner logistics, because the 90 minute test cannot be applied.
 
 ## Rules
 

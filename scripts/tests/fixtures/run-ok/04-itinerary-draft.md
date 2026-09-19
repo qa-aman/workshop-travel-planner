@@ -5,10 +5,10 @@ Generated on 19-09-2026. Budget $3000. Likes: food, temples. Avoids: crowds.
 ## Where you stay
 | City | Nights | Area | Why | Example hotels (rating, price level) | Est. per night USD |
 |---|---|---|---|---|---|
-| Tokyo | 1 | Asakusa | Senso-ji on foot, izakaya and street-food alleys, well connected by rail | plat hostel keikyu asakusa station (4.4, price level not returned by tool); TOKYO-W-inn Asakusa (4.4, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
-| Tokyo | 1 | Nezu / Yanaka | Old-town shrines, low foot traffic, away from Shibuya and Shinjuku crowds | HOTEL GRAPHY NEZU (4.3, price level not returned by tool); The Barn Tokyo (4.8, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
-| Kyoto | 1 | Higashiyama | Walking distance to Kiyomizu-dera and the temple lanes, best done at opening | Imperial Hotel Kyoto (4.6, price level not returned by tool); Mitsui Garden Hotel Kyoto Sanjo Premier (4.6, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
-| Kyoto | 1 | Kyoto Station area | Station access for Fushimi Inari and departure, station-front dining | M's Hotel Kyoto Station Taruya (3.9, price level not returned by tool); HOTEL LiVEMAX KYOTO-EKIMAE (3.2, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
+| Tokyo | 1 | Asakusa | Senso-ji on foot, izakaya and street-food alleys, well connected by rail | plat hostel keikyu asakusa station (4.4, price level not returned by tool), TOKYO-W-inn Asakusa (4.4, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
+| Tokyo | 1 | Nezu / Yanaka | Old-town shrines, low foot traffic, away from Shibuya and Shinjuku crowds | HOTEL GRAPHY NEZU (4.3, price level not returned by tool), The Barn Tokyo (4.8, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
+| Kyoto | 1 | Higashiyama | Walking distance to Kiyomizu-dera and the temple lanes, best done at opening | Imperial Hotel Kyoto (4.6, price level not returned by tool), Mitsui Garden Hotel Kyoto Sanjo Premier (4.6, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
+| Kyoto | 1 | Kyoto Station area | Station access for Fushimi Inari and departure, station-front dining | M's Hotel Kyoto Station Taruya (3.9, price level not returned by tool), HOTEL LiVEMAX KYOTO-EKIMAE (3.2, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
 
 Hotel price levels could not verify: search_places returned no price_level for any result.
 
@@ -29,7 +29,7 @@ Hikari alternative: about 160 min, 13,650 JPY, covered by the JR Pass. Fares mov
 ## Day 2: Tokyo, Nezu / Yanaka
 | When | What | Kind | Why it fits | Crowd tactic | Transit min from previous | Est. USD | Source |
 |---|---|---|---|---|---|---|---|
-| morning | Nezu Shrine | nice-to-have | Quiet shrine with a torii tunnel, alternative to Fushimi-style photo spots in Tokyo | Weekday morning before 09:00 | 52 walk from Asakusa base (tool); metro time could not verify | 6.50 (estimate, midpoint temple entry band) | tool |
+| morning | Nezu Shrine | nice-to-have | Quiet shrine with a torii tunnel, alternative to Fushimi-style photo spots in Tokyo | Weekday morning before 09:00 | 52 walk from Asakusa base (tool), metro time could not verify | 6.50 (estimate, midpoint temple entry band) | tool |
 | afternoon | Yanaka Ginza | nice-to-have | Menchi-katsu croquettes, senbei, skewered dango, neighbourhood snacks, fits "food" like | Weekday mid-afternoon, well before the sunset photo crowd gathers at the Yuyake Dandan steps | 14 (Nezu Shrine to Yanaka Ginza, tool) | part of 42.50/day food midpoint (estimate) | tool |
 | evening | Ueno food street (Ameyoko Market) | nice-to-have | Street seafood, cheap sushi, fresh fruit, fried snacks, fits "food" like | Weekday late morning avoids the weekend shoulder-to-shoulder crowds along the main arcade | could not verify from Yanaka Ginza (Nezu Shrine to Ameyoko is 26 walk, tool) | part of 42.50/day food midpoint (estimate) | tool |
 
@@ -51,8 +51,8 @@ Hikari alternative: about 160 min, 13,650 JPY, covered by the JR Pass. Fares mov
 | When | What | Kind | Why it fits | Crowd tactic | Transit min from previous | Est. USD | Source |
 |---|---|---|---|---|---|---|---|
 | morning | Fushimi Inari Taisha | must-do | The iconic thousand-torii shrine, fits "temples" like | Peak site, included because must-do. Arrive 06:00, before tour buses | 40 walk from Kyoto Station area, tool | 6.50 (estimate, midpoint temple entry band) | tool |
-| afternoon | Departure from Kyoto | free | No return leg or flight time in the brief, so left open | n/a, not a venue | n/a | 0 | logistics |
-| evening | Not scheduled | free | Half-day departure | n/a, not a venue | n/a | 0 | logistics |
+| afternoon | Departure from Kyoto | free | No return leg or flight time in the brief, so left open | n/a, not a venue | n/a | 0 | estimate |
+| evening | Not scheduled | free | Half-day departure | n/a, not a venue | n/a | 0 | estimate |
 
 ## How we handled crowds
 1. Three peak sites (Senso-ji, Kiyomizu-dera, Fushimi Inari) are kept because they are must-do, and each is placed at a gate-opening slot (06:30, 07:00, 06:00) from a base within walking or station reach.
@@ -65,7 +65,7 @@ Hikari alternative: about 160 min, 13,650 JPY, covered by the JR Pass. Fares mov
 | Category | USD | Basis |
 |---|---|---|
 | stay | 460.00 | 4 nights x midpoint 115 of $80 to $150 band (estimate) |
-| transport | 177.50 | train 120 (midpoint of $100 to $140 band, estimate; seeded reserved fare is 88.48) + 5 days x midpoint 11.50 of $8 to $15 local transit band (estimate) |
+| transport | 177.50 | train 120 (midpoint of $100 to $140 band, estimate, seeded reserved fare is 88.48) + 5 days x midpoint 11.50 of $8 to $15 local transit band (estimate) |
 | food | 212.50 | 5 days x midpoint 42.50 of $30 to $55 band (estimate) |
 | activities | 32.50 | 5 temple entries scheduled (Senso-ji, Nezu Shrine, Honenin, Kiyomizu-dera, Fushimi Inari) x midpoint 6.50 of $3 to $10 band (estimate) |
 | buffer | 88.25 | 10% of the four lines above |

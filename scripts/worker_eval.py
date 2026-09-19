@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 import jsonschema
+from referencing import Registry, Resource
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACTS = ROOT / "docs" / "contracts"
@@ -143,16 +144,66 @@ def eval_budget(folder: Path) -> None:
     check("budget.no_iso", not ISO.search(md_for_iso), "no ISO dates in 03-budget.md (outside the FX line)")
 
 
+def eval_no_semicolon(folder: Path) -> None:
+    bad = []
+    for path in sorted(folder.glob("*.md")):
+        if ";" in path.read_text():
+            bad.append(path.name)
+    check("itin.no_semicolon", not bad, f"semicolons found in: {bad}" if bad else "no semicolons in any *.md file")
+
+
+def day_slot_sources(md: str) -> dict[tuple[int, str], str]:
+    """(day, when) -> Source cell, read from every '## Day N' table in itinerary.md."""
+    out: dict[tuple[int, str], str] = {}
+    for m in re.finditer(r"^## Day (\d+)", md, re.M):
+        day = int(m.group(1))
+        start = m.end()
+        nxt = re.search(r"^## ", md[start:], re.M)
+        body = md[start:][: nxt.start()] if nxt else md[start:]
+        header: list[str] = []
+        rows: list[list[str]] = []
+        for line in body.splitlines():
+            if line.startswith("|") and not re.match(r"^\|\s*-", line):
+                cells = [c.strip() for c in line.strip().strip("|").split("|")]
+                if not header:
+                    header = cells
+                else:
+                    rows.append(cells)
+        when_col = col(rows, [header], "When")
+        source_col = col(rows, [header], "Source")
+        for when, src in zip(when_col, source_col):
+            out[(day, when.strip().lower())] = src.strip().lower()
+    return out
+
+
 def eval_itinerary(folder: Path, brief: dict) -> None:
     md = (folder / "itinerary.md").read_text()
     days = re.findall(r"^## Day (\d+)", md, re.M)
     check("itin.days", [int(d) for d in days] == list(range(1, brief["days"] + 1)), f"day headings {days} vs 1..{brief['days']}")
     check("itin.no_iso", not ISO.search(md), "no ISO dates in itinerary.md")
     data = json.loads((folder / "itinerary.json").read_text())
+    md_sources = day_slot_sources(md)
+    mismatches = []
+    for day in data.get("days", []):
+        for slot in day.get("slots", []):
+            key = (day.get("day"), str(slot.get("when", "")).strip().lower())
+            md_src = md_sources.get(key)
+            json_src = str(slot.get("source", "")).strip().lower()
+            if md_src is not None and md_src != json_src:
+                mismatches.append(f"day {key[0]} {key[1]}: json={json_src!r} md={md_src!r}")
+    check("itin.source_match", not mismatches, f"{len(mismatches)} slot source mismatches: {mismatches}" if mismatches else "itinerary.json source matches itinerary.md for every slot")
     schema = json.loads((CONTRACTS / "itinerary.schema.json").read_text())
-    resolver = jsonschema.RefResolver(base_uri=CONTRACTS.as_uri() + "/", referrer=schema)
+    registry = Registry().with_resources(
+        (
+            (CONTRACTS / name).as_uri(),
+            Resource.from_contents(json.loads((CONTRACTS / name).read_text())),
+        )
+        for name in ("brief.schema.json", "review.schema.json")
+    )
+    validator_cls = jsonschema.validators.validator_for(schema)
+    validator = validator_cls({**schema, "$id": (CONTRACTS / "itinerary.schema.json").as_uri()}, registry=registry)
     try:
-        jsonschema.validate(data, schema, resolver=resolver)
+        validator.validate(data)
         check("itin.schema", True, "itinerary.json validates")
     except jsonschema.ValidationError as e:
         check("itin.schema", False, f"itinerary.json: {e.message} at {list(e.absolute_path)}")
@@ -187,6 +238,7 @@ def main() -> int:
     eval_logistics(folder, brief)
     eval_budget(folder)
     eval_itinerary(folder, brief)
+    eval_no_semicolon(folder)
     if a.run_log:
         eval_run_log(Path(a.run_log))
     for status, cid, detail in results:
