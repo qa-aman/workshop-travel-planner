@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ReviewResult",
+  "type": "object",
+  "required": ["pass", "checks", "failures"],
+  "properties": {
+    "pass": {"type": "boolean"},
+    "checks": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "pass", "reason"],
+        "properties": {
+          "id": {"enum": ["days_fit", "cities_included", "within_budget", "matches_likes", "avoids_crowds", "travel_time_realistic"]},
+          "label": {"type": "string"},
+          "pass": {"type": "boolean"},
+          "reason": {"type": "string"}
+        }
+      }
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["check_id", "owner", "instruction"],
+        "properties": {
+          "check_id": {"type": "string"},
+          "owner": {"enum": ["destination-research", "logistics", "budget", "orchestrator"]},
+          "instruction": {"type": "string"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TripBrief",
+  "type": "object",
+  "required": ["request", "destination", "days", "cities", "budget_usd", "likes", "avoids", "slug"],
+  "properties": {
+    "request": {"type": "string"},
+    "destination": {"type": "string"},
+    "days": {"type": "integer", "minimum": 1},
+    "cities": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "budget_usd": {"type": "number"},
+    "likes": {"type": "array", "items": {"type": "string"}},
+    "avoids": {"type": "array", "items": {"type": "string"}},
+    "start_date": {"type": ["string", "null"], "pattern": "^\\d{2}-\\d{2}-\\d{4}$"},
+    "travellers": {"type": "integer", "default": 1},
+    "slug": {"type": "string"}
+  }
+}

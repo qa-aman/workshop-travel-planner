@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Itinerary",
+  "type": "object",
+  "required": ["slug", "title", "generated_on", "brief", "days", "stays", "intercity", "budget", "crowd_strategy", "review"],
+  "properties": {
+    "slug": {"type": "string"},
+    "title": {"type": "string"},
+    "generated_on": {"type": "string", "pattern": "^\\d{2}-\\d{2}-\\d{4}$"},
+    "brief": {"$ref": "brief.schema.json"},
+    "days": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["day", "city", "area", "slots"],
+        "properties": {
+          "day": {"type": "integer"},
+          "date": {"type": ["string", "null"], "pattern": "^\\d{2}-\\d{2}-\\d{4}$"},
+          "city": {"type": "string"},
+          "area": {"type": "string"},
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["when", "name", "kind", "crowd_tactic", "transit_min_from_prev"],
+              "properties": {
+                "when": {"enum": ["morning", "afternoon", "evening"]},
+                "name": {"type": "string"},
+                "kind": {"enum": ["temple", "food", "sight", "transit", "free"]},
+                "area": {"type": "string"},
+                "why": {"type": "string"},
+                "crowd_tactic": {"type": "string"},
+                "transit_min_from_prev": {"type": ["integer", "null"]},
+                "est_cost_usd": {"type": ["number", "null"]},
+                "source": {"enum": ["tool", "seed", "estimate", "could not verify"]}
+              }
+            }
+          }
+        }
+      }
+    },
+    "stays": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["city", "nights", "area", "why", "examples"],
+        "properties": {
+          "city": {"type": "string"},
+          "nights": {"type": "integer"},
+          "area": {"type": "string"},
+          "why": {"type": "string"},
+          "est_nightly_usd": {"type": ["number", "null"]},
+          "examples": {"type": "array", "items": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}, "rating": {"type": ["number", "null"]}, "price_level": {"type": ["string", "null"]}}}}
+        }
+      }
+    },
+    "intercity": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "mode", "duration_min", "source"],
+        "properties": {
+          "from": {"type": "string"}, "to": {"type": "string"}, "mode": {"type": "string"},
+          "duration_min": {"type": "integer"}, "fare_usd": {"type": ["number", "null"]},
+          "source": {"enum": ["tool", "seed", "estimate", "could not verify"]}
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "required": ["limit_usd", "total_usd", "within_budget", "lines", "fx"],
+      "properties": {
+        "limit_usd": {"type": "number"},
+        "total_usd": {"type": "number"},
+        "within_budget": {"type": "boolean"},
+        "lines": {"type": "array", "items": {"type": "object", "required": ["category", "usd", "basis"], "properties": {"category": {"enum": ["stay", "transport", "food", "activities", "buffer"]}, "usd": {"type": "number"}, "basis": {"type": "string"}}}},
+        "alternatives": {"type": "array", "items": {"type": "string"}},
+        "fx": {"type": "object", "properties": {"rate": {"type": "number"}, "date": {"type": "string"}}}
+      }
+    },
+    "crowd_strategy": {"type": "array", "items": {"type": "string"}},
+    "review": {"$ref": "review.schema.json"},
+    "warnings": {"type": "array", "items": {"type": "string"}}
+  }
+}

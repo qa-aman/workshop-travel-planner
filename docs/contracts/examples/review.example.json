@@ -1,0 +1,14 @@
+{
+  "pass": false,
+  "checks": [
+    {"id": "days_fit", "label": "Fits in 5 days", "pass": true, "reason": "Days 1 to 5 present, nothing on day 6."},
+    {"id": "cities_included", "label": "Includes Tokyo and Kyoto", "pass": true, "reason": "Tokyo days 1-2, Kyoto days 3-5."},
+    {"id": "within_budget", "label": "Within $3,000", "pass": false, "reason": "Total estimate $3,240 exceeds $3,000 by $240."},
+    {"id": "matches_likes", "label": "Matches food and temples", "pass": true, "reason": "Every day has at least one temple and one food anchor."},
+    {"id": "avoids_crowds", "label": "Avoids crowds", "pass": true, "reason": "Every item carries a crowd tactic."},
+    {"id": "travel_time_realistic", "label": "Travel time realistic", "pass": true, "reason": "No day exceeds 90 min of transit between anchors."}
+  ],
+  "failures": [
+    {"check_id": "within_budget", "owner": "budget", "instruction": "Total is $240 over. Apply the first cheaper alternative from 03-budget.md and restate the bands."}
+  ]
+}
