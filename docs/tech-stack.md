@@ -60,6 +60,8 @@ web/.env.local       copy for Next.js, gitignored
 
 The MCP server refuses to start without a Google key. The terminal path uses the Claude Code login. The web path uses `ANTHROPIC_API_KEY` through the Agent SDK.
 
+Verified 19-09-2026: the web route runs on the local Claude Code login with no ANTHROPIC_API_KEY set.
+
 ## 5. Cost envelope for one run
 
 | Item | Calls per run | Monthly free | Runs before cost |

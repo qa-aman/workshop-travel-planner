@@ -39,4 +39,40 @@ describe("toAgentEvents", () => {
       { type: "step", text: "Step 2: Fan out" },
     ]);
   });
+
+  it("joins array tool_result content from every text block, ignoring non-text blocks", () => {
+    const map = new Map([["t1", "budget" as const]]);
+    const msg = {
+      type: "user",
+      parent_tool_use_id: null,
+      message: {
+        content: [
+          {
+            type: "tool_result",
+            tool_use_id: "t1",
+            content: [
+              { type: "text", text: "1" },
+              { type: "text", text: "2\n3" },
+            ],
+          },
+        ],
+      },
+    } as never;
+    expect(toAgentEvents(msg, map)).toEqual([
+      { type: "summary", agent: "budget", lines: ["1", "2", "3"] },
+      { type: "status", agent: "budget", status: "done" },
+    ]);
+  });
+
+  it("prefers the trips/<slug>/itinerary.md path over a bare hyphenated match", () => {
+    const msg = {
+      type: "result",
+      subtype: "success",
+      is_error: false,
+      result: "Done. See trips/japan-tokyo-kyoto-a8b5/itinerary.md and also could-not-verify-dead end",
+    } as never;
+    expect(toAgentEvents(msg, new Map())).toEqual([
+      { type: "result", slug: "japan-tokyo-kyoto-a8b5", ok: true, error: undefined },
+    ]);
+  });
 });

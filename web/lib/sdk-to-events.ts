@@ -41,14 +41,26 @@ export function toAgentEvents(msg: SDKMessage, agentByToolUseId: Map<string, Age
         const id = String(block.tool_use_id);
         const who = agentByToolUseId.get(id);
         if (!who) continue;
-        const raw = typeof block.content === "string" ? block.content : JSON.stringify(block.content);
+        const raw =
+          typeof block.content === "string"
+            ? block.content
+            : Array.isArray(block.content)
+              ? (block.content as { type: string; text?: string }[])
+                  .filter((c) => c.type === "text")
+                  .map((c) => String(c.text ?? ""))
+                  .join("\n")
+              : JSON.stringify(block.content);
         out.push({ type: "summary", agent: who, lines: raw.split("\n").filter(Boolean).slice(0, 3) });
         out.push({ type: "status", agent: who, status: "done" });
       }
     }
   } else if (msg.type === "result") {
     const r = msg as { subtype: string; result?: string; is_error?: boolean };
-    const slug = (r.result ?? "").match(/[a-z]+(?:-[a-z]+)+-[0-9a-f]{4}/)?.[0] ?? null;
+    const text = r.result ?? "";
+    const slug =
+      text.match(/\btrips\/([a-z0-9]+(?:-[a-z0-9]+)+-[0-9a-f]{4})\b/)?.[1] ??
+      text.match(/[a-z]+(?:-[a-z]+)+-[0-9a-f]{4}/)?.[0] ??
+      null;
     out.push({ type: "result", slug, ok: r.subtype === "success" && !r.is_error, error: r.is_error ? r.result : undefined });
   }
   return out;
