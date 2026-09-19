@@ -32,4 +32,15 @@ def test_search_places_requires_key(tmp_path, monkeypatch):
     monkeypatch.setattr(cache, "CACHE_DIR", tmp_path)
     monkeypatch.delenv("GOOGLE_MAPS_API_KEY", raising=False)
     monkeypatch.delenv("GOOGLE_MAPS_API", raising=False)
-    assert "error" in places.search_places("x", "Tokyo")
+
+    def must_not_call(*args, **kwargs):
+        raise AssertionError("post_json must not be called without a key")
+
+    monkeypatch.setattr(places, "post_json", must_not_call)
+    out = places.search_places("x", "Tokyo")
+    assert out == {"error": "GOOGLE_MAPS_API_KEY not set"}
+
+
+def test_area_falls_back_to_city_segment_for_short_addresses():
+    assert places._area("Eiffel Tower, Paris, France") == "Paris"
+    assert places._area("Kyoto") == "Kyoto"

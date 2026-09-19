@@ -21,7 +21,11 @@ PRICE = {
 def _area(address: str) -> str:
     # "30 Shishigatani..., Sakyo Ward, Kyoto, 606-8426, Japan" -> "Sakyo Ward"
     parts = [p.strip() for p in address.split(",")]
-    return parts[-4] if len(parts) >= 4 else (parts[0] if parts else "")
+    if len(parts) >= 4:
+        return parts[-4]
+    if len(parts) >= 2:
+        return parts[-2]
+    return parts[0] if parts else ""
 
 
 def _map(p: dict) -> dict:
