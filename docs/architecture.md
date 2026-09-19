@@ -30,7 +30,7 @@ flowchart LR
     UI -->|GET /api/trips/slug| FS
 ```
 
-The review agent has no MCP servers and reads only the brief and the draft. That is the independence guarantee: it cannot fix anything, only judge.
+The review agent has Read and Write but no MCP tools, and reads only the brief and the draft. Independence is by prompt (it is instructed to judge, not fix) and by the absence of MCP tools, not by withholding Write: it needs Write to produce `05-review.json`.
 
 ## 3. Pattern
 
@@ -103,7 +103,7 @@ Workers write a file and return three lines. The orchestrator's context stays sm
 | | |
 |---|---|
 | Where | `.claude/agents/review.md`, Opus |
-| Tools | Read, Write. No MCP. |
+| Tools | Read, Write. No MCP. Independence by prompt and by the absence of MCP tools, not by withholding Write, which is needed for `05-review.json`. |
 | Reads | `00-brief.json`, `04-itinerary-draft.md`, nothing else |
 | Writes | `05-review.json` |
 | Checks | `days_fit`, `cities_included`, `within_budget` (recomputed from the draft's lines, never trusting the stated total), `matches_likes`, `avoids_crowds` (every slot has a concrete tactic), `travel_time_realistic` (no day over 90 min intra-city, inter-city day allots rail time plus 60) |
@@ -115,7 +115,7 @@ Workers write a file and return three lines. The orchestrator's context stays sm
 mcp/travel-tools/
   server.py                 MCPServer("travel-tools"), 5 tools, exits 2 without a Google key
   travel_tools/
-    cache.py                cached(key_parts, ttl_s, fn): sha256 key, 24h, never caches {error}
+    cache.py                cached(key_parts, ttl_s, fn): sha256 key, 24 h (weather 6 h), never caches {error}
     http.py                 get_json / post_json: return {error} instead of raising
     places.py               search_places -> Google Places Text Search (New)
     walking.py              get_walking_route -> Google Routes, WALK. Also api_key() helper
@@ -188,12 +188,12 @@ The problem statement runs Destination, Logistics and Budget in parallel. Budget
 
 | Failure | Behaviour |
 |---|---|
-| Google key missing or invalid | MCP server exits with code 2 and a stderr line. Nothing runs half-way. UI shows one message. |
+| Google key missing or invalid | Terminal: MCP server exits with code 2 and a stderr line, nothing runs half-way. Web: the route returns a 500 with a clear message, the page shows it, before `query()` ever starts. |
 | A tool call errors or returns empty | Tool returns `{error}`. The agent writes "could not verify X". Review treats it as a warning unless it is the only temple or food item on a day. |
 | Worker agent errors or times out | Orchestrator writes `## <section> unavailable`, continues. Review fails the related check, which triggers the single repair loop on that agent. |
 | Over budget after the repair loop | Itinerary ships with the overage in red and the budget agent's cheaper alternatives listed. Never silently trimmed. |
 | Routes transit unavailable (always, in Japan) | Designed out: walking minutes from the tool, rail from the seed, "could not verify" for metro or bus. |
-| SSE connection drops | The run continues on disk. The page reloads from `trips/<slug>/itinerary.json`. |
+| SSE connection drops | The run continues on disk. The page reloads from `?trip=<slug>` in the URL. |
 | Review disagrees with a fixture | `scripts/review_eval.sh` fails. Tighten the check wording in `review.md`, not the fixture. Two rounds max, then report. |
 
 ## 9. Testing map
@@ -203,7 +203,8 @@ The problem statement runs Destination, Logistics and Budget in parallel. Budget
 | MCP tools | Field mapping, error paths, cache behaviour, env fallback | pytest with recorded fixtures, offline |
 | MCP live | The key still works for Places and Routes WALK, FX responds | `LIVE_API_TESTS=1`, 3 tests |
 | Review agent | 5 drafts: clean, over budget, missing Kyoto, six days, no crowd tactics | `scripts/review_eval.sh` runs the agent headless and diffs pass/fail per check |
-| SDK to UI mapping | Agent attribution, tool-call naming, summary on tool_result, step detection | Vitest, 5 tests |
+| SDK to UI mapping | Agent attribution, tool-call naming, summary on tool_result, step detection, failed status on is_error | Vitest, 8 tests |
+| Worker and orchestrator structure | Candidate counts, crowd tactics, sources, source-to-md match, no semicolons, night split, FX format, day headings, itinerary.json schema, six review checks, parallel fan-out | `scripts/worker_eval.py` over `trips/<slug>/`, pytest wraps it in `scripts/tests` |
 | End to end | Three agents running at once, tool calls visible, six review lines, budget colour, reload from JSON | Browser drive recorded in `docs/handover-check.md` |
 | Not tested | UI glue, orchestrator prose beyond the sample run | by decision |
 

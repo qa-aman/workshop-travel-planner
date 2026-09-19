@@ -61,7 +61,7 @@ Verified against official docs:
 | destination-research | sonnet | travel-tools: search_places, get_weather. Write | brief | `01-destinations.md`: per city 6-10 candidates tagged must-do or nice-to-have, each with name, area, why it fits the likes, crowd tactic (time of day, lesser-known alternative, or "peak, included because must-do"), Places rating, price level. Food areas listed separately. Facts come from tool results, not memory |
 | logistics | sonnet | travel-tools: search_places (hotels), get_walking_route, get_rail_route. Write | brief | `02-logistics.md`: 2 stay areas per city with 2 hotel examples each (name, rating, price level), night split across cities, inter-city Shinkansen with seeded minutes and fare, day-sequence skeleton grouped by area with walking minutes between anchors |
 | budget | sonnet | travel-tools: convert_currency. Read, Write | brief | `03-budget.md`: category split (stay, transport, food, activities, buffer), price bands per category in USD and JPY at today's rate, 2-3 "if over, cut here" alternatives. Every number labelled estimate or tool-verified |
-| review | opus | Read only. No MCP, no Write to the plan | draft itinerary + brief | `05-review.json`: six checks, each pass or fail with a one-line reason, `failures[]` naming the owning agent. Checks: fits the day count, includes every requested city, total within budget, matches likes, every item carries a crowd tactic, travel time realistic |
+| review | opus | Read, Write (Write is needed for 05-review.json, independence is by prompt and by the absence of MCP tools) | draft itinerary + brief | `05-review.json`: six checks, each pass or fail with a one-line reason, `failures[]` naming the owning agent. Checks: fits the day count, includes every requested city, total within budget, matches likes, every item carries a crowd tactic, travel time realistic |
 
 Rules that hold across agents:
 1. Review sees only the draft and the brief. It never sees worker reports and has no tools to fix anything. Independence by construction.
@@ -84,7 +84,7 @@ Python, FastMCP, stdio. Registered in `.mcp.json` at repo root as `travel-tools`
 Behaviour:
 1. Fail-fast: the server refuses to start without `GOOGLE_MAPS_API_KEY`.
 2. Every tool returns `{error: "..."}` on API failure instead of raising, so the agent can report "could not verify".
-3. Responses cached in `mcp/.cache/<sha256 of args>.json` for 24 hours. Protects the free tier across repeated demo runs.
+3. Responses cached in `mcp/.cache/<sha256 of args>.json` for 24 hours, weather 6 hours (forecasts change). An empty Places result is a valid answer and is cached like any other. Protects the free tier across repeated demo runs.
 4. `get_weather` is called only when the brief has dates.
 
 Amendment 19-09-2026, after live probing with the repo key: Google Routes API returns no TRANSIT routes anywhere in Japan (London transit works with the identical request, Tokyo to Kyoto, Tokyo intra-city and lat/lng requests all return `{}`). The original `get_transit_route` tool is replaced by `get_walking_route` (Routes WALK mode, verified: Senso-ji to Ueno Park 1,911 m, 29 min) and `get_rail_route` (seeded from the official JR Central table: Tokyo to Kyoto Nozomi reserved ¥13,970, Hikari ¥13,650). Agents never state a metro or bus time for Japan, they give walking time or "could not verify".
@@ -119,7 +119,7 @@ workshop-travel-planner/
     agents/                       destination-research.md, logistics.md, budget.md, review.md
     skills/plan-trip/SKILL.md     /plan-trip "<request>", terminal entry point
     claude-sessions-registry.md
-  mcp/travel-tools/               server.py, tools/{places,routes,currency,weather}.py, tests/, .cache/
+  mcp/travel-tools/               server.py, travel_tools/{places,walking,rail,currency,weather,cache}.py, tests/, .cache/
   web/                            app/page.tsx, app/api/plan/route.ts, components/, store/
   trips/                          one folder per run, gitignored except trips/sample-japan/
   docs/superpowers/specs/         this document
@@ -145,4 +145,4 @@ workshop-travel-planner/
 
 1. The example request produces, in one run, an itinerary that passes all six review checks, with every place name traceable to a `search_places` result and the Tokyo to Kyoto leg traceable to a `get_rail_route` result.
 2. The same run works from the terminal (`/plan-trip`) and from the web page, using the same agent files.
-3. A full run stays within free API tiers, under 4 minutes, and every intermediate artifact is readable in `trips/<slug>/`.
+3. A full run stays within free API tiers, under 15 minutes with a Sonnet orchestrator (measured 11m49s and 13m27s on 19-09-2026, each with one repair round). Reducing run time is a follow-up. Every intermediate artifact is readable in `trips/<slug>/`.

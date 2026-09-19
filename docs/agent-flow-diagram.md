@@ -54,7 +54,7 @@ flowchart TD
 
 **Key callouts:**
 1. The three workers never talk to each other. They share only the brief in and files out.
-2. The review agent has no MCP tools and is never shown the worker files, only the brief and the draft. That is what makes it independent.
+2. The review agent has Read and Write but no MCP tools, and is never shown the worker files, only the brief and the draft. Independence is by prompt and by the absence of MCP tools, not by withholding Write, which it needs to write `05-review.json`.
 3. The repair loop runs exactly once. A second failure ships with a `Warnings` section instead of looping.
 4. On the second pass the orchestrator re-runs only the agents named in `failures[].owner`. An `owner` of `orchestrator` means it fixes the draft itself.
 
@@ -136,7 +136,7 @@ flowchart LR
 **Key callouts:**
 1. Google Routes has no transit data for Japan, so rail comes from a seeded file with the official JR Central fare (`seed`), and intra-city moves are walking minutes (`tool`). Agents never state a metro or bus time.
 2. Google Places returns no price level for hotels, so stay prices are estimate bands from the budget agent, labelled as such.
-3. Every tool response is cached on disk for 24 hours, so repeated demo runs cost no API calls.
+3. Every tool response is cached on disk for 24 hours, weather 6 hours, so repeated demo runs cost no API calls.
 4. The orchestrator never adds a place, price or time that is not in a worker file.
 
 ## 3. Responsibilities
@@ -209,5 +209,3 @@ sequenceDiagram
 | Review result | 5 of 6, shipped with one warning |
 | Cost with an Opus orchestrator | $6.41, of which Opus $4.71 |
 | Orchestrator model after that run | Sonnet (D-019) |
-
-Full results page for that run: https://claude.ai/artifact/6hEqKwkrHBLigof3sVRhRK

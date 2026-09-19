@@ -8,14 +8,14 @@ Date: 19-09-2026. Derived from `docs/superpowers/plans/implementation-plan.md`. 
 |---|---|---|---|
 | Agent runtime | Claude Code, filesystem agents in `.claude/agents/` | 2.1.278 | Agents are markdown a PM can read. The same files run from the terminal and from the web app. Rejected: agents defined in TypeScript (loses the terminal path and the readable-file demo moment). |
 | Orchestration entry | `.claude/skills/plan-trip/SKILL.md` | n/a | One command in the terminal, one prompt string from the SDK. The procedure lives in one file. |
-| Web to agents bridge | `@anthropic-ai/claude-agent-sdk` (TypeScript) | bundled with Claude Code 2.1.278 | Loads `.claude/agents`, `.mcp.json` and `CLAUDE.md` via `settingSources: ["project"]`. `forwardSubagentText: true` gives per-agent messages tagged with `parent_tool_use_id`. Rejected: shelling out to `claude -p` (no structured message stream). |
+| Web to agents bridge | `@anthropic-ai/claude-agent-sdk` (TypeScript) | 0.3.278 (npm) | Loads `.claude/agents`, `.mcp.json` and `CLAUDE.md` via `settingSources: ["project"]`. `forwardSubagentText: true` gives per-agent messages tagged with `parent_tool_use_id`. Rejected: shelling out to `claude -p` (no structured message stream). |
 | Tool server | Model Context Protocol, Python SDK `mcp` | `>=2,<3` | Named tools with typed inputs, visible in the UI as `search_places("quiet temples", "Kyoto")`. Rejected: Bash + curl scripts (shell noise in the UI, harder to permission). |
 | Python runtime | Python via uv | 3.12, uv 0.10 | Machine default is 3.9, uv pins 3.12 per project with no global change. |
 | HTTP client | `httpx` | `>=0.27` | Sync, simple, mockable with `respx` in tests. |
 | Python tests | `pytest` + `respx` | `>=8`, `>=0.21` | Recorded fixtures, offline, free. One live suite behind `LIVE_API_TESTS=1`. |
 | Web framework | Next.js, App Router | 14 | Route handler streams SSE from the SDK generator. Matches the standard stack for this workspace. |
-| UI kit | MUI | latest 5.x | Cards, chips, tables without hand-rolled CSS. |
-| State | Zustand | latest 4.x | One store holds the run: agent status, tool calls, itinerary. |
+| UI kit | MUI | 9.4.0 (npm) | Cards, chips, tables without hand-rolled CSS. |
+| State | Zustand | 5.0.15 (npm) | One store holds the run: agent status, tool calls, itinerary. |
 | Web tests | Vitest | latest | Unit tests on the SDK-to-event mapper only. UI glue is not tested. |
 | Node | Node.js | 26.8 | Installed on the machine. |
 
@@ -58,7 +58,7 @@ Routes API transit returns an empty response for every request inside Japan. Tes
 web/.env.local       copy for Next.js, gitignored
 ```
 
-The MCP server refuses to start without a Google key. The terminal path uses the Claude Code login. The web path uses `ANTHROPIC_API_KEY` through the Agent SDK.
+The MCP server refuses to start without a Google key. Both the terminal path and the web path use the local Claude Code login first, falling back to `ANTHROPIC_API_KEY` only if it is set.
 
 Verified 19-09-2026: the web route runs on the local Claude Code login with no ANTHROPIC_API_KEY set.
 
@@ -69,19 +69,20 @@ Verified 19-09-2026: the web route runs on the local Claude Code login with no A
 | Places Text Search | about 12 to 16 | 5,000 | about 300 |
 | Routes WALK | about 6 to 10 | 10,000 | about 1,000 |
 | Frankfurter, Open-Meteo | 1 to 3 | unlimited | n/a |
-| Claude tokens | 1 Opus session + 3 Sonnet + 1 Opus subagent, one optional repair loop | n/a | billed per run |
+| Claude tokens | 1 Sonnet session + 3 Sonnet workers + 1 Opus review, one optional repair loop | n/a | billed per run |
 
-Every API response is cached on disk for 24 hours (`mcp/travel-tools/.cache/`), so repeated demo runs of the same request cost zero API calls after the first.
+Every API response is cached on disk for 24 hours (`mcp/travel-tools/.cache/`), weather 6 hours, so repeated demo runs of the same request cost zero API calls after the first.
 
 ## 6. Commands
 
 | Task | Command |
 |---|---|
-| Plan a trip from the terminal | `claude` then `/plan-trip Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.` |
+| Plan a trip from the terminal | `claude --model sonnet` then `/plan-trip Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.` |
 | MCP unit tests | `cd mcp/travel-tools && uv run pytest -q` |
 | MCP live smoke | `set -a && source .env && set +a && cd mcp/travel-tools && LIVE_API_TESTS=1 uv run pytest tests/test_live.py -q` |
 | Check Claude Code sees the server | `claude mcp list` |
 | Review agent eval | `./scripts/review_eval.sh` |
+| Structural eval of a run | `uv run --project mcp/travel-tools --with jsonschema python scripts/worker_eval.py trips/<slug>` |
 | Web app | `cd web && npm run dev` then http://localhost:3000 |
 | Web unit tests | `cd web && npm test` |
 | Date format audit | see Task 16 of the implementation plan |

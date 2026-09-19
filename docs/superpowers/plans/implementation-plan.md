@@ -2687,7 +2687,7 @@ With `npm run dev` running, drive the real flow in a browser once more from a cl
 4. Review card shows 6 lines.
 5. Budget total colour matches `within_budget`.
 6. Refreshing the page and calling `loadTrip` restores the itinerary.
-7. `python3 ~/.claude/scripts/slop_check.py trips/sample-japan/itinerary.md` exit code.
+7. `grep -c ";" trips/sample-japan/itinerary.md` prints 0 and `grep -cP "\x{2014}|\x{2013}"` prints 0 (em dash and en dash, by codepoint so the pattern itself never contains one).
 8. `uv run --project mcp/travel-tools --with jsonschema python scripts/worker_eval.py trips/sample-japan --run-log <the run's json log>` prints no FAIL line.
 If any line fails, fix the cause and re-run. Do not hand over with a failing line.
 
