@@ -30,7 +30,7 @@ Write `trips/<slug>/05-review.json` matching exactly this shape, then reply with
 
 ## How to judge each check
 
-1. `days_fit`: exactly `days` day headings, numbered 1..days, no day empty.
+1. `days_fit`: exactly `days` day headings, numbered 1..days, no day empty. Count every `## Day N` heading regardless of its content or any note in the heading text.
 2. `cities_included`: every city in the brief has at least one full day.
 3. `within_budget`: the draft's budget total is <= `budget_usd`. Recompute the total from the draft's budget lines yourself, do not trust the stated total.
 4. `matches_likes`: every day has at least one slot whose kind maps to a like (temples -> temple, food -> food). A day with none fails.

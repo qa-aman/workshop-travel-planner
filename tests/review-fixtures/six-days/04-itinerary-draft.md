@@ -54,7 +54,7 @@ Hikari alternative: about 160 min, 13,650 JPY, covered by the JR Pass. Fares mov
 | afternoon | Departure from Kyoto | free | No return leg or flight time in the brief, so left open | n/a, not a venue | n/a | 0 | logistics |
 | evening | Not scheduled | free | Half-day departure | n/a, not a venue | n/a | 0 | logistics |
 
-## Day 6: Kyoto, extra day (not in brief)
+## Day 6: Kyoto, Arashiyama
 | When | What | Kind | Why it fits | Crowd tactic | Transit min from previous | Est. USD | Source |
 |---|---|---|---|---|---|---|---|
 | morning | Arashiyama Bamboo Grove | nice-to-have | Bamboo grove walk, fits general sightseeing | Arrive before 08:00, ahead of the tour-bus arrivals | could not verify | 0 (estimate, no entry fee) | tool |

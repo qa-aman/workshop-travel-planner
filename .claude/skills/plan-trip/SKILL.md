@@ -63,3 +63,4 @@ Whether it passes or not now, continue. Do not loop again.
 1. Dates DD-MM-YYYY everywhere. No em dashes.
 2. Never add a place, price or time that is not in a worker file.
 3. Never run the repair loop twice.
+4. Never use a semicolon anywhere in any file you write. Join list items in a table cell with commas.

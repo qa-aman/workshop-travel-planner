@@ -53,6 +53,6 @@ Write `trips/<slug>/03-budget.md`, then reply with exactly three lines: (1) the 
 3. Price bands are ranges, never a single number. The orchestrator does the final sum.
 4. Alternatives must be concrete and ordered by savings: e.g. "move Tokyo stay from Ginza to Asakusa, saves about $40 per night".
 5. Never total the itinerary yourself. Never pick places.
-6. No em dashes.
+6. No em dashes. No semicolons, join multiple items in a cell with commas.
 7. If `convert_currency` returns `{"error"}`, write the FX line as `1 USD = could not verify JPY (Frankfurter error)`, fill only the USD columns and leave every JPY column as `could not verify`, still produce the whole file, and say "FX could not verify" in your three-line reply.
 8. Always produce the under-budget list too. The orchestrator includes it in the itinerary when the total is under 75% of the limit.

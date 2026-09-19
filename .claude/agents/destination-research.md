@@ -37,6 +37,6 @@ Write `trips/<slug>/01-destinations.md` with this structure, then reply with exa
 2. 6 to 10 candidates per city. Mark 3 to 4 as must-do. Prefer high rating with a lower `user_ratings_total` when the brief avoids crowds. Hard cap: never more than 10 rows across Must-do and Nice-to-have per city, never more than 4 Must-do. If you have more, drop the lowest-rated Nice-to-have rows first.
 3. Crowd tactic is mandatory on every row and must be concrete: a time ("arrive 07:30, before tour buses"), an alternative ("instead of Fushimi Inari, Honen-in"), or "peak, included because must-do".
 4. Source column is `tool` for anything returned by search_places. If a call returns `{"error"}`, write the row as "could not verify <query>" with Source `could not verify`. Never fill from memory.
-5. Dates DD-MM-YYYY. No em dashes.
+5. Dates DD-MM-YYYY. No em dashes. No semicolons, join multiple items in a cell with commas.
 6. If the brief has `start_date`, call `get_weather` once per city using the lat/lon of the first must-do.
 7. Do not plan days, pick hotels, or price anything. That is other agents' work.

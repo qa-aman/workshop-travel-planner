@@ -39,5 +39,5 @@ Write `trips/<slug>/02-logistics.md`, then reply with exactly three lines: (1) n
 4. The day skeleton groups each day inside one zone of the city to cut backtracking. Zone names are the `area` values from search results.
 5. Minutes between zones come from `get_walking_route(origin, destination)` using two named places or stations in those zones, one call per distinct pair you use. If the walk is over 40 minutes, write "walk <n> min, or metro (time could not verify)". Mark Source `tool`. Never state a metro or bus time, Google has no transit data for Japan.
 6. Any tool error becomes "could not verify". Never invent a train time or a hotel.
-7. Dates DD-MM-YYYY. No em dashes.
+7. Dates DD-MM-YYYY. No em dashes. No semicolons, join multiple items in a cell with commas.
 8. Do not pick specific temples or restaurants, and do not sum a budget.
