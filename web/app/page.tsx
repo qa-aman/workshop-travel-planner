@@ -1,6 +1,7 @@
 "use client";
 import { Box, Container, Stack, Typography } from "@mui/material";
 import { AgentTimeline } from "@/components/AgentTimeline";
+import { ItineraryView } from "@/components/ItineraryView";
 import { RequestForm } from "@/components/RequestForm";
 
 export default function Page() {
@@ -24,6 +25,7 @@ export default function Page() {
       </Box>
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
         <AgentTimeline />
+        <ItineraryView />
       </Container>
     </>
   );
