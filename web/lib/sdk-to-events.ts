@@ -57,10 +57,7 @@ export function toAgentEvents(msg: SDKMessage, agentByToolUseId: Map<string, Age
   } else if (msg.type === "result") {
     const r = msg as { subtype: string; result?: string; is_error?: boolean };
     const text = r.result ?? "";
-    const slug =
-      text.match(/\btrips\/([a-z0-9]+(?:-[a-z0-9]+)+-[0-9a-f]{4})\b/)?.[1] ??
-      text.match(/[a-z]+(?:-[a-z]+)+-[0-9a-f]{4}/)?.[0] ??
-      null;
+    const slug = text.match(/\btrips\/([a-z0-9]+(?:-[a-z0-9]+)+-[0-9a-f]{4})\b/)?.[1] ?? null;
     out.push({ type: "result", slug, ok: r.subtype === "success" && !r.is_error, error: r.is_error ? r.result : undefined });
   }
   return out;

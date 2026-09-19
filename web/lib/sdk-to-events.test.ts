@@ -64,15 +64,23 @@ describe("toAgentEvents", () => {
     ]);
   });
 
-  it("prefers the trips/<slug>/itinerary.md path over a bare hyphenated match", () => {
-    const msg = {
+  it("extracts the slug from the trips/<slug>/itinerary.md path, and returns null with no fallback when that path is absent", () => {
+    const withPath = {
       type: "result",
       subtype: "success",
       is_error: false,
-      result: "Done. See trips/japan-tokyo-kyoto-a8b5/itinerary.md and also could-not-verify-dead end",
+      result: "Done. See trips/japan-tokyo-kyoto-a8b5/itinerary.md",
     } as never;
-    expect(toAgentEvents(msg, new Map())).toEqual([
+    expect(toAgentEvents(withPath, new Map())).toEqual([
       { type: "result", slug: "japan-tokyo-kyoto-a8b5", ok: true, error: undefined },
     ]);
+
+    const withoutPath = {
+      type: "result",
+      subtype: "success",
+      is_error: false,
+      result: "could-not-verify-dead end",
+    } as never;
+    expect(toAgentEvents(withoutPath, new Map())).toEqual([{ type: "result", slug: null, ok: true, error: undefined }]);
   });
 });

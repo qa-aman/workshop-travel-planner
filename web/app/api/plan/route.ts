@@ -15,9 +15,25 @@ export async function POST(req: Request) {
   }
 
   const encoder = new TextEncoder();
+  // Contract (spec section 8.5): a client disconnect must never stop the planner run.
+  // The browser can close the SSE connection at any time (tab close, navigation, network
+  // drop); the ReadableStream's `cancel()` fires when that happens. From that point on,
+  // `controller.enqueue()` throws, so `send` becomes a no-op instead of throwing back into
+  // the `for await` loop below. The loop keeps draining `q` to completion regardless of
+  // `closed`, so the orchestrator finishes its run and writes `trips/<slug>/` to disk even
+  // with nobody listening. `controller.close()` is only called if the stream was never
+  // cancelled, since closing an already-cancelled controller throws.
+  let closed = false;
   const stream = new ReadableStream({
     async start(controller) {
-      const send = (e: AgentEvent) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(e)}\n\n`));
+      const send = (e: AgentEvent) => {
+        if (closed) return;
+        try {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(e)}\n\n`));
+        } catch {
+          closed = true;
+        }
+      };
       const agentByToolUseId = new Map<string, AgentId>();
       send({ type: "status", agent: "orchestrator", status: "running" });
       try {
@@ -41,8 +57,17 @@ export async function POST(req: Request) {
       } catch (err) {
         send({ type: "result", slug: null, ok: false, error: err instanceof Error ? err.message : String(err) });
       } finally {
-        controller.close();
+        if (!closed) {
+          try {
+            controller.close();
+          } catch {
+            closed = true;
+          }
+        }
       }
+    },
+    cancel() {
+      closed = true;
     },
   });
 
