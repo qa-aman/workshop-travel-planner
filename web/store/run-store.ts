@@ -56,6 +56,13 @@ export const useRunStore = create<RunState & Actions>((set, get) => ({
 
   loadTrip: async (slug) => {
     const res = await fetch(`/api/trips/${slug}`);
-    if (res.ok) set({ slug, itinerary: (await res.json()) as Itinerary, phase: "done" });
+    if (res.ok) {
+      const itinerary = (await res.json()) as Itinerary;
+      const s = get();
+      const agents = Object.fromEntries(
+        AGENT_IDS.map((id) => [id, { ...s.agents[id], status: "done" }]),
+      ) as unknown as RunState["agents"];
+      set({ slug, itinerary, phase: "done", agents });
+    }
   },
 }));

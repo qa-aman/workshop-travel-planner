@@ -14,7 +14,7 @@ const LABEL: Record<AgentId, string> = {
 const STRIPE: Record<AgentStatus, string> = {
   waiting: "#C7C9D1",
   running: "#E8A23D",
-  revising: "#D98A2B",
+  revising: "#7A5FB5",
   done: "#3C7A5B",
   failed: "#BD4B2C",
 };
@@ -22,7 +22,7 @@ const STRIPE: Record<AgentStatus, string> = {
 const STATUS_TEXT: Record<AgentStatus, string> = {
   waiting: "#8A8D97",
   running: "#B0742A",
-  revising: "#B0742A",
+  revising: "#6A4FA0",
   done: "#3C7A5B",
   failed: "#BD4B2C",
 };
@@ -52,6 +52,7 @@ export function AgentTimeline() {
       {AGENT_IDS.map((id) => {
         const a = agents[id];
         const running = a.status === "running";
+        const revising = a.status === "revising";
         return (
           <Card
             key={id}
@@ -67,8 +68,15 @@ export function AgentTimeline() {
                 insetBlock: 0,
                 insetInlineStart: 0,
                 width: 4,
-                bgcolor: STRIPE[a.status],
-                animation: running ? "pulse-stripe 1.8s ease-in-out infinite" : "none",
+                bgcolor: revising ? "transparent" : STRIPE[a.status],
+                backgroundImage: revising
+                  ? `repeating-linear-gradient(to bottom, ${STRIPE.revising} 0 7px, transparent 7px 12px)`
+                  : "none",
+                animation: running
+                  ? "pulse-stripe 1.8s ease-in-out infinite"
+                  : revising
+                    ? "pulse-stripe-double 2.6s ease-in-out infinite"
+                    : "none",
                 "@media (prefers-reduced-motion: reduce)": { animation: "none" },
               },
             }}
@@ -117,7 +125,7 @@ export function AgentTimeline() {
                       variant="body2"
                       sx={{ fontFamily: MONO, color: c.pass ? "success.main" : "error.main" }}
                     >
-                      {c.pass ? "pass" : "fail"}: {c.label}
+                      {c.pass ? "PASS" : "FAIL"}: {c.label}
                     </Typography>
                   ))}
                 </Stack>
