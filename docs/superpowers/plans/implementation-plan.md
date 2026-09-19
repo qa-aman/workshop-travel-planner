@@ -18,6 +18,7 @@
 4. Review agent has no MCP servers and no Write access to the plan.
 5. Free-tier protection: every MCP tool response is cached 24h on disk under `mcp/travel-tools/.cache/`.
 6. MCP server refuses to start without a Google key. Code reads `GOOGLE_MAPS_API_KEY`, falling back to `GOOGLE_MAPS_API` (the name already used in the repo `.env`, verified 19-09-2026).
+11. Decision and spec discipline, applies to every task: (a) any choice a reasonable engineer could have made differently gets a row in `docs/decisions.md` (newest first, next `D-0NN`) in the same commit. (b) Any deviation from `docs/superpowers/specs/19-09-2026-travel-planner-multi-agent-design.md` requires editing the spec AND adding a row to `docs/superpowers/specs/changelog.md` in the same commit, with the reason and the trigger. A task that ends with a spec deviation and no changelog row is not complete. (c) `docs/tech-stack.md` and `docs/architecture.md` are updated when a library, API, tool name or component changes.
 10. Google Routes API returns no TRANSIT routes anywhere in Japan (verified 19-09-2026: London transit works, Tokyo to Kyoto, Tokyo intra-city and lat/lng requests all return `{}`). Rail data for Japan is therefore seeded from the official JR Central smartEX fare PDF, and intra-city timing uses Routes API `WALK` mode, which does work in Japan.
 7. Commit messages: lowercase, imperative, under 72 chars, end with `Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>`.
 8. Python: `uv` manages the venv, Python 3.12. Node: 26, npm.
@@ -89,7 +90,8 @@ trips/*
 - [ ] **Step 2: Write `.env.example`**
 
 ```bash
-# Google Maps Platform key with "Places API (New)" and "Routes API" enabled
+# Google Maps Platform key with "Places API (New)" and "Routes API" enabled.
+# The code also accepts the name GOOGLE_MAPS_API.
 GOOGLE_MAPS_API_KEY=
 # Used by the Agent SDK from the Next.js app. Terminal use relies on your Claude Code login.
 ANTHROPIC_API_KEY=
@@ -105,7 +107,8 @@ ANTHROPIC_API_KEY=
       "command": "uv",
       "args": ["run", "--project", "mcp/travel-tools", "python", "mcp/travel-tools/server.py"],
       "env": {
-        "GOOGLE_MAPS_API_KEY": "${GOOGLE_MAPS_API_KEY}"
+        "GOOGLE_MAPS_API_KEY": "${GOOGLE_MAPS_API_KEY}",
+        "GOOGLE_MAPS_API": "${GOOGLE_MAPS_API}"
       }
     }
   }
@@ -127,6 +130,7 @@ Facts come from the `travel-tools` MCP server, never from memory.
 3. A tool error is reported as "could not verify <thing>". Never invent a place, price or time.
 4. Every run writes to `trips/<slug>/`. Slug = lowercase destination and cities joined by hyphens plus a 4-char hash, e.g. `japan-tokyo-kyoto-a1f3`.
 5. Prices are estimates unless a tool returned them. Say which.
+6. Decisions go in `docs/decisions.md` the moment they are made. Any deviation from the spec in `docs/superpowers/specs/` is written into the spec and logged in `docs/superpowers/specs/changelog.md` in the same commit, with the reason.
 
 ## Commands
 
