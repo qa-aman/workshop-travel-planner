@@ -22,4 +22,10 @@ def test_get_weather_maps_days(tmp_path, monkeypatch):
 
 def test_get_weather_rejects_bad_date_format(tmp_path, monkeypatch):
     monkeypatch.setattr(cache, "CACHE_DIR", tmp_path)
-    assert "error" in weather.get_weather(35.0, 135.0, "2026-10-01", "2026-10-02")
+
+    def must_not_call(*args, **kwargs):
+        raise AssertionError("get_json must not be called for a bad date")
+
+    monkeypatch.setattr(weather, "get_json", must_not_call)
+    out = weather.get_weather(35.0, 135.0, "2026-10-01", "2026-10-02")
+    assert out == {"error": "dates must be DD-MM-YYYY"}
