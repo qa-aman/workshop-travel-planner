@@ -1,0 +1,11 @@
+.env
+node_modules/
+.next/
+mcp/travel-tools/.cache/
+mcp/travel-tools/.venv/
+__pycache__/
+.pytest_cache/
+trips/*
+!trips/sample-japan/
+.DS_Store
+.superpowers/
