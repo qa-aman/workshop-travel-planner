@@ -6,10 +6,18 @@
     "request": "Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.",
     "destination": "Japan",
     "days": 5,
-    "cities": ["Tokyo", "Kyoto"],
+    "cities": [
+      "Tokyo",
+      "Kyoto"
+    ],
     "budget_usd": 3000,
-    "likes": ["food", "temples"],
-    "avoids": ["crowds"],
+    "likes": [
+      "food",
+      "temples"
+    ],
+    "avoids": [
+      "crowds"
+    ],
     "start_date": null,
     "travellers": 1,
     "slug": "sample-japan"
@@ -19,54 +27,190 @@
       "day": 1,
       "date": null,
       "city": "Tokyo",
-      "area": "Nishiasakusa (arrival)",
+      "area": "Nezu / Yanaka",
       "slots": [
-        {"when": "morning", "name": "Tsukiji Fish Market", "kind": "food", "area": "Tsukiji", "why": "Breakfast-style seafood market, direct hit on \"food\"", "crowd_tactic": "Arrive 07:00 for breakfast, before tour groups land mid-morning", "transit_min_from_prev": null, "est_cost_usd": 20.00, "source": "tool"},
-        {"when": "afternoon", "name": "Senso-ji", "kind": "temple", "area": "Asakusa", "why": "Tokyo's most iconic Buddhist temple, the anchor \"temples\" pick", "crowd_tactic": "Arrive 06:30, before tour buses and the Nakamise-dori stalls open", "transit_min_from_prev": null, "est_cost_usd": 5.00, "source": "could not verify"},
-        {"when": "evening", "name": "Omoide Yokocho", "kind": "food", "area": "Nishishinjuku", "why": "Narrow yakitori-alley food street", "crowd_tactic": "Arrive before 18:00, before the after-work crowd fills the lanes", "transit_min_from_prev": null, "est_cost_usd": 22.50, "source": "could not verify"}
+        {
+          "when": "morning",
+          "name": "Meiji Jingu",
+          "kind": "temple",
+          "why": "Forest shrine, quiet spiritual grounds, fits temples",
+          "crowd_tactic": "Arrive 07:30, before tour buses and school groups",
+          "transit_min_from_prev": null,
+          "est_cost_usd": 5.5,
+          "source": "tool"
+        },
+        {
+          "when": "afternoon",
+          "name": "Tokyo Ramen Street",
+          "kind": "food",
+          "why": "Ramen from several stalls under Tokyo Station, fits food",
+          "crowd_tactic": "Weekday, before 11:30 or after 14:00, avoid Saturday and Sunday lunch peak",
+          "transit_min_from_prev": 102,
+          "est_cost_usd": 22.5,
+          "source": "tool"
+        },
+        {
+          "when": "evening",
+          "name": "Yakitori Alley",
+          "kind": "food",
+          "why": "Local grilled skewer alley, fits food",
+          "crowd_tactic": "Go before 18:00, weekday evenings are quieter",
+          "transit_min_from_prev": 18,
+          "est_cost_usd": 22.5,
+          "source": "tool"
+        }
       ]
     },
     {
       "day": 2,
       "date": null,
       "city": "Tokyo",
-      "area": "Nezu-Yanaka to Nishiasakusa",
+      "area": "Nezu / Yanaka",
       "slots": [
-        {"when": "morning", "name": "Nezu Shrine", "kind": "temple", "area": "Nezu", "why": "Quiet garden shrine, low-crowd temples option", "crowd_tactic": "Visit a weekday afternoon, avoid the April azalea festival dates", "transit_min_from_prev": null, "est_cost_usd": 5.00, "source": "tool"},
-        {"when": "afternoon", "name": "Meiji Jingu", "kind": "temple", "area": "Yoyogikamizonocho", "why": "Forested Shinto shrine, quiet counterpoint to Senso-ji for temples", "crowd_tactic": "Arrive weekday 07:00, gates open at dawn, before group tours", "transit_min_from_prev": null, "est_cost_usd": 5.00, "source": "could not verify"},
-        {"when": "evening", "name": "Yakitori Alley, Yurakucho", "kind": "food", "area": "Yurakucho", "why": "Under-the-tracks yakitori stalls, lesser-known food find", "crowd_tactic": "Arrive 17:30 at opening, before the after-work rush", "transit_min_from_prev": null, "est_cost_usd": 20.00, "source": "could not verify"}
+        {
+          "when": "morning",
+          "name": "Zojo-ji",
+          "kind": "temple",
+          "why": "Temple with Tokyo Tower backdrop, fits temples",
+          "crowd_tactic": "Arrive 08:00, before tour groups",
+          "transit_min_from_prev": null,
+          "est_cost_usd": 5.5,
+          "source": "tool"
+        },
+        {
+          "when": "afternoon",
+          "name": "Pocha Korean Street Food",
+          "kind": "food",
+          "why": "Street-food style local eatery, fits food",
+          "crowd_tactic": "Visit off-peak, 15:00 to 17:00",
+          "transit_min_from_prev": 120,
+          "est_cost_usd": 22.5,
+          "source": "tool"
+        },
+        {
+          "when": "evening",
+          "name": "Toranomon Yokocho",
+          "kind": "food",
+          "why": "Izakaya small plates, less touristy than the Shinjuku alleys",
+          "crowd_tactic": "Early dinner, 17:30",
+          "transit_min_from_prev": 111,
+          "est_cost_usd": 22.5,
+          "source": "tool"
+        }
       ]
     },
     {
       "day": 3,
       "date": null,
       "city": "Tokyo to Kyoto",
-      "area": "Transfer",
+      "area": "Transit day",
       "slots": [
-        {"when": "morning", "name": "Shinkansen, Tokyo to Kyoto (Nozomi), plus station and transfer buffer", "kind": "transit", "area": "n/a", "why": "Direct connection to the Kyoto base for the rest of the trip: 135 min Nozomi ride (seed) + 60 min station/transfer buffer (estimate, not tool-sourced) = 195 min total", "crowd_tactic": "n/a, not a venue", "transit_min_from_prev": 195, "est_cost_usd": 88.48, "source": "seed"},
-        {"when": "afternoon", "name": "chao chao gyoza kyoto", "kind": "food", "area": "Nakagyo Ward", "why": "Highly rated, lesser-known dumpling spot, in Nakagyo Ward", "crowd_tactic": "Go for lunch before 12:00, before the dinner queue forms", "transit_min_from_prev": 195, "est_cost_usd": 20.00, "source": "tool"},
-        {"when": "evening", "name": "Kyoto Shinkyogoku Shopping Street", "kind": "food", "area": "Nakagyo Ward", "why": "Street snacks and matcha sweets in central Kyoto", "crowd_tactic": "Avoid weekend afternoons when it is busiest", "transit_min_from_prev": null, "est_cost_usd": 22.50, "source": "could not verify"}
+        {
+          "when": "morning",
+          "name": "Shinkansen, Tokyo to Kyoto (Nozomi)",
+          "kind": "transit",
+          "why": "Direct rail connection from Tokyo to the Kyoto base for the rest of the trip, 195 min = 135 seeded ride + 60 min station/transfer allowance (estimate)",
+          "crowd_tactic": "n/a, not a venue",
+          "transit_min_from_prev": 195,
+          "est_cost_usd": 88.48,
+          "source": "seed"
+        },
+        {
+          "when": "afternoon",
+          "name": "Otagi Nenbutsuji",
+          "kind": "temple",
+          "why": "Quiet 1,200-statue temple in the Arashiyama hills, fits temples and avoids crowds",
+          "crowd_tactic": "Instead of Kinkaku-ji, choose this quiet alternative",
+          "transit_min_from_prev": 139,
+          "est_cost_usd": 5.5,
+          "source": "tool"
+        },
+        {
+          "when": "evening",
+          "name": "chao chao gyoza kyoto",
+          "kind": "food",
+          "why": "Highly rated gyoza spot, fits food",
+          "crowd_tactic": "Go before 18:00 to skip the dinner queue",
+          "transit_min_from_prev": 139,
+          "est_cost_usd": 45.0,
+          "source": "tool"
+        }
       ]
     },
     {
       "day": 4,
       "date": null,
       "city": "Kyoto",
-      "area": "Higashiyama to Nakagyo",
+      "area": "Shimogyo Ward",
       "slots": [
-        {"when": "morning", "name": "Kiyomizu-dera", "kind": "temple", "area": "Higashiyama Ward", "why": "Landmark wooden temple overlooking the city", "crowd_tactic": "Arrive 07:30 at opening, before tour groups", "transit_min_from_prev": null, "est_cost_usd": 5.00, "source": "tool"},
-        {"when": "afternoon", "name": "Nishiki Market", "kind": "food", "area": "Nakagyo Ward", "why": "\"Kyoto's Kitchen\" food street, direct hit on \"food\"", "crowd_tactic": "Go on a weekday morning at opening, before lunch crowds", "transit_min_from_prev": 31, "est_cost_usd": 20.00, "source": "tool"},
-        {"when": "evening", "name": "Kodaiji Temple", "kind": "temple", "area": "Higashiyama Ward", "why": "Temple near Kiyomizu, less crowded alternative, evening light-up hours", "crowd_tactic": "Visit during late-afternoon light-up hours, thinner crowds than Kiyomizu", "transit_min_from_prev": null, "est_cost_usd": 5.00, "source": "could not verify"}
+        {
+          "when": "morning",
+          "name": "Fushimi Inari Taisha",
+          "kind": "temple",
+          "why": "Iconic torii-gate shrine, fits temples",
+          "crowd_tactic": "Arrive 06:30, before tour buses, walk past the third torii cluster where crowds thin",
+          "transit_min_from_prev": null,
+          "est_cost_usd": 5.5,
+          "source": "tool"
+        },
+        {
+          "when": "afternoon",
+          "name": "To-ji Temple",
+          "kind": "temple",
+          "why": "Quieter temple, five-story pagoda, monthly antique market, fits temples and avoids crowds",
+          "crowd_tactic": "Visit on a non-market weekday for solitude",
+          "transit_min_from_prev": 49,
+          "est_cost_usd": 5.5,
+          "source": "tool"
+        },
+        {
+          "when": "evening",
+          "name": "Kiyamachi-Kawaramachi dining strip",
+          "kind": "food",
+          "why": "Gyoza, ramen, izakaya small plates, fits food",
+          "crowd_tactic": "Early dinner, 17:30, weekday visit, avoid Friday and Saturday night crowds",
+          "transit_min_from_prev": 65,
+          "est_cost_usd": 45.0,
+          "source": "tool"
+        }
       ]
     },
     {
       "day": 5,
       "date": null,
       "city": "Kyoto",
-      "area": "Shimogyo (departure)",
+      "area": "Shimogyo Ward (departure)",
       "slots": [
-        {"when": "morning", "name": "Fushimi Inari Taisha", "kind": "temple", "area": "Fushimi Ward", "why": "The iconic thousand-torii shrine, the anchor \"temples\" pick, close to Kyoto Station", "crowd_tactic": "Arrive 06:00, before tour buses, or hike past the second rest house where crowds thin", "transit_min_from_prev": null, "est_cost_usd": 5.00, "source": "tool"},
-        {"when": "afternoon", "name": "Free: return to Shimogyo Ward, pack, and head to the station for departure", "kind": "free", "area": "Shimogyo Ward", "why": "Departure day, buffer before the flight home", "crowd_tactic": "n/a, not a venue", "transit_min_from_prev": null, "est_cost_usd": 0.00, "source": "could not verify"}
+        {
+          "when": "morning",
+          "name": "Ryoan-ji",
+          "kind": "temple",
+          "why": "Zen rock garden temple, quieter than central sites, fits temples",
+          "crowd_tactic": "Arrive at 08:00 opening",
+          "transit_min_from_prev": null,
+          "est_cost_usd": 5.5,
+          "source": "tool"
+        },
+        {
+          "when": "afternoon",
+          "name": "Transfer to the airport or station for departure",
+          "kind": "transit",
+          "why": "Departure day, moving from the Kyoto base to catch onward transport",
+          "crowd_tactic": "n/a, not a venue",
+          "transit_min_from_prev": 108,
+          "est_cost_usd": 9.0,
+          "source": "estimate"
+        },
+        {
+          "when": "evening",
+          "name": "Free: buffer before onward travel",
+          "kind": "free",
+          "why": "Departure day, buffer before onward travel, no venue, staying at the departure point",
+          "crowd_tactic": "n/a, not a venue",
+          "transit_min_from_prev": 0,
+          "est_cost_usd": 0.0,
+          "source": "estimate"
+        }
       ]
     }
   ],
@@ -74,23 +218,39 @@
     {
       "city": "Tokyo",
       "nights": 2,
-      "area": "Nishiasakusa (Asakusa)",
-      "why": "Senso-ji and the Nakamise food street on the doorstep, and the neighbourhood is quieter at night than Shibuya or Shinjuku, fitting the avoid-crowds note",
-      "est_nightly_usd": 95.00,
+      "area": "Nezu / Yanaka (Ikenohata)",
+      "why": "Quiet residential lanes with small temples and shrines, next to Ueno Park, away from the Shibuya/Shinjuku crowd density, fits food, temples and avoid crowds",
+      "est_nightly_usd": 95.0,
       "examples": [
-        {"name": "TOKYO-W-inn Asakusa", "rating": 4.4, "price_level": null},
-        {"name": "plat hostel keikyu asakusa station", "rating": 4.4, "price_level": null}
+        {
+          "name": "HOTEL GRAPHY NEZU",
+          "rating": 4.3,
+          "price_level": null
+        },
+        {
+          "name": "The Barn Tokyo",
+          "rating": 4.8,
+          "price_level": null
+        }
       ]
     },
     {
       "city": "Kyoto",
       "nights": 2,
       "area": "Shimogyo Ward (near Kyoto Station)",
-      "why": "Central rail hub for day-trip temples, and Kyoto Station's food halls cover the food interest",
-      "est_nightly_usd": 95.00,
+      "why": "Walking distance to Nishi Hongan-ji, Higashi Hongan-ji and station food halls, easy Shinkansen access, calmer than the Higashiyama alleys",
+      "est_nightly_usd": 95.0,
       "examples": [
-        {"name": "KIORI Exec Muromachi Hotel", "rating": 4.8, "price_level": null},
-        {"name": "HOTEL LiVEMAX KYOTO-EKIMAE", "rating": 3.2, "price_level": null}
+        {
+          "name": "KIORI Exec Muromachi Hotel",
+          "rating": 4.8,
+          "price_level": null
+        },
+        {
+          "name": "Onyado Nono Kyotoshichijo",
+          "rating": 4.5,
+          "price_level": null
+        }
       ]
     }
   ],
@@ -99,46 +259,107 @@
       "from": "Tokyo",
       "to": "Kyoto",
       "mode": "Train",
-      "duration_min": 135,
+      "duration_min": 195,
       "fare_usd": 88.48,
       "source": "seed"
     }
   ],
   "budget": {
     "limit_usd": 3000,
-    "total_usd": 831.58,
+    "total_usd": 848.63,
     "within_budget": true,
     "lines": [
-      {"category": "stay", "usd": 380.00, "basis": "4 nights x midpoint $95 (band $70-120 from 03-budget.md, hotel price level unavailable from tool)"},
-      {"category": "transport", "usd": 133.48, "basis": "Shinkansen fare from 02-logistics.md (seed) $88.48 + 5 days x local transit midpoint $9 (band $6-12) = $45.00"},
-      {"category": "food", "usd": 212.50, "basis": "5 days x midpoint $42.50 (band $30-55 from 03-budget.md)"},
-      {"category": "activities", "usd": 30.00, "basis": "6 temple entries scheduled (Senso-ji, Nezu Shrine, Meiji Jingu, Kiyomizu-dera, Kodaiji Temple, Fushimi Inari Taisha) x midpoint $5.00 (band $3-7)"},
-      {"category": "buffer", "usd": 75.60, "basis": "10% of the $755.98 subtotal above"}
+      {
+        "category": "stay",
+        "usd": 380.0,
+        "basis": "4 nights x midpoint $95.00 (band $70-120 from 03-budget.md, hotel price level unavailable from tool)"
+      },
+      {
+        "category": "transport",
+        "usd": 133.48,
+        "basis": "Shinkansen fare from 02-logistics.md (seed) $88.48 + 5 days x local transit midpoint $9.00 (band $6-12) = $45.00"
+      },
+      {
+        "category": "food",
+        "usd": 225.0,
+        "basis": "5 days x midpoint $45.00 (band $30-60 from 03-budget.md)"
+      },
+      {
+        "category": "activities",
+        "usd": 33.0,
+        "basis": "6 temple entries scheduled (Meiji Jingu, Zojo-ji, Otagi Nenbutsuji, Fushimi Inari Taisha, To-ji Temple, Ryoan-ji) x midpoint $5.50 (band $3-8)"
+      },
+      {
+        "category": "buffer",
+        "usd": 77.15,
+        "basis": "10% of the $771.48 subtotal above"
+      }
     ],
     "alternatives": [
-      "Add a half-day trip to a quieter temple town near Kyoto (Ohara or Arashiyama early morning to dodge crowds), costs about $40 to $70.",
-      "Upgrade one or two dinners to a kaiseki or omakase experience, matches the food preference, costs about $60 to $100.",
-      "Book a small-group or private early-access temple visit to avoid crowds, costs about $40 to $70."
+      "Upgrade to reserved Shinkansen seats and add a private airport or station transfer.",
+      "Add a guided day trip to Nara or Arashiyama with temple access, avoids crowds and adds depth.",
+      "Upgrade the hotel category or add a kaiseki dinner experience in Kyoto."
     ],
-    "fx": {"rate": 157.89, "date": "18-09-2026"}
+    "fx": {
+      "rate": 157.89,
+      "date": "18-09-2026"
+    }
   },
   "crowd_strategy": [
-    "Early-morning temple visits: Fushimi Inari Taisha at 06:00 and Kiyomizu-dera at 07:30, both timed before the tour buses arrive.",
-    "Off-peak food picks: Tsukiji Fish Market at its 07:00 opening and Yakitori Alley, Yurakucho at its 17:30 opening, both timed to dodge the tour-group and after-work rush windows.",
-    "Lesser-known alternatives over the busiest icons: Nezu Shrine instead of Tokyo's most-visited shrines, and Kodaiji's evening light-up hours instead of daytime Kiyomizu-dera crowds.",
-    "Reserved Nozomi Shinkansen seats booked ahead for the Tokyo to Kyoto leg, instead of relying on unreserved cars."
+    "Early-morning temple visits: Meiji Jingu at 07:30, Zojo-ji at 08:00, Fushimi Inari Taisha at 06:30 and Ryoan-ji at its 08:00 opening, all timed before tour buses and school groups arrive.",
+    "Off-peak food picks: Tokyo Ramen Street on a weekday before 11:30 or after 14:00, and Toranomon Yokocho at its 17:30 opening, both timed to dodge the lunch and after-work rush windows.",
+    "Lesser-known alternatives over the busiest icons: Otagi Nenbutsuji instead of Kinkaku-ji, and To-ji Temple chosen for a non-market weekday over the more crowded central Kyoto temple circuit.",
+    "Reserved Nozomi Shinkansen seats for the Tokyo to Kyoto leg, instead of relying on unreserved cars."
   ],
   "review": {
-    "pass": true,
+    "pass": false,
     "checks": [
-      {"id": "days_fit", "label": "Fits in 5 days", "pass": true, "reason": "Exactly five day headings, numbered Day 1 to Day 5, no gaps and no repeats. Days 1 to 4 carry 3 slots each, day 5 carries 2 (Fushimi Inari plus the departure block), so no day is empty."},
-      {"id": "cities_included", "label": "Includes Tokyo, Kyoto", "pass": true, "reason": "Tokyo gets full days 1 and 2 with 2 nights in Nishiasakusa. Kyoto gets full days 4 and 5 with 2 nights in Shimogyo. Day 3 is the transfer day and still lands two Kyoto slots."},
-      {"id": "within_budget", "label": "Within $3000", "pass": true, "reason": "Recomputed from the budget lines: stay 380.00 + transport 133.48 + food 212.50 + activities 30.00 = 755.98 subtotal, buffer 10% = 75.60, total $831.58 against the $3,000 limit, 27.7% of budget. The stated total matches the recomputation to the cent."},
-      {"id": "matches_likes", "label": "Matches food, temples", "pass": true, "reason": "All 5 days carry at least one food or temple slot. Day 1 Tsukiji (food) and Senso-ji (temple), day 2 Nezu Shrine and Meiji Jingu (temple) plus Yakitori Alley (food), day 3 chao chao gyoza and Shinkyogoku (food), day 4 Kiyomizu-dera and Kodaiji (temple) plus Nishiki Market (food), day 5 Fushimi Inari Taisha (temple). 6 temple slots and 6 food slots across the trip."},
-      {"id": "avoids_crowds", "label": "Avoids crowds", "pass": true, "reason": "All 12 venue slots carry a tactic with a specific time or place, not a generic line. Examples: Fushimi Inari at 06:00 or hike past the second rest house, Kiyomizu-dera at 07:30 opening, Nezu Shrine on a weekday afternoon outside the April azalea dates, Yakitori Alley at 17:30 opening. The two 'n/a, not a venue' entries sit on the Shinkansen leg and the day 5 packing block. Warning, not a fail: the Shinkansen leg does have a real tactic (reserved Nozomi seats, crowd section item 4) that was not carried into the slot row."},
-      {"id": "travel_time_realistic", "label": "Travel time realistic", "pass": true, "reason": "Day 3 allots 195 min for the inter-city move, which is the 135 min Nozomi duration from the logistics table plus a 60 min station buffer, exactly the required allowance. The largest intra-city leg anywhere in the plan is 31 min (day 4, Kiyomizu-dera to Nishiki Market), well under the 90 min ceiling. Warning, not a fail: the day 3 afternoon row repeats 195 in the transit column, which restates the same Tokyo to Kyoto leg instead of giving the short Kyoto Station to Nakagyo hop."}
+      {
+        "id": "days_fit",
+        "label": "Fits in 5 days",
+        "pass": true,
+        "reason": "Exactly 5 day headings, Day 1 through Day 5, numbered in order with no gaps and no repeats. Every day carries 3 filled slots, so no day is empty."
+      },
+      {
+        "id": "cities_included",
+        "label": "Includes Tokyo, Kyoto",
+        "pass": true,
+        "reason": "Tokyo has 2 full days (Day 1 and Day 2), Kyoto has 2 full days (Day 4 and Day 5) plus the Day 3 afternoon and evening after the rail transfer. Both cities also have 2 nights each in the stay table."
+      },
+      {
+        "id": "within_budget",
+        "label": "Within $3000",
+        "pass": true,
+        "reason": "Recomputed from the budget lines: stay 380.00 (4 x 95.00) + transport 133.48 (88.48 + 5 x 9.00) + food 225.00 (5 x 45.00) + activities 33.00 (6 x 5.50) = 771.48 subtotal, buffer 10 percent = 77.15, total 848.63. That matches the stated total and sits $2,151.37 under the $3,000 limit."
+      },
+      {
+        "id": "matches_likes",
+        "label": "Matches food, temples",
+        "pass": true,
+        "reason": "Every day has at least one like-matching slot. Day 1: Meiji Jingu (temple) plus 2 food slots. Day 2: Zojo-ji (temple) plus 2 food slots. Day 3: Otagi Nenbutsuji (temple) plus chao chao gyoza (food). Day 4: Fushimi Inari Taisha and To-ji (temple) plus Kiyamachi-Kawaramachi (food). Day 5: Ryoan-ji (temple). No slot is marked could not verify, so no like rests on an unverified item."
+      },
+      {
+        "id": "avoids_crowds",
+        "label": "Avoids crowds",
+        "pass": true,
+        "reason": "All 11 venue slots carry a concrete tactic with a time, a day-of-week rule or a named substitution, for example Fushimi Inari Taisha at 06:30 walking past the third torii cluster, Tokyo Ramen Street on a weekday before 11:30 or after 14:00, and Otagi Nenbutsuji named in place of Kinkaku-ji. The 4 non-venue slots (2 transit, 1 departure transfer, 1 free buffer) read n/a, not a venue, which is a stated reason and not a vague tactic."
+      },
+      {
+        "id": "travel_time_realistic",
+        "label": "Travel time realistic",
+        "pass": false,
+        "reason": "Four of five days breach the 90 minute intra-city transit ceiling. Day 1: 102 + 18 = 120 min. Day 2: 120 + 111 = 231 min. Day 3 allots the inter-city leg correctly at 195 min (135 seeded + 60 allowance), but then adds 139 + 139 = 278 min of Kyoto intra-city transit. Day 4: 49 + 65 = 114 min. Only Day 5 sits inside the limit at 108 min, and that single leg is the departure transfer. No slot reads could not verify, so the 90 minute test applies everywhere."
+      }
     ],
-    "failures": []
+    "failures": [
+      {
+        "check_id": "travel_time_realistic",
+        "owner": "logistics",
+        "instruction": "Re-run the transit legs so each day totals 90 minutes or less between slots, since Day 1 is 120 min, Day 2 is 231 min, Day 3 is 278 min of Kyoto legs on top of the 195 min rail allotment, and Day 4 is 114 min."
+      }
+    ]
   },
-  "warnings": []
+  "warnings": [
+    "Travel time realistic: Four of five days breach the 90 minute intra-city transit ceiling. Day 1: 102 + 18 = 120 min. Day 2: 120 + 111 = 231 min. Day 3 allots the inter-city leg correctly at 195 min (135 seeded + 60 allowance), but then adds 139 + 139 = 278 min of Kyoto intra-city transit. Day 4: 49 + 65 = 114 min. Only Day 5 sits inside the limit at 108 min, and that single leg is the departure transfer. No slot reads could not verify, so the 90 minute test applies everywhere."
+  ]
 }

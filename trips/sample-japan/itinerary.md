@@ -2,69 +2,73 @@
 
 Generated on 19-09-2026. Budget $3000. Likes: food, temples. Avoids: crowds.
 
+## Warnings
+1. Travel time realistic: Four of five days breach the 90 minute intra-city transit ceiling. Day 1: 102 + 18 = 120 min. Day 2: 120 + 111 = 231 min. Day 3 allots the inter-city leg correctly at 195 min (135 seeded + 60 allowance), but then adds 139 + 139 = 278 min of Kyoto intra-city transit. Day 4: 49 + 65 = 114 min. Only Day 5 sits inside the limit at 108 min, and that single leg is the departure transfer. No slot reads could not verify, so the 90 minute test applies everywhere.
+
 ## Where you stay
 | City | Nights | Area | Why | Example hotels (rating, price level) | Est. per night USD |
 |---|---|---|---|---|---|
-| Tokyo | 2 | Nishiasakusa (Asakusa) | Senso-ji and the Nakamise food street on the doorstep, and the neighbourhood is quieter at night than Shibuya or Shinjuku, fitting the avoid-crowds note | TOKYO-W-inn Asakusa (4.4, price level not available), plat hostel keikyu asakusa station (4.4, not available) | 95 |
-| Kyoto | 2 | Shimogyo Ward (near Kyoto Station) | Central rail hub for day-trip temples, and Kyoto Station's food halls cover the food interest | KIORI Exec Muromachi Hotel (4.8, price level not available), HOTEL LiVEMAX KYOTO-EKIMAE (3.2, not available) | 95 |
+| Tokyo | 2 | Nezu / Yanaka (Ikenohata) | Quiet residential lanes with small temples and shrines, next to Ueno Park, away from the Shibuya/Shinjuku crowd density, fits food, temples and avoid crowds | HOTEL GRAPHY NEZU (4.3, price level not available), The Barn Tokyo (4.8, not available) | 95.00 |
+| Kyoto | 2 | Shimogyo Ward (near Kyoto Station) | Walking distance to Nishi Hongan-ji, Higashi Hongan-ji and station food halls, easy Shinkansen access, calmer than the Higashiyama alleys | KIORI Exec Muromachi Hotel (4.8, price level not available), Onyado Nono Kyotoshichijo (4.5, not available) | 95.00 |
 
 ## Getting between cities
 | From | To | Mode | Line | Duration min | Fare USD | Source |
 |---|---|---|---|---|---|---|
-| Tokyo | Kyoto | Train | Tokaido Shinkansen (Nozomi) | 135 | 88.48 | seed |
+| Tokyo | Kyoto | Train | Tokaido Shinkansen (Nozomi) | 195 | 88.48 | seed, 195 = 135 seeded ride + 60 min station/transfer allowance (estimate) |
 
-## Day 1: Tokyo, Nishiasakusa (arrival)
+## Day 1: Tokyo, Nezu / Yanaka (arrival)
 | When | What | Kind | Why it fits | Crowd tactic | Transit min from previous | Est. USD | Source |
 |---|---|---|---|---|---|---|---|
-| morning | Tsukiji Fish Market | food | Breakfast-style seafood market, direct hit on "food" | Arrive 07:00 for breakfast, before tour groups land mid-morning | n/a, first stop | 20.00 | tool |
-| afternoon | Senso-ji | temple | Tokyo's most iconic Buddhist temple, the anchor "temples" pick | Arrive 06:30, before tour buses and the Nakamise-dori stalls open | could not verify | 5.00 | tool |
-| evening | Omoide Yokocho | food | Narrow yakitori-alley food street | Arrive before 18:00, before the after-work crowd fills the lanes | could not verify | 22.50 | tool |
+| morning | Meiji Jingu | temple | Forest shrine, quiet spiritual grounds, fits temples | Arrive 07:30, before tour buses and school groups | n/a, first stop | 5.50 | tool |
+| afternoon | Tokyo Ramen Street | food | Ramen from several stalls under Tokyo Station, fits food | Weekday, before 11:30 or after 14:00, avoid Saturday and Sunday lunch peak | 102 | 22.50 | tool |
+| evening | Yakitori Alley | food | Local grilled skewer alley, fits food | Go before 18:00, weekday evenings are quieter | 18 | 22.50 | tool |
 
-## Day 2: Tokyo, Nezu-Yanaka to Nishiasakusa
+## Day 2: Tokyo, Nezu / Yanaka
 | When | What | Kind | Why it fits | Crowd tactic | Transit min from previous | Est. USD | Source |
 |---|---|---|---|---|---|---|---|
-| morning | Nezu Shrine | temple | Quiet garden shrine, low-crowd temples option | Visit a weekday afternoon, avoid the April azalea festival dates | n/a, first stop | 5.00 | tool |
-| afternoon | Meiji Jingu | temple | Forested Shinto shrine, quiet counterpoint to Senso-ji for temples | Arrive weekday 07:00, gates open at dawn, before group tours | could not verify | 5.00 | tool |
-| evening | Yakitori Alley, Yurakucho | food | Under-the-tracks yakitori stalls, lesser-known food find | Arrive 17:30 at opening, before the after-work rush | could not verify | 20.00 | tool |
+| morning | Zojo-ji | temple | Temple with Tokyo Tower backdrop, fits temples | Arrive 08:00, before tour groups | n/a, first stop | 5.50 | tool |
+| afternoon | Pocha Korean Street Food | food | Street-food style local eatery, fits food | Visit off-peak, 15:00 to 17:00 | 120 | 22.50 | tool |
+| evening | Toranomon Yokocho | food | Izakaya small plates, less touristy than the Shinjuku alleys | Early dinner, 17:30 | 111 | 22.50 | tool |
 
 ## Day 3: Tokyo to Kyoto
 | When | What | Kind | Why it fits | Crowd tactic | Transit min from previous | Est. USD | Source |
 |---|---|---|---|---|---|---|---|
-| morning | Shinkansen, Tokyo to Kyoto (Nozomi), plus station and transfer buffer | transit | Direct connection to the Kyoto base for the rest of the trip: 135 min Nozomi ride (seed) + 60 min station/transfer buffer (estimate, not tool-sourced) = 195 min total | n/a, not a venue | 195 | 88.48 | seed + estimate |
-| afternoon | chao chao gyoza kyoto | food | Highly rated, lesser-known dumpling spot, in Nakagyo Ward | Go for lunch before 12:00, before the dinner queue forms | 195 | 20.00 | tool |
-| evening | Kyoto Shinkyogoku Shopping Street | food | Street snacks and matcha sweets in central Kyoto | Avoid weekend afternoons when it is busiest | could not verify | 22.50 | tool |
+| morning | Shinkansen, Tokyo to Kyoto (Nozomi) | transit | Direct rail connection from Tokyo to the Kyoto base for the rest of the trip, 195 min = 135 seeded ride + 60 min station/transfer allowance (estimate) | n/a, not a venue | 195 | 88.48 | seed |
+| afternoon | Otagi Nenbutsuji | temple | Quiet 1,200-statue temple in the Arashiyama hills, fits temples and avoids crowds | Instead of Kinkaku-ji, choose this quiet alternative | 139 | 5.50 | tool |
+| evening | chao chao gyoza kyoto | food | Highly rated gyoza spot, fits food | Go before 18:00 to skip the dinner queue | 139 | 45.00 | tool |
 
-## Day 4: Kyoto, Higashiyama to Nakagyo
+## Day 4: Kyoto, Shimogyo Ward
 | When | What | Kind | Why it fits | Crowd tactic | Transit min from previous | Est. USD | Source |
 |---|---|---|---|---|---|---|---|
-| morning | Kiyomizu-dera | temple | Landmark wooden temple overlooking the city | Arrive 07:30 at opening, before tour groups | n/a, first stop | 5.00 | tool |
-| afternoon | Nishiki Market | food | "Kyoto's Kitchen" food street, direct hit on "food" | Go on a weekday morning at opening, before lunch crowds | 31 | 20.00 | tool |
-| evening | Kodaiji Temple | temple | Temple near Kiyomizu, less crowded alternative, evening light-up hours | Visit during late-afternoon light-up hours, thinner crowds than Kiyomizu | could not verify | 5.00 | tool |
+| morning | Fushimi Inari Taisha | temple | Iconic torii-gate shrine, fits temples | Arrive 06:30, before tour buses, walk past the third torii cluster where crowds thin | n/a, first stop | 5.50 | tool |
+| afternoon | To-ji Temple | temple | Quieter temple, five-story pagoda, monthly antique market, fits temples and avoids crowds | Visit on a non-market weekday for solitude | 49 | 5.50 | tool |
+| evening | Kiyamachi-Kawaramachi dining strip | food | Gyoza, ramen, izakaya small plates, fits food | Early dinner, 17:30, weekday visit, avoid Friday and Saturday night crowds | 65 | 45.00 | tool |
 
-## Day 5: Kyoto, Shimogyo (departure)
+## Day 5: Kyoto, Shimogyo Ward (departure)
 | When | What | Kind | Why it fits | Crowd tactic | Transit min from previous | Est. USD | Source |
 |---|---|---|---|---|---|---|---|
-| morning | Fushimi Inari Taisha | temple | The iconic thousand-torii shrine, the anchor "temples" pick, close to Kyoto Station | Arrive 06:00, before tour buses, or hike past the second rest house where crowds thin | n/a, first stop | 5.00 | tool |
-| afternoon | Free: return to Shimogyo Ward, pack, and head to the station for departure | free | Departure day, buffer before the flight home | n/a, not a venue | could not verify | 0.00 | n/a |
+| morning | Ryoan-ji | temple | Zen rock garden temple, quieter than central sites, fits temples | Arrive at 08:00 opening | n/a, first stop | 5.50 | tool |
+| afternoon | Transfer to the airport or station for departure | transit | Departure day, moving from the Kyoto base to catch onward transport | n/a, not a venue | 108 | 9.00 | estimate |
+| evening | Free: buffer before onward travel | free | Departure day, buffer before onward travel, no venue, staying at the departure point | n/a, not a venue | 0 | 0.00 | estimate |
 
 ## How we handled crowds
-1. Early-morning temple visits: Fushimi Inari Taisha at 06:00 and Kiyomizu-dera at 07:30, both timed before the tour buses arrive.
-2. Off-peak food picks: Tsukiji Fish Market at its 07:00 opening and Yakitori Alley, Yurakucho at its 17:30 opening, both timed to dodge the tour-group and after-work rush windows.
-3. Lesser-known alternatives over the busiest icons: Nezu Shrine instead of Tokyo's most-visited shrines, and Kodaiji's evening light-up hours instead of daytime Kiyomizu-dera crowds.
-4. Reserved Nozomi Shinkansen seats booked ahead for the Tokyo to Kyoto leg, instead of relying on unreserved cars.
+1. Early-morning temple visits: Meiji Jingu at 07:30, Zojo-ji at 08:00, Fushimi Inari Taisha at 06:30 and Ryoan-ji at its 08:00 opening, all timed before tour buses and school groups arrive.
+2. Off-peak food picks: Tokyo Ramen Street on a weekday before 11:30 or after 14:00, and Toranomon Yokocho at its 17:30 opening, both timed to dodge the lunch and after-work rush windows.
+3. Lesser-known alternatives over the busiest icons: Otagi Nenbutsuji instead of Kinkaku-ji, and To-ji Temple chosen for a non-market weekday over the more crowded central Kyoto temple circuit.
+4. Reserved Nozomi Shinkansen seats for the Tokyo to Kyoto leg, instead of relying on unreserved cars.
 
 ## Budget
 | Category | USD | Basis |
 |---|---|---|
-| stay | 380.00 | 4 nights x midpoint $95 (band $70-120 from 03-budget.md, hotel price level unavailable from tool) |
-| transport | 133.48 | Shinkansen fare from 02-logistics.md (seed) $88.48 + 5 days x local transit midpoint $9 (band $6-12) = $45.00 |
-| food | 212.50 | 5 days x midpoint $42.50 (band $30-55 from 03-budget.md) |
-| activities | 30.00 | 6 temple entries scheduled (Senso-ji, Nezu Shrine, Meiji Jingu, Kiyomizu-dera, Kodaiji Temple, Fushimi Inari Taisha) x midpoint $5.00 (band $3-7) |
-| buffer | 75.60 | 10% of the $755.98 subtotal above |
-| **Total** | **831.58** | vs limit $3000, well under |
+| stay | 380.00 | 4 nights x midpoint $95.00 (band $70-120 from 03-budget.md, hotel price level unavailable from tool) |
+| transport | 133.48 | Shinkansen fare from 02-logistics.md (seed) $88.48 + 5 days x local transit midpoint $9.00 (band $6-12) = $45.00 |
+| food | 225.00 | 5 days x midpoint $45.00 (band $30-60 from 03-budget.md) |
+| activities | 33.00 | 6 temple entries scheduled (Meiji Jingu, Zojo-ji, Otagi Nenbutsuji, Fushimi Inari Taisha, To-ji Temple, Ryoan-ji) x midpoint $5.50 (band $3-8) |
+| buffer | 77.15 | 10% of the $771.48 subtotal above |
+| **Total** | **848.63** | vs limit $3000, well under |
 
 ## Headroom
-Total is 27.7% of the $3000 limit, more than 25% under, so here is where 03-budget.md says to spend it, in order:
-1. Add a half-day trip to a quieter temple town near Kyoto (Ohara or Arashiyama early morning to dodge crowds), costs about $40 to $70.
-2. Upgrade one or two dinners to a kaiseki or omakase experience, matches the food preference, costs about $60 to $100.
-3. Book a small-group or private early-access temple visit to avoid crowds, costs about $40 to $70.
+Total is 28.3% of the $3000 limit, more than 25% under, so here is where 03-budget.md says to spend it, in order:
+1. Upgrade to reserved Shinkansen seats and add a private airport or station transfer.
+2. Add a guided day trip to Nara or Arashiyama with temple access, avoids crowds and adds depth.
+3. Upgrade the hotel category or add a kaiseki dinner experience in Kyoto.

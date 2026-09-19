@@ -1,42 +1,48 @@
 {
-  "pass": true,
+  "pass": false,
   "checks": [
     {
       "id": "days_fit",
       "label": "Fits in 5 days",
       "pass": true,
-      "reason": "Exactly five day headings, numbered Day 1 to Day 5, no gaps and no repeats. Days 1 to 4 carry 3 slots each, day 5 carries 2 (Fushimi Inari plus the departure block), so no day is empty."
+      "reason": "Exactly 5 day headings, Day 1 through Day 5, numbered in order with no gaps and no repeats. Every day carries 3 filled slots, so no day is empty."
     },
     {
       "id": "cities_included",
       "label": "Includes Tokyo, Kyoto",
       "pass": true,
-      "reason": "Tokyo gets full days 1 and 2 with 2 nights in Nishiasakusa. Kyoto gets full days 4 and 5 with 2 nights in Shimogyo. Day 3 is the transfer day and still lands two Kyoto slots."
+      "reason": "Tokyo has 2 full days (Day 1 and Day 2), Kyoto has 2 full days (Day 4 and Day 5) plus the Day 3 afternoon and evening after the rail transfer. Both cities also have 2 nights each in the stay table."
     },
     {
       "id": "within_budget",
       "label": "Within $3000",
       "pass": true,
-      "reason": "Recomputed from the budget lines: stay 380.00 + transport 133.48 + food 212.50 + activities 30.00 = 755.98 subtotal, buffer 10% = 75.60, total $831.58 against the $3,000 limit, 27.7% of budget. The stated total matches the recomputation to the cent."
+      "reason": "Recomputed from the budget lines: stay 380.00 (4 x 95.00) + transport 133.48 (88.48 + 5 x 9.00) + food 225.00 (5 x 45.00) + activities 33.00 (6 x 5.50) = 771.48 subtotal, buffer 10 percent = 77.15, total 848.63. That matches the stated total and sits $2,151.37 under the $3,000 limit."
     },
     {
       "id": "matches_likes",
       "label": "Matches food, temples",
       "pass": true,
-      "reason": "All 5 days carry at least one food or temple slot. Day 1 Tsukiji (food) and Senso-ji (temple), day 2 Nezu Shrine and Meiji Jingu (temple) plus Yakitori Alley (food), day 3 chao chao gyoza and Shinkyogoku (food), day 4 Kiyomizu-dera and Kodaiji (temple) plus Nishiki Market (food), day 5 Fushimi Inari Taisha (temple). 6 temple slots and 6 food slots across the trip."
+      "reason": "Every day has at least one like-matching slot. Day 1: Meiji Jingu (temple) plus 2 food slots. Day 2: Zojo-ji (temple) plus 2 food slots. Day 3: Otagi Nenbutsuji (temple) plus chao chao gyoza (food). Day 4: Fushimi Inari Taisha and To-ji (temple) plus Kiyamachi-Kawaramachi (food). Day 5: Ryoan-ji (temple). No slot is marked could not verify, so no like rests on an unverified item."
     },
     {
       "id": "avoids_crowds",
       "label": "Avoids crowds",
       "pass": true,
-      "reason": "All 12 venue slots carry a tactic with a specific time or place, not a generic line. Examples: Fushimi Inari at 06:00 or hike past the second rest house, Kiyomizu-dera at 07:30 opening, Nezu Shrine on a weekday afternoon outside the April azalea dates, Yakitori Alley at 17:30 opening. The two 'n/a, not a venue' entries sit on the Shinkansen leg and the day 5 packing block. Warning, not a fail: the Shinkansen leg does have a real tactic (reserved Nozomi seats, crowd section item 4) that was not carried into the slot row."
+      "reason": "All 11 venue slots carry a concrete tactic with a time, a day-of-week rule or a named substitution, for example Fushimi Inari Taisha at 06:30 walking past the third torii cluster, Tokyo Ramen Street on a weekday before 11:30 or after 14:00, and Otagi Nenbutsuji named in place of Kinkaku-ji. The 4 non-venue slots (2 transit, 1 departure transfer, 1 free buffer) read n/a, not a venue, which is a stated reason and not a vague tactic."
     },
     {
       "id": "travel_time_realistic",
       "label": "Travel time realistic",
-      "pass": true,
-      "reason": "Day 3 allots 195 min for the inter-city move, which is the 135 min Nozomi duration from the logistics table plus a 60 min station buffer, exactly the required allowance. The largest intra-city leg anywhere in the plan is 31 min (day 4, Kiyomizu-dera to Nishiki Market), well under the 90 min ceiling. Warning, not a fail: the day 3 afternoon row repeats 195 in the transit column, which restates the same Tokyo to Kyoto leg instead of giving the short Kyoto Station to Nakagyo hop."
+      "pass": false,
+      "reason": "Four of five days breach the 90 minute intra-city transit ceiling. Day 1: 102 + 18 = 120 min. Day 2: 120 + 111 = 231 min. Day 3 allots the inter-city leg correctly at 195 min (135 seeded + 60 allowance), but then adds 139 + 139 = 278 min of Kyoto intra-city transit. Day 4: 49 + 65 = 114 min. Only Day 5 sits inside the limit at 108 min, and that single leg is the departure transfer. No slot reads could not verify, so the 90 minute test applies everywhere."
     }
   ],
-  "failures": []
+  "failures": [
+    {
+      "check_id": "travel_time_realistic",
+      "owner": "logistics",
+      "instruction": "Re-run the transit legs so each day totals 90 minutes or less between slots, since Day 1 is 120 min, Day 2 is 231 min, Day 3 is 278 min of Kyoto legs on top of the 195 min rail allotment, and Day 4 is 114 min."
+    }
+  ]
 }
