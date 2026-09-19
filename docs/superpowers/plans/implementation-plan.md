@@ -2312,6 +2312,10 @@ export async function GET(_req: Request, { params }: { params: { slug: string } 
 }
 ```
 
+- [ ] **Step 2b: Verify the no-key path first (D-021)**
+
+With `ANTHROPIC_API_KEY` unset in `web/.env.local` and the shell, start `npm run dev` and POST the example request (Step 3 command). If events stream and a slug comes back, the SDK is using the local Claude Code login and the key is optional for a local single-user demo; record that in the report and in `docs/tech-stack.md` section 4. If the route errors with an authentication message, set the key and continue, and record that instead.
+
 - [ ] **Step 3: Smoke the route with curl**
 
 Run: `cd web && npm run dev` in one terminal, then in another:
