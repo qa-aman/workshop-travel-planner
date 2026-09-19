@@ -1,0 +1,25 @@
+{
+  "places": [
+    {
+      "id": "ChIJ1",
+      "displayName": {"text": "Honen-in Temple", "languageCode": "en"},
+      "formattedAddress": "30 Shishigatani Goshonodancho, Sakyo Ward, Kyoto, 606-8426, Japan",
+      "location": {"latitude": 35.0209, "longitude": 135.7969},
+      "rating": 4.5,
+      "userRatingCount": 2100,
+      "types": ["buddhist_temple", "place_of_worship", "tourist_attraction"],
+      "googleMapsUri": "https://maps.google.com/?cid=1"
+    },
+    {
+      "id": "ChIJ2",
+      "displayName": {"text": "Shisen-do", "languageCode": "en"},
+      "formattedAddress": "27 Ichijoji Monguchicho, Sakyo Ward, Kyoto, 606-8154, Japan",
+      "location": {"latitude": 35.0424, "longitude": 135.7929},
+      "rating": 4.4,
+      "userRatingCount": 900,
+      "priceLevel": "PRICE_LEVEL_INEXPENSIVE",
+      "types": ["buddhist_temple", "tourist_attraction"],
+      "googleMapsUri": "https://maps.google.com/?cid=2"
+    }
+  ]
+}
