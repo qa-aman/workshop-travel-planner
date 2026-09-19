@@ -1,0 +1,7 @@
+{
+  "clean":            {"days_fit": true,  "cities_included": true,  "within_budget": true,  "matches_likes": true, "avoids_crowds": true,  "travel_time_realistic": true},
+  "over-budget":      {"days_fit": true,  "cities_included": true,  "within_budget": false, "matches_likes": true, "avoids_crowds": true,  "travel_time_realistic": true},
+  "missing-kyoto":    {"days_fit": true,  "cities_included": false, "within_budget": true,  "matches_likes": true, "avoids_crowds": true,  "travel_time_realistic": true},
+  "six-days":         {"days_fit": false, "cities_included": true,  "within_budget": true,  "matches_likes": true, "avoids_crowds": true,  "travel_time_realistic": true},
+  "no-crowd-tactics": {"days_fit": true,  "cities_included": true,  "within_budget": true,  "matches_likes": true, "avoids_crowds": false, "travel_time_realistic": true}
+}
