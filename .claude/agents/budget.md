@@ -49,3 +49,4 @@ Write `trips/<slug>/03-budget.md`, then reply with exactly three lines: (1) the 
 4. Alternatives must be concrete and ordered by savings: e.g. "move Tokyo stay from Ginza to Asakusa, saves about $40 per night".
 5. Never total the itinerary yourself. Never pick places.
 6. No em dashes.
+7. If `convert_currency` returns `{"error"}`, write the FX line as `1 USD = could not verify JPY (Frankfurter error)`, fill only the USD columns and leave every JPY column as `could not verify`, still produce the whole file, and say "FX could not verify" in your three-line reply.
