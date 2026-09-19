@@ -1,0 +1,48 @@
+{
+  "pass": false,
+  "checks": [
+    {
+      "id": "days_fit",
+      "label": "Fits in 5 days",
+      "pass": true,
+      "reason": "Exactly 5 day headings, numbered Day 1 to Day 5, each with at least one scheduled slot (Day 5 has one morning slot, afternoon and evening marked free for departure)."
+    },
+    {
+      "id": "cities_included",
+      "label": "Includes Tokyo, Kyoto",
+      "pass": true,
+      "reason": "Tokyo has Day 1 and Day 2 in full. Kyoto has Day 4 in full plus Day 3 (arrival afternoon and evening) and Day 5 (morning)."
+    },
+    {
+      "id": "within_budget",
+      "label": "Within $3000",
+      "pass": true,
+      "reason": "Recomputed from the budget lines: stay 4 x 115 = 460.00, transport 120 + 5 x 11.50 = 177.50, food 5 x 42.50 = 212.50, activities 5 x 6.50 = 32.50, subtotal 882.50, buffer 10% = 88.25, total 970.75. Matches the stated total and is under the $3000 limit by 2029.25. All lines are estimates except the seeded rail fare of 88.48; international flights are excluded."
+    },
+    {
+      "id": "matches_likes",
+      "label": "Matches food, temples",
+      "pass": true,
+      "reason": "Every day has at least one temple or food slot: Day 1 Senso-ji plus two food slots, Day 2 Nezu Shrine plus two food slots, Day 3 Honenin plus Pontocho food, Day 4 Kiyomizu-dera plus two food slots, Day 5 Fushimi Inari Taisha. The Kind column uses must-do and nice-to-have rather than temple and food, so the mapping was read from the What and Why it fits columns."
+    },
+    {
+      "id": "avoids_crowds",
+      "label": "Avoids crowds",
+      "pass": false,
+      "reason": "Day 2 evening slot (Ameyoko Market) carries the tactic 'Weekday late morning avoids the weekend shoulder-to-shoulder crowds', which cannot be applied to an evening slot, so that slot has no usable crowd tactic. All other venue slots have a concrete tactic (gate-opening times 06:30, 07:00, 06:00, before 09:00, 16:00 weekday opening, before 11:30 or after 14:00, before 12:00 or after 19:30). Warning only: Day 3 Honenin's tactic is a site choice ('instead of the crowded Philosopher's Path temples') rather than a timing tactic."
+    },
+    {
+      "id": "travel_time_realistic",
+      "label": "Travel time realistic",
+      "pass": true,
+      "reason": "Inter-city day (Day 3) allots 195 min, which is the 135 min seeded Nozomi ride plus 60 min buffer. Stated intra-city transit per day: Day 1 0 min, Day 2 66 min (52 + 14), Day 3 89 min, Day 4 38 min, Day 5 40 min, all within 90. Warning: Day 2 Yanaka Ginza to Ameyoko and Day 3 Honenin to Pontocho are 'could not verify', so the true Day 2 and Day 3 totals may exceed 90 (Nezu Shrine to Ameyoko alone is 26 min walk per the tool, which would put Day 2 at 92 if that leg is similar)."
+    }
+  ],
+  "failures": [
+    {
+      "check_id": "avoids_crowds",
+      "owner": "orchestrator",
+      "instruction": "Day 2 evening Ameyoko Market slot has a late-morning tactic that does not fit an evening visit, so either give that slot an evening-specific concrete tactic from the destinations file or move the slot to the time the tactic covers."
+    }
+  ]
+}

@@ -40,6 +40,7 @@ One request, five agents, one MCP server, artifacts on disk. The full picture is
 | Run the MCP server by hand | `uv run --project mcp/travel-tools python mcp/travel-tools/server.py` (reads the Google key from the environment or repo `.env`) |
 | Check Claude Code sees the server | `claude mcp list` |
 | Review agent eval (runs `claude -p` five times) | `./scripts/review_eval.sh` |
+| Structural eval of a run | `uv run --project mcp/travel-tools --with jsonschema python scripts/worker_eval.py trips/<slug>` |
 | Web dev server | `cd web && npm run dev` then http://localhost:3000 |
 | Web unit tests | `cd web && npm test` |
 | Date format audit before handover | `grep -rnE "[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}|(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* [0-9]{1,2},? [0-9]{4}" web/app web/components web/lib web/store trips/sample-japan .claude docs/contracts` |

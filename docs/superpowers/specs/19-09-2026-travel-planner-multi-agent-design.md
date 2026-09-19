@@ -139,6 +139,7 @@ workshop-travel-planner/
 2. Review agent: five fixture drafts (clean, over budget, missing Kyoto, six days, no crowd tactics) with the expected pass or fail per check.
 3. End to end: one committed sample run `trips/sample-japan/` from the real example request, used by the UI in dev without API spend. Before handover the real flow is driven in a browser and every card is checked to update.
 4. No tests for UI glue or the orchestrator prompt beyond the sample run.
+5. Worker and orchestrator structure: scripts/worker_eval.py over any trips/<slug>/ folder (candidate counts, crowd tactics, sources, night split, FX format, day headings, itinerary.json schema, six review checks, parallel fan-out from the run log). Hygiene gate, run before handover.
 
 ## 10. Success criteria
 

@@ -1,0 +1,12 @@
+{
+  "request": "Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.",
+  "destination": "Japan",
+  "days": 5,
+  "cities": ["Tokyo", "Kyoto"],
+  "budget_usd": 3000,
+  "likes": ["food", "temples"],
+  "avoids": ["crowds"],
+  "start_date": null,
+  "travellers": 1,
+  "slug": "run-ok"
+}
