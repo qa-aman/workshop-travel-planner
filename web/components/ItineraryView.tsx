@@ -170,7 +170,7 @@ export function ItineraryView() {
                           <Typography variant="body1">{s.name}</Typography>
                           <Typography variant="caption" color="text.secondary">
                             {s.kind}
-                            {s.transit_min_from_prev ? `, ${s.transit_min_from_prev} min from previous` : ""}
+                            {s.transit_min_from_prev != null ? `, ${s.transit_min_from_prev} min from previous` : ""}
                           </Typography>
                           <SourceChip source={s.source} />
                         </Stack>
