@@ -30,7 +30,7 @@ Read `01-destinations.md`, `02-logistics.md`, `03-budget.md`. Write `trips/<slug
 1. Each day sits in the base area from the logistics day skeleton. Fill morning, afternoon, evening from destinations, must-do first, keeping each day inside one zone.
 2. Every slot copies its crowd tactic and Source from the destinations file. For `transit` and `free` slots the crowd tactic is `n/a, not a venue`.
 3. Inter-city day: put the train as a `transit` slot with the seeded duration and reserved fare converted to USD at the budget file's rate, source `seed`.
-4. Budget section: multiply the budget price bands by counts (nights, days, temple entries you actually scheduled, one train) using the MIDPOINT of each band. Show every line with its basis. Total it. Compare to the limit.
+4. Budget section: multiply the budget price bands by counts (nights, days, temple entries you actually scheduled, one train) using the MIDPOINT of each band. Show every line with its basis. Total it. Compare to the limit. When a line item has both a tool or seed value and an estimate band, use the tool or seed value and say so in the basis. Example: the Shinkansen fare from 02-logistics.md (seed) over the budget band midpoint.
 5. Anything "could not verify" stays labelled so.
 
 ## Step 4: Review
@@ -40,15 +40,22 @@ Launch the `review` subagent with the prompt `Brief: trips/<slug>/00-brief.json.
 ## Step 5: Repair loop (at most once)
 
 If `05-review.json` has `pass: false`:
-1. For each entry in `failures`, launch the named `owner` subagent again with the prompt `Brief: trips/<slug>/00-brief.json. Revision request: <instruction>. Update your file in place.` Launch them in one message if more than one.
+1. For each entry in `failures`, launch the named `owner` subagent again with the prompt `Brief: trips/<slug>/00-brief.json. Revision request for <check_id>: <instruction>. The affected slot is <day and when, if the reason names one>. Update your file in place and say what you changed.` Launch them in one message if more than one. If an entry's owner is `orchestrator`, do not launch a subagent. Fix the draft yourself in Step 2 of this loop, following the instruction.
 2. Re-run Step 3 into the same draft file.
 3. Re-run Step 4.
 Whether it passes or not now, continue. Do not loop again.
 
 ## Step 6: Final
 
-1. Copy the draft to `trips/<slug>/itinerary.md`. If the last review still fails, add a `## Warnings` section at the top listing each failing check's reason.
-2. Write `trips/<slug>/itinerary.json` matching `docs/contracts/itinerary.schema.json`. `generated_on` is today in DD-MM-YYYY. `review` is the last `05-review.json`. `warnings` mirrors the Warnings section. `budget.fx` is always present, with `rate` and `date` from 03-budget.md, or `rate: null` when FX could not verify.
+1. Copy the draft to `trips/<slug>/itinerary.md`. If the last review still fails, add a `## Warnings` section at the top listing each failing check's reason. If the total is under 75% of the limit, add a `## Headroom` section after Budget listing the budget file's spend-here lines.
+2. Write `trips/<slug>/itinerary.json` matching `docs/contracts/itinerary.schema.json`. `generated_on` is today in DD-MM-YYYY. Map the draft to the schema as follows:
+   - `title`: the H1 of the draft.
+   - `days[]`: one per `## Day N` section; `slots[]` from the table rows, `when` from the first column, `kind` from the Kind column, `crowd_tactic` from the Crowd tactic column, `transit_min_from_prev` from the transit column (integer or null), `est_cost_usd` from the Est. USD column (number or null), `source` from the Source column.
+   - `stays[]`: from the "Where you stay" table; `examples[]` split the "Example hotels (rating, price level)" cell into `name`, `rating` (number or null), `price_level` (string or null).
+   - `intercity[]`: from the "Getting between cities" table, `fare_usd` converted at the budget FX rate.
+   - `budget.lines[]`: from the Budget table, `basis` verbatim; `budget.fx` always present, `rate` null when FX could not verify.
+   - `crowd_strategy[]`: the numbered lines under "How we handled crowds".
+   - `review`: the last `05-review.json` verbatim. `warnings[]`: the Warnings section lines, empty array when there are none.
 3. Reply with: the slug, pass or fail, total vs limit, and the path to `itinerary.md`.
 
 ## Hard rules

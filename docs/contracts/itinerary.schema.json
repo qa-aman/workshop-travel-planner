@@ -75,7 +75,7 @@
         "within_budget": {"type": "boolean"},
         "lines": {"type": "array", "items": {"type": "object", "required": ["category", "usd", "basis"], "properties": {"category": {"enum": ["stay", "transport", "food", "activities", "buffer"]}, "usd": {"type": "number"}, "basis": {"type": "string"}}}},
         "alternatives": {"type": "array", "items": {"type": "string"}},
-        "fx": {"type": "object", "properties": {"rate": {"type": "number"}, "date": {"type": "string"}}}
+        "fx": {"type": "object", "properties": {"rate": {"type": ["number", "null"]}, "date": {"type": "string"}}}
       }
     },
     "crowd_strategy": {"type": "array", "items": {"type": "string"}},
