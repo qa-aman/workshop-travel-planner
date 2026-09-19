@@ -23,7 +23,7 @@ Facts come from the `travel-tools` MCP server, never from memory.
 One request, five agents, one MCP server, artifacts on disk. The full picture is in `docs/architecture.md`, the reasoning in `docs/superpowers/specs/19-09-2026-travel-planner-multi-agent-design.md`.
 
 1. **Entry points.** Terminal: `/plan-trip "<request>"` (`.claude/skills/plan-trip/SKILL.md`). Web: `web/app/api/plan/route.ts` calls the Agent SDK `query()` with `cwd` = repo root and `settingSources: ["project"]`, so it runs the same skill, agents and `.mcp.json` as the terminal. There is one procedure, in the skill file. Do not duplicate it in code or here.
-2. **Fan-out.** The orchestrator (main session, Opus) writes `trips/<slug>/00-brief.json`, then launches `destination-research`, `logistics` and `budget` (Sonnet) in one message so they run in parallel. Each writes its own file (`01-`, `02-`, `03-`) and returns three lines. The orchestrator synthesises `04-itinerary-draft.md` from the three files.
+2. **Fan-out.** The orchestrator (main session, Sonnet, start the terminal with `claude --model sonnet`) writes `trips/<slug>/00-brief.json`, then launches `destination-research`, `logistics` and `budget` (Sonnet) in one message so they run in parallel. Each writes its own file (`01-`, `02-`, `03-`) and returns three lines. The orchestrator synthesises `04-itinerary-draft.md` from the three files.
 3. **Gate.** `review` (Opus) reads only the brief and the draft, has no MCP tools, and writes `05-review.json` with six pass/fail checks. On fail the orchestrator re-runs only the agents named in `failures[]`, once, then ships `itinerary.md` and `itinerary.json` with warnings if still failing.
 4. **Facts.** `mcp/travel-tools/server.py` exposes five tools: `search_places` (Google Places Text Search), `get_walking_route` (Google Routes, WALK mode), `get_rail_route` (seeded `data/japan_rail.json` from the official JR Central fare table), `convert_currency` (Frankfurter), `get_weather` (Open-Meteo). Google Routes has no transit data for Japan, which is why rail is seeded and agents never state a metro or bus time. Every response is cached 24h in `mcp/travel-tools/.cache/`. Every tool returns `{"error": ...}` instead of raising.
 5. **Contracts.** JSON shapes for the brief, the review and the itinerary live in `docs/contracts/`. Agent files, the skill, the review fixtures and `web/lib/types.ts` all follow them. Change a shape there first.
@@ -33,7 +33,7 @@ One request, five agents, one MCP server, artifacts on disk. The full picture is
 
 | Task | Command |
 |---|---|
-| Plan a trip from the terminal | `claude` then `/plan-trip Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.` |
+| Plan a trip from the terminal | `claude --model sonnet` then `/plan-trip Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.` |
 | MCP unit tests (offline, fixtures) | `cd mcp/travel-tools && uv run pytest -q` |
 | One MCP test | `cd mcp/travel-tools && uv run pytest tests/test_places.py::test_search_places_maps_fields -q` |
 | MCP live smoke (spends real calls) | `set -a && source .env && set +a && cd mcp/travel-tools && LIVE_API_TESTS=1 uv run pytest tests/test_live.py -q` |

@@ -44,7 +44,7 @@ Routes API transit returns an empty response for every request inside Japan. Tes
 
 | Agent | Model | Reason |
 |---|---|---|
-| Orchestrator (main session) | Opus | Synthesis and the repair decision need judgement. |
+| Orchestrator (main session) | Sonnet | Merges worker files against a template. Changed from Opus on 19-09-2026 after the first dry run cost $6.41 with $4.71 on Opus (D-019). Start the terminal with `claude --model sonnet`. |
 | destination-research | Sonnet | Tool calling and extraction. |
 | logistics | Sonnet | Tool calling and extraction. |
 | budget | Sonnet | Arithmetic over bands, one FX call. |

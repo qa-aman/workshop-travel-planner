@@ -82,7 +82,7 @@ sequenceDiagram
 | | |
 |---|---|
 | Where | `.claude/skills/plan-trip/SKILL.md` (procedure), `CLAUDE.md` (project rules) |
-| Runs in | The main Claude Code session, Opus |
+| Runs in | The main Claude Code session, Sonnet (`claude --model sonnet`, or `model` in the web route) |
 | Tools | Agent, Read, Write |
 | Reads | The request, then the three worker files, then `05-review.json` |
 | Writes | `00-brief.json`, `04-itinerary-draft.md`, `itinerary.md`, `itinerary.json` |
