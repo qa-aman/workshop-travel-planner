@@ -11,7 +11,7 @@ for case_dir in "$FIX"/*/; do
   cp "$FIX/brief.json" "$work/00-brief.json"
   cp "$case_dir/04-itinerary-draft.md" "$work/04-itinerary-draft.md"
   claude -p "Use the review subagent. Brief: trips/fixture-$name/00-brief.json. Draft: trips/fixture-$name/04-itinerary-draft.md" \
-    --allowedTools "Agent,Read,Write" --max-turns 12 --model sonnet >/dev/null
+    --allowedTools "Agent,Read,Edit(trips/**)" --max-turns 12 --model sonnet >/dev/null || { echo "FAIL $name: claude exited non-zero"; fail=1; continue; }
   python3 - "$name" "$work/05-review.json" "$FIX/expected.json" <<'PY' || fail=1
 import json, sys
 name, got_path, exp_path = sys.argv[1:]

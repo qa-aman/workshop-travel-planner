@@ -8,7 +8,7 @@ Generated on 19-09-2026. Budget $3000. Likes: food, temples. Avoids: crowds.
 | Tokyo | 1 | Asakusa | Senso-ji on foot, izakaya and street-food alleys, well connected by rail | plat hostel keikyu asakusa station (4.4, price level not returned by tool); TOKYO-W-inn Asakusa (4.4, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
 | Tokyo | 1 | Nezu / Yanaka | Old-town shrines, low foot traffic, away from Shibuya and Shinjuku crowds | HOTEL GRAPHY NEZU (4.3, price level not returned by tool); The Barn Tokyo (4.8, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
 | Tokyo | 1 | Higashiyama | Walking distance to Kiyomizu-dera and the temple lanes, best done at opening | Imperial Hotel Tokyo (4.6, price level not returned by tool); Mitsui Garden Hotel Tokyo Sanjo Premier (4.6, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
-| Tokyo | 1 | Tokyo Station area | Station access for Fushimi Inari and departure, station-front dining | M's Hotel Tokyo Station Taruya (3.9, price level not returned by tool); HOTEL LiVEMAX KYOTO-EKIMAE (3.2, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
+| Tokyo | 1 | Tokyo Station area | Station access for Fushimi Inari and departure, station-front dining | M's Hotel Tokyo Station Taruya (3.9, price level not returned by tool); HOTEL LiVEMAX TOKYO-EKIMAE (3.2, price level not returned by tool) | 115 (estimate, midpoint of $80 to $150 band) |
 
 Hotel price levels could not verify: search_places returned no price_level for any result.
 
