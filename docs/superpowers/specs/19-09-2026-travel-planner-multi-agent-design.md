@@ -59,7 +59,7 @@ Verified against official docs:
 |---|---|---|---|---|
 | orchestrator (main session, `/plan-trip`) | opus | Agent, Read, Write | raw request | `00-brief.json` with destination, days, cities, budget_usd, likes[], avoids[], dates if given. Launches workers, synthesises, writes `itinerary.md` and `itinerary.json` |
 | destination-research | sonnet | travel-tools: search_places, get_weather. Write | brief | `01-destinations.md`: per city 6-10 candidates tagged must-do or nice-to-have, each with name, area, why it fits the likes, crowd tactic (time of day, lesser-known alternative, or "peak, included because must-do"), Places rating, price level. Food areas listed separately. Facts come from tool results, not memory |
-| logistics | sonnet | travel-tools: search_places (hotels), get_transit_route. Write | brief | `02-logistics.md`: 2 stay areas per city with 2 hotel examples each (name, rating, price level), night split across cities, inter-city route with real transit minutes and fare, day-sequence skeleton grouped by area with transit minutes between anchors |
+| logistics | sonnet | travel-tools: search_places (hotels), get_walking_route, get_rail_route. Write | brief | `02-logistics.md`: 2 stay areas per city with 2 hotel examples each (name, rating, price level), night split across cities, inter-city Shinkansen with seeded minutes and fare, day-sequence skeleton grouped by area with walking minutes between anchors |
 | budget | sonnet | travel-tools: convert_currency. Read, Write | brief | `03-budget.md`: category split (stay, transport, food, activities, buffer), price bands per category in USD and JPY at today's rate, 2-3 "if over, cut here" alternatives. Every number labelled estimate or tool-verified |
 | review | opus | Read only. No MCP, no Write to the plan | draft itinerary + brief | `05-review.json`: six checks, each pass or fail with a one-line reason, `failures[]` naming the owning agent. Checks: fits the day count, includes every requested city, total within budget, matches likes, every item carries a crowd tactic, travel time realistic |
 
@@ -76,7 +76,8 @@ Python, FastMCP, stdio. Registered in `.mcp.json` at repo root as `travel-tools`
 | Tool | Backed by | Free tier (verified 19-09-2026) | Returns |
 |---|---|---|---|
 | `search_places(query, city, place_type?, max_results=8)` | [Google Places Text Search](https://developers.google.com/maps/documentation/places/web-service/text-search) | 5,000 calls/month, then $32 per 1,000 ([pricing](https://developers.google.com/maps/billing-and-pricing/pricing)) | `[{name, area, lat, lon, rating, user_ratings_total, price_level, types, maps_url}]` |
-| `get_transit_route(origin, destination, depart_at?)` | [Google Routes API, transit](https://developers.google.com/maps/documentation/routes/transit-route) | 10,000 calls/month, then $5 per 1,000 | `{duration_min, fare_jpy?, legs:[{mode, line, from, to, minutes}]}` |
+| `get_walking_route(origin, destination)` | [Google Routes API, WALK mode](https://developers.google.com/maps/documentation/routes/compute_route_directions) | 10,000 calls/month, then $5 per 1,000 | `{duration_min, distance_m, source:"tool"}` |
+| `get_rail_route(origin_city, destination_city)` | Seeded `data/japan_rail.json` from the official [JR Central smartEX fare table](https://smart-ex.jp/en/product/plan/service/) (ordinary reserved, regular season) | n/a, local file | `{train, duration_min, fare_jpy_reserved, fare_jpy_hikari, source:"seed", source_url}` |
 | `convert_currency(amount, from, to)` | [Frankfurter](https://www.frankfurter.dev/) | Free, no key | `{amount, rate, date}` |
 | `get_weather(lat, lon, start_date, end_date)` | [Open-Meteo](https://open-meteo.com/en/docs) | Free, no key | daily max, min, precipitation |
 
@@ -85,6 +86,8 @@ Behaviour:
 2. Every tool returns `{error: "..."}` on API failure instead of raising, so the agent can report "could not verify".
 3. Responses cached in `mcp/.cache/<sha256 of args>.json` for 24 hours. Protects the free tier across repeated demo runs.
 4. `get_weather` is called only when the brief has dates.
+
+Amendment 19-09-2026, after live probing with the repo key: Google Routes API returns no TRANSIT routes anywhere in Japan (London transit works with the identical request, Tokyo to Kyoto, Tokyo intra-city and lat/lng requests all return `{}`). The original `get_transit_route` tool is replaced by `get_walking_route` (Routes WALK mode, verified: Senso-ji to Ueno Park 1,911 m, 29 min) and `get_rail_route` (seeded from the official JR Central table: Tokyo to Kyoto Nozomi reserved ¥13,970, Hikari ¥13,650). Agents never state a metro or bus time for Japan, they give walking time or "could not verify".
 
 Rejected sources, with the reason recorded so nobody re-evaluates them:
 1. Amadeus Self-Service test tier: Tours and Activities test cities are Bangalore, Barcelona, Berlin, Dallas, London, New York, Paris, San Francisco ([source](https://github.com/amadeus4dev/data-collection/blob/master/data/tours.md)). Hotel Search test documented for `LON`/`NYC` ([source](https://developers.amadeus.com/self-service/apis-docs/guides/developer-guides/test-data/)). Production needs a card.
@@ -139,6 +142,6 @@ workshop-travel-planner/
 
 ## 10. Success criteria
 
-1. The example request produces, in one run, an itinerary that passes all six review checks, with every place name traceable to a `search_places` result and the Tokyo to Kyoto leg traceable to a `get_transit_route` result.
+1. The example request produces, in one run, an itinerary that passes all six review checks, with every place name traceable to a `search_places` result and the Tokyo to Kyoto leg traceable to a `get_rail_route` result.
 2. The same run works from the terminal (`/plan-trip`) and from the web page, using the same agent files.
 3. A full run stays within free API tiers, under 4 minutes, and every intermediate artifact is readable in `trips/<slug>/`.
