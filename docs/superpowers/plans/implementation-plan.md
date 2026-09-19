@@ -838,7 +838,7 @@ Expected: 5 passed.
 
 - [ ] **Step 6: Write `mcp/travel-tools/data/japan_rail.json`**
 
-Fares are from the official JR Central smartEX reserved-seat fare table (ordinary car, reserved seat, regular season, one-way adult), PDF linked from https://smart-ex.jp/en/product/plan/service/ , read 19-09-2026. Nozomi timing is the published fastest scheduled time; check https://global.jr-central.co.jp/en/info/timetable/ if it needs updating.
+Fares are from the official JR Central smartEX reserved-seat fare table (ordinary car, reserved seat, regular season, one-way adult), PDF linked from https://smart-ex.jp/en/product/plan/service/ , read 19-09-2026. Nozomi timing is the published fastest scheduled time. Check https://global.jr-central.co.jp/en/info/timetable/ if it needs updating.
 
 ```json
 {
@@ -1081,7 +1081,7 @@ def test_live_fx():
 - [ ] **Step 6: Run the live smoke test once with the real key**
 
 Run: `cd mcp/travel-tools && set -a && source ../../.env && set +a && LIVE_API_TESTS=1 uv run pytest tests/test_live.py -q`
-Expected: 3 passed. Both APIs were confirmed enabled on the repo key on 19-09-2026 (Places returned Kiyomizu-dera, To-ji, Tenryu-ji; Routes WALK returned 1,911 m / 29 min). If either returns `HTTP 403` now, the key changed. Stop and fix the key, do not work around it.
+Expected: 3 passed. Both APIs were confirmed enabled on the repo key on 19-09-2026 (Places returned Kiyomizu-dera, To-ji, Tenryu-ji, and Routes WALK returned 1,911 m / 29 min). If either returns `HTTP 403` now, the key changed. Stop and fix the key, do not work around it.
 
 - [ ] **Step 7: Verify Claude Code sees the server**
 
@@ -1574,7 +1574,7 @@ In ONE message, launch these three subagents at the same time, each with the pro
 2. `logistics`
 3. `budget`
 
-Wait for all three. Each returns three lines. Do not read their files yet.
+Wait for all three. Each returns three lines. Do not read their files yet. If a subagent returns an error instead of three lines, write `## <section> unavailable` for that section in the draft and continue, the review will flag it.
 
 ## Step 3: Synthesise
 
@@ -2428,12 +2428,11 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 | 5 MCP four tools, fail-fast, `{error}`, 24h cache, weather only with dates | 2 to 7, 9 rule 6 |
 | 6 Front end: form, timeline with states incl. revising, tool calls, review checklist, itinerary view, SSE via SDK, reload from JSON | 12 to 15 |
 | 7 Repo layout | 1, file map |
-| 8 Error handling: key missing (7), tool error to "could not verify" (5, 6, 9), worker failure continues (10 Step 5 covers the review-driven repair; orchestrator marking "unavailable" is in the skill's hard rule 2 combined with template), over budget shown in red (15), SSE drop reload (14 `loadTrip`) | as listed |
+| 8 Error handling: key missing (7), tool error to "could not verify" (5, 6, 9), worker failure continues (10 Step 2 writes the section as unavailable, Step 5 covers the review-driven repair), over budget shown in red (15), SSE drop reload (14 `loadTrip`) | as listed |
 | 9 Testing: MCP fixtures + live flag (2 to 7), review fixtures (11), sample run + browser drive (16) | as listed |
 | 10 Success criteria | 16 Step 3 records all three |
 
-Type consistency checked: `AgentId` values match agent `name:` fields; MCP tool names (`search_places`, `get_walking_route`, `get_rail_route`, `convert_currency`, `get_weather`) match between `server.py`, agent `tools:` lists and `MCP_PREFIX` in the mapper; review check ids match between `review.md`, `review.schema.json`, `expected.json` and the UI.
+Type consistency checked: `AgentId` values match agent `name:` fields. MCP tool names (`search_places`, `get_walking_route`, `get_rail_route`, `convert_currency`, `get_weather`) match between `server.py`, agent `tools:` lists and `MCP_PREFIX` in the mapper. Review check ids match between `review.md`, `review.schema.json`, `expected.json` and the UI.
 
 Deviation from the spec, recorded: spec section 5 named a `get_transit_route` tool on Google Routes transit mode. Live probing on 19-09-2026 showed Routes transit returns nothing inside Japan, so it is replaced by `get_walking_route` (Routes WALK, verified working in Tokyo) plus `get_rail_route` (seeded from the official JR Central smartEX fare table). The spec is amended in the same commit.
 
-One known gap, deliberate: spec 8.3 says the orchestrator marks a crashed worker's section "unavailable". The skill body does not spell out that sentence. Add to `/plan-trip` Step 2 if it shows up in testing: "If a subagent returns an error instead of three lines, write `## <section> unavailable` in the draft and continue."
