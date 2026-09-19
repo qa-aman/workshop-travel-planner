@@ -1,0 +1,23 @@
+{
+  "source": "JR Central smartEX fare overview, ordinary car reserved seat, regular season, one-way adult",
+  "source_url": "https://smart-ex.jp/en/product/plan/service/",
+  "read_on": "19-09-2026",
+  "season_note": "Off-peak minus 200 JPY, peak plus 200 JPY, super peak plus 400 JPY, per the same table.",
+  "segments": [
+    {
+      "from": "Tokyo", "to": "Kyoto", "line": "Tokaido Shinkansen", "train": "Nozomi",
+      "duration_min": 135, "fare_jpy_reserved": 13970, "fare_jpy_hikari": 13650,
+      "notes": "Nozomi is all-reserved during New Year, Golden Week and Obon. Hikari takes about 160 min and is covered by the JR Pass."
+    },
+    {
+      "from": "Tokyo", "to": "Shin-Osaka", "line": "Tokaido Shinkansen", "train": "Nozomi",
+      "duration_min": 150, "fare_jpy_reserved": 14520, "fare_jpy_hikari": 14170,
+      "notes": ""
+    },
+    {
+      "from": "Kyoto", "to": "Shin-Osaka", "line": "Tokaido Shinkansen", "train": "Nozomi",
+      "duration_min": 15, "fare_jpy_reserved": 3260, "fare_jpy_hikari": 3260,
+      "notes": "Local JR Kyoto Line is about 30 min and much cheaper."
+    }
+  ]
+}

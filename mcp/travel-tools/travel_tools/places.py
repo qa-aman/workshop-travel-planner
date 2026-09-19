@@ -1,7 +1,6 @@
-import os
-
 from travel_tools.cache import cached
 from travel_tools.http import post_json
+from travel_tools.walking import api_key
 
 URL = "https://places.googleapis.com/v1/places:searchText"
 FIELD_MASK = ",".join([
@@ -44,7 +43,7 @@ def _map(p: dict) -> dict:
 
 
 def search_places(query: str, city: str, place_type: str | None = None, max_results: int = 8) -> dict:
-    key = os.environ.get("GOOGLE_MAPS_API_KEY")
+    key = api_key()
     if not key:
         return {"error": "GOOGLE_MAPS_API_KEY not set"}
     n = max(1, min(int(max_results), 20))
