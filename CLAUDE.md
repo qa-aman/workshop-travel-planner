@@ -57,3 +57,7 @@ Environment: `.env` at repo root holds `GOOGLE_MAPS_API_KEY` (code also accepts 
 | `docs/feedback.md` | Every correction from Aman, as a class with a check. |
 | `docs/tech-stack.md` | Libraries, versions, APIs with verified free tiers, rejected APIs. |
 | `docs/architecture.md` | Diagrams, components, data flow, failure table, testing map. |
+
+## Orchestration
+
+The planning procedure lives in `.claude/skills/plan-trip/SKILL.md`. Both the terminal (`/plan-trip`) and the web app (Agent SDK) run that procedure. Do not duplicate it here. Agent contracts are in `docs/contracts/`.

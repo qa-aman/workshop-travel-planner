@@ -3,11 +3,7 @@
     "travel-tools": {
       "type": "stdio",
       "command": "uv",
-      "args": ["run", "--project", "mcp/travel-tools", "python", "mcp/travel-tools/server.py"],
-      "env": {
-        "GOOGLE_MAPS_API_KEY": "${GOOGLE_MAPS_API_KEY}",
-        "GOOGLE_MAPS_API": "${GOOGLE_MAPS_API}"
-      }
+      "args": ["run", "--project", "mcp/travel-tools", "python", "mcp/travel-tools/server.py"]
     }
   }
 }
