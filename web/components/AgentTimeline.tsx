@@ -1,5 +1,6 @@
 "use client";
 import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
+import { FONT_MONO } from "@/app/providers";
 import { AGENT_IDS, type AgentId, type AgentStatus } from "@/lib/types";
 import { useRunStore } from "@/store/run-store";
 
@@ -26,8 +27,6 @@ const STATUS_TEXT: Record<AgentStatus, string> = {
   done: "#3C7A5B",
   failed: "#BD4B2C",
 };
-
-const MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 
 function fmtArgs(args: Record<string, unknown>) {
   return Object.values(args)
@@ -86,7 +85,7 @@ export function AgentTimeline() {
                 <Typography variant="subtitle2">{LABEL[id]}</Typography>
                 <Typography
                   variant="caption"
-                  sx={{ fontFamily: MONO, color: STATUS_TEXT[a.status], letterSpacing: "0.02em" }}
+                  sx={{ fontFamily: FONT_MONO, color: STATUS_TEXT[a.status], letterSpacing: "0.02em" }}
                 >
                   {a.status}
                 </Typography>
@@ -99,7 +98,7 @@ export function AgentTimeline() {
                       key={i}
                       variant="caption"
                       component="div"
-                      sx={{ fontFamily: MONO, color: "text.secondary", lineHeight: 1.5 }}
+                      sx={{ fontFamily: FONT_MONO, color: "text.secondary", lineHeight: 1.5 }}
                     >
                       {c.tool}({fmtArgs(c.args)})
                     </Typography>
@@ -123,7 +122,7 @@ export function AgentTimeline() {
                     <Typography
                       key={c.id}
                       variant="body2"
-                      sx={{ fontFamily: MONO, color: c.pass ? "success.main" : "error.main" }}
+                      sx={{ fontFamily: FONT_MONO, color: c.pass ? "success.main" : "error.main" }}
                     >
                       {c.pass ? "PASS" : "FAIL"}: {c.label}
                     </Typography>

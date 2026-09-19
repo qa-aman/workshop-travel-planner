@@ -9,6 +9,7 @@ interface Actions {
   apply: (e: AgentEvent) => void;
   loadTrip: (slug: string) => Promise<void>;
   reset: () => void;
+  initFromUrl: () => void;
 }
 
 export const useRunStore = create<RunState & Actions>((set, get) => ({
@@ -31,27 +32,59 @@ export const useRunStore = create<RunState & Actions>((set, get) => ({
     } else if (e.type === "step") {
       set({ steps: [...s.steps, e.text] });
     } else if (e.type === "result") {
-      set({ slug: e.slug, phase: e.ok ? "done" : "error", error: e.error ?? null });
-      if (e.ok && e.slug) void get().loadTrip(e.slug);
+      if (e.ok && e.slug) {
+        set({ slug: e.slug, phase: "done", error: null });
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          url.searchParams.set("trip", e.slug);
+          window.history.replaceState(null, "", url.toString());
+        }
+        void get().loadTrip(e.slug);
+      } else if (e.ok && !e.slug) {
+        set({ slug: e.slug, phase: "error", error: "Run finished but no trip folder was named" });
+      } else {
+        set({ slug: e.slug, phase: "error", error: e.error ?? null });
+      }
     }
   },
 
   start: async (request) => {
     get().reset();
     set({ phase: "running" });
-    const res = await fetch("/api/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request }) });
-    if (!res.ok || !res.body) { set({ phase: "error", error: `HTTP ${res.status}` }); return; }
-    const reader = res.body.getReader();
-    const dec = new TextDecoder();
-    let buf = "";
-    for (;;) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buf += dec.decode(value, { stream: true });
-      const parts = buf.split("\n\n");
-      buf = parts.pop() ?? "";
-      for (const p of parts) if (p.startsWith("data: ")) get().apply(JSON.parse(p.slice(6)) as AgentEvent);
+    try {
+      const res = await fetch("/api/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request }) });
+      if (!res.ok || !res.body) {
+        let message = `HTTP ${res.status}`;
+        try {
+          const body = (await res.json()) as { error?: string };
+          if (body?.error) message = body.error;
+        } catch {
+          // body was not JSON, keep the HTTP status message
+        }
+        set({ phase: "error", error: message, agents: { ...get().agents, orchestrator: { ...get().agents.orchestrator, status: "failed" } } });
+        return;
+      }
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const parts = buf.split("\n\n");
+        buf = parts.pop() ?? "";
+        for (const p of parts) if (p.startsWith("data: ")) get().apply(JSON.parse(p.slice(6)) as AgentEvent);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      set({ phase: "error", error: message, agents: { ...get().agents, orchestrator: { ...get().agents.orchestrator, status: "failed" } } });
     }
+  },
+
+  initFromUrl: () => {
+    if (typeof window === "undefined") return;
+    const trip = new URLSearchParams(window.location.search).get("trip");
+    if (trip) void get().loadTrip(trip);
   },
 
   loadTrip: async (slug) => {

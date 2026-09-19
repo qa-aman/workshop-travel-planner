@@ -1,10 +1,20 @@
 "use client";
 import { Box, Container, Stack, Typography } from "@mui/material";
+import { useEffect } from "react";
 import { AgentTimeline } from "@/components/AgentTimeline";
+import { ErrorBanner } from "@/components/ErrorBanner";
 import { ItineraryView } from "@/components/ItineraryView";
 import { RequestForm } from "@/components/RequestForm";
+import { useRunStore } from "@/store/run-store";
 
 export default function Page() {
+  const initFromUrl = useRunStore((s) => s.initFromUrl);
+
+  useEffect(() => {
+    initFromUrl();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <Box sx={{ bgcolor: "#152238", color: "#F6F3EA" }}>
@@ -24,6 +34,7 @@ export default function Page() {
         </Container>
       </Box>
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+        <ErrorBanner />
         <AgentTimeline />
         <ItineraryView />
       </Container>

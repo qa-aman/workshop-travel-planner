@@ -277,7 +277,9 @@ export function ItineraryView() {
           )}
           {it.budget.fx && (
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block", fontFamily: FONT_MONO }}>
-              1 USD = {it.budget.fx.rate} JPY on {it.budget.fx.date}
+              {it.budget.fx.rate === null
+                ? "FX could not verify"
+                : `1 USD = ${it.budget.fx.rate} JPY on ${it.budget.fx.date}`}
             </Typography>
           )}
         </CardContent>

@@ -51,7 +51,7 @@ export function toAgentEvents(msg: SDKMessage, agentByToolUseId: Map<string, Age
                   .join("\n")
               : JSON.stringify(block.content);
         out.push({ type: "summary", agent: who, lines: raw.split("\n").filter(Boolean).slice(0, 3) });
-        out.push({ type: "status", agent: who, status: "done" });
+        out.push({ type: "status", agent: who, status: block.is_error === true ? "failed" : "done" });
       }
     }
   } else if (msg.type === "result") {

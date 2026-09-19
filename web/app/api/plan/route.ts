@@ -1,4 +1,5 @@
 import { query } from "@anthropic-ai/claude-agent-sdk";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { toAgentEvents } from "@/lib/sdk-to-events";
 import type { AgentEvent, AgentId } from "@/lib/types";
@@ -8,10 +9,26 @@ export const dynamic = "force-dynamic";
 
 const REPO_ROOT = path.resolve(process.cwd(), "..");
 
+async function hasGoogleMapsKey(): Promise<boolean> {
+  if (process.env.GOOGLE_MAPS_API_KEY ?? process.env.GOOGLE_MAPS_API) return true;
+  try {
+    const envText = await readFile(path.join(REPO_ROOT, ".env"), "utf8");
+    return /^(GOOGLE_MAPS_API_KEY|GOOGLE_MAPS_API)=/m.test(envText);
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(req: Request) {
   const { request } = (await req.json()) as { request?: string };
   if (!request || request.trim().length < 10) {
     return new Response(JSON.stringify({ error: "request is required" }), { status: 400 });
+  }
+  if (!(await hasGoogleMapsKey())) {
+    return new Response(
+      JSON.stringify({ error: "GOOGLE_MAPS_API_KEY is not set. Add it to .env at the repo root." }),
+      { status: 500 },
+    );
   }
 
   const encoder = new TextEncoder();
@@ -55,6 +72,7 @@ export async function POST(req: Request) {
         }
         send({ type: "status", agent: "orchestrator", status: "done" });
       } catch (err) {
+        send({ type: "status", agent: "orchestrator", status: "failed" });
         send({ type: "result", slug: null, ok: false, error: err instanceof Error ? err.message : String(err) });
       } finally {
         if (!closed) {

@@ -33,6 +33,19 @@ describe("toAgentEvents", () => {
     ]);
   });
 
+  it("marks the agent failed when its tool_result carries is_error true", () => {
+    const map = new Map([["t1", "budget" as const]]);
+    const msg = {
+      type: "user",
+      parent_tool_use_id: null,
+      message: { content: [{ type: "tool_result", tool_use_id: "t1", is_error: true, content: "boom" }] },
+    } as never;
+    expect(toAgentEvents(msg, map)).toEqual([
+      { type: "summary", agent: "budget", lines: ["boom"] },
+      { type: "status", agent: "budget", status: "failed" },
+    ]);
+  });
+
   it("emits a step for main-session text starting with 'Step'", () => {
     expect(toAgentEvents(assistant([{ type: "text", text: "Step 2: Fan out" }]), new Map())).toEqual([
       { type: "text", agent: "orchestrator", text: "Step 2: Fan out" },

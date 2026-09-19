@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRunStore } from "@/store/run-store";
 
 const EXAMPLE = "Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.";
-const LAST_RUN_SLUG = "japan-tokyo-kyoto-7c2e";
+const LAST_RUN_SLUG = "sample-japan";
 
 const fieldSx = {
   "& .MuiInputLabel-root": { color: "rgba(246, 243, 234, 0.65)" },
