@@ -21,12 +21,14 @@ got = json.load(open(got_path))
 exp = json.load(open(exp_path))
 got_types = [c["type"] for c in got["changes"]]
 mismatches = []
-if sorted(got_types) != sorted(exp["change_types"]):
+if "change_types" in exp and sorted(got_types) != sorted(exp["change_types"]):
     mismatches.append(f"change_types: expected {exp['change_types']}, got {got_types}")
 for c in got["changes"]:
     for key in ("shift_days", "delta_days", "target_city", "cutoff_day"):
         if key in exp and key in c and c[key] != exp[key]:
             mismatches.append(f"{key}: expected {exp[key]}, got {c[key]}")
+if exp.get("needs_user_input_nonempty") and not got.get("needs_user_input"):
+    mismatches.append("needs_user_input: expected non-empty, got empty")
 print(f"{name}: {'OK' if not mismatches else 'MISMATCH ' + '; '.join(mismatches)}")
 sys.exit(1 if mismatches else 0)
 PY
