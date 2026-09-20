@@ -50,7 +50,7 @@
           "area": {"type": "string"},
           "why": {"type": "string"},
           "est_nightly_usd": {"type": ["number", "null"]},
-          "examples": {"type": "array", "items": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}, "rating": {"type": ["number", "null"]}, "price_level": {"type": ["string", "null"]}}}}
+          "examples": {"type": "array", "items": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}, "rating": {"type": ["number", "null"]}, "price_level": {"type": ["string", "null"]}, "url": {"type": ["string", "null"]}}}}
         }
       }
     },

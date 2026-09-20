@@ -1,5 +1,5 @@
 "use client";
-import { Alert, Box, Card, CardContent, Chip, Divider, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Alert, Box, Card, CardContent, Chip, Divider, Link, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import type { Slot } from "@/lib/types";
 import { useRunStore } from "@/store/run-store";
 import { FONT_MONO } from "@/app/providers";
@@ -86,7 +86,13 @@ export function ItineraryView() {
                 <Stack spacing={0.5}>
                   {s.examples.map((e, i) => (
                     <Typography key={i} variant="body2">
-                      {e.name}
+                      {e.url ? (
+                        <Link href={e.url} target="_blank" rel="noopener noreferrer">
+                          {e.name}
+                        </Link>
+                      ) : (
+                        e.name
+                      )}
                       {e.rating != null && (
                         <Typography component="span" variant="caption" sx={{ fontFamily: FONT_MONO, color: "text.secondary", ml: 1 }}>
                           {e.rating.toFixed(1)}

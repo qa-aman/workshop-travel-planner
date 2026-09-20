@@ -17,10 +17,11 @@ Write `trips/<slug>/03-budget.md`, then reply with exactly three lines: (1) the 
 # Budget for <destination>, limit $<budget_usd>
 
 ## FX
-1 USD = <rate> <CUR> on <DD-MM-YYYY> (Frankfurter)
+1 USD = <rate> <CUR> on <DD-MM-YYYY> (Frankfurter, https://www.frankfurter.dev/)
 
 ## Category split (target)
 | Category | Share | USD | <CUR> |
+|---|---|---|---|
 | stay | 35% | ... | ... |
 | transport | 15% | ... | ... |
 | food | 25% | ... | ... |
@@ -29,6 +30,7 @@ Write `trips/<slug>/03-budget.md`, then reply with exactly three lines: (1) the 
 
 ## Price bands (estimates unless marked tool)
 | Item | Low USD | High USD | Basis | Source |
+|---|---|---|---|---|
 | Hotel night, quiet area, 3-star | ... | ... | price_level moderate | estimate |
 | Inter-city transfer one way | ... | ... | fare from logistics | tool / estimate |
 | Meals per day (street + one sit-down) | ... | ... | | estimate |

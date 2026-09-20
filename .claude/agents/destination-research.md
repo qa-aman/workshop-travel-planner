@@ -19,16 +19,19 @@ Write `trips/<slug>/01-destinations.md` with this structure, then reply with exa
 ## <City 1>
 ### Must-do
 | Name | Area | Why it fits (<likes>) | Crowd tactic | Rating (count) | Price level | Source |
+|---|---|---|---|---|---|---|
 ### Nice-to-have
-(same columns)
+(same columns, same separator row)
 ### Food areas
 | Area | What to eat | Best time | Crowd tactic | Source |
+|---|---|---|---|---|
 
 ## <City 2>
 (same)
 
 ## Weather (only if the brief has start_date)
 | Date | Max C | Min C | Rain mm |
+|---|---|---|---|
 ```
 
 ## Rules

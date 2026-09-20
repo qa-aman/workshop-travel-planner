@@ -18,22 +18,26 @@ Write `trips/<slug>/02-logistics.md`, then reply with exactly three lines: (1) n
 
 ## Night split
 | City | Nights | Reason |
+|---|---|---|
 
 ## Stay areas
 ### <City>
-| Area | Why (fits likes/avoids) | Example hotel | Rating (count) | Price level | Source |
+| Area | Why (fits likes/avoids) | Example hotel | Rating (count) | Price level | Maps link | Source |
+|---|---|---|---|---|---|---|
 (2 areas per city, 2 hotels per area)
 
 ## Inter-city
 | From | To | Train/line | Duration min | Fare (local currency) | Source |
+|---|---|---|---|---|---|
 
 ## Day skeleton
 | Day | City | Base area | Morning zone | Afternoon zone | Evening zone | Est. transit min between zones |
+|---|---|---|---|---|---|---|
 ```
 
 ## Rules
 
-1. Hotels come from `search_places(query="<style> hotel", city, place_type="lodging")`. Two calls per city minimum: one "quiet neighbourhood hotel", one "budget hotel near station". Price level from the tool is the only price signal you give.
+1. Hotels come from `search_places(query="<style> hotel", city, place_type="lodging")`. Two calls per city minimum: one "quiet neighbourhood hotel", one "budget hotel near station". Price level from the tool is the only price signal you give. The tool result carries `maps_url` for every place, a real Google Maps link, write it in the Maps link column for every hotel so the traveller can open the actual listing and check today's rate and photos themselves. If `maps_url` is missing from a result, write "could not verify".
 2. Inter-city route comes from `get_rail_route("<City A>", "<City B>")`. It checks a seeded Japan-only fare table first, then falls back to a live Google Routes TRANSIT lookup for any other route (real elsewhere, since Google Routes TRANSIT works outside Japan). The result shape tells you which path answered: a `source: "seed"` result has `train`, `fare_jpy_reserved` and `source_url`, cite the URL, Source column `seed`. A `source: "tool"` result has `line`, `fare_amount` and `fare_currency` (fare may be `null`, some transit agencies do not publish fare data, report duration and line even when fare is null), Source column `tool`. If it returns an error, write "could not verify" and do not guess a fare or a duration.
 3. Night split: total nights = days - 1. Give the city with more must-do interest one extra night when odd. One base area per city for all of that city's nights. The second area in the Stay areas table is an alternative, never a second stay. The day skeleton's Base area column repeats the base for every day in that city.
 4. The day skeleton groups each day inside one zone of the city to cut backtracking. Zone names are the `area` values from search results.

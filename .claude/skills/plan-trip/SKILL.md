@@ -11,9 +11,9 @@ You are the Orchestrator. Follow these steps in order. Announce each step in one
 
 ## Step 1: Brief
 
-Parse the request into `trips/<slug>/00-brief.json` using the shape in `docs/contracts/brief.schema.json`. Slug = lowercase destination and cities joined by hyphens, plus 4 hex chars taken from the current time: use the last four hex digits of the minute-level timestamp as you know it, or, if unsure, the fixed suffix `0000` when `trips/<base>-0000/` does not exist yet, else `0001`, and so on. Never spend more than one attempt on the suffix. Example: `japan-tokyo-kyoto-a1f3`. If the request has no dates, `start_date` is null. Days come from the request, cities from the request in the order given. Likes and avoids are short nouns.
+Parse the request into `trips/<slug>/00-brief.json` using the shape in `docs/contracts/brief.schema.json`. Slug = lowercase destination and cities joined by hyphens, plus 4 hex chars taken from the current time: use the last four hex digits of the minute-level timestamp as you know it, or, if unsure, the fixed suffix `0000` when `trips/<base>-0000/` does not exist yet, else `0001`, and so on. Never spend more than one attempt on the suffix. Example: `japan-tokyo-kyoto-a1f3`. Days come from the request, cities from the request in the order given. Likes and avoids are short nouns.
 
-If destination, days or budget are missing from the request, stop and ask the user for the missing one. Do not guess.
+If destination, days, budget or travel dates are missing from the request, stop before writing the brief and ask the user for the missing one. Dates are mandatory, not optional: `start_date` must never default to null by assumption, ask "what dates are you travelling" if the request does not state them, because weather and any date-dependent planning cannot happen without them. Do not guess any of the four.
 
 ## Step 2: Fan out (parallel)
 
@@ -52,7 +52,7 @@ Whether it passes or not now, continue. Do not loop again.
 2. Write `trips/<slug>/itinerary.json` matching `docs/contracts/itinerary.schema.json`. `generated_on` is today in DD-MM-YYYY. Map the draft to the schema as follows:
    - `title`: the H1 of the draft.
    - `days[]`: one per `## Day N` section; `slots[]` from the table rows, `when` from the first column, `kind` from the Kind column, `crowd_tactic` from the Crowd tactic column, `transit_min_from_prev` from the transit column ONLY (integer or null, and a transit cell reading "could not verify" makes `transit_min_from_prev` null and never changes `source`), `est_cost_usd` from the Est. USD column (number or null), `source` from the Source column ONLY. Never copy text from the transit column into `source`.
-   - `stays[]`: from the "Where you stay" table; `examples[]` split the "Example hotels (rating, price level)" cell into `name`, `rating` (number or null), `price_level` (string or null).
+   - `stays[]`: from the "Where you stay" table; `examples[]` split the "Example hotels (rating, price level, Maps link)" cell into `name`, `rating` (number or null), `price_level` (string or null), `url` (the Maps link, or null when could not verify). A hotel name written as a Markdown link `[name](url)` splits into that `name` and `url`.
    - `intercity[]`: one row per "Getting between cities" table row, always written even when could not verify. `duration_min` is the Duration min column as an integer, or `null` when that cell reads "could not verify". `fare_usd` converted at the budget FX rate, or `null` when the fare could not verify. `source` from the table's Source column.
    - `budget.lines[]`: from the Budget table, `basis` verbatim; `budget.fx` always present, `rate` null when FX could not verify, `currency` is the `<CUR>` code from 03-budget.md's FX line (never null unless FX itself could not verify, and never a hardcoded currency, it always matches whichever code the budget agent actually used for this destination).
    - `crowd_strategy[]`: the numbered lines under "How we handled crowds".
@@ -65,3 +65,4 @@ Whether it passes or not now, continue. Do not loop again.
 2. Never add a place, price or time that is not in a worker file.
 3. Never run the repair loop twice.
 4. Never use a semicolon anywhere in any file you write. Join list items in a table cell with commas.
+5. Every markdown table you write, in any file, must have a header-separator row (`|---|---|---|`, one cell per column) as the line immediately after the header row. A table with a header and no separator row is not valid Markdown and renders as unformatted text, not a table. Check every table you write for this before finishing the file.
