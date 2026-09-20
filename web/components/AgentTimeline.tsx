@@ -10,6 +10,7 @@ const LABEL: Record<AgentId, string> = {
   logistics: "Logistics",
   budget: "Budget",
   review: "Review",
+  "trip-revision": "Trip revision",
 };
 
 const STRIPE: Record<AgentStatus, string> = {
@@ -39,16 +40,20 @@ function fmtArgs(args: Record<string, unknown>) {
 export function AgentTimeline() {
   const agents = useRunStore((s) => s.agents);
   const itinerary = useRunStore((s) => s.itinerary);
+  // trip-revision only appears once a /revise-trip run actually launches it, so a
+  // plain /plan-trip run (which never touches that agent) does not show a permanently
+  // idle sixth card.
+  const visibleIds = AGENT_IDS.filter((id) => id !== "trip-revision" || agents[id].status !== "waiting");
 
   return (
     <Box
       sx={{
         display: "grid",
         gap: 2,
-        gridTemplateColumns: { xs: "1fr", md: "repeat(5, 1fr)" },
+        gridTemplateColumns: { xs: "1fr", md: `repeat(${visibleIds.length}, 1fr)` },
       }}
     >
-      {AGENT_IDS.map((id) => {
+      {visibleIds.map((id) => {
         const a = agents[id];
         const running = a.status === "running";
         const revising = a.status === "revising";

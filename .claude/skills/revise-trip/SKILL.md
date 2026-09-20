@@ -17,24 +17,41 @@ Compute today's date in DD-MM-YYYY (use the date you are told the current date i
 
 Read `revision-plan.json`. If `needs_user_input` is non-empty, stop and ask the user each listed question. Do not guess any of them, per the same "never invent" rule as `/plan-trip`. Wait for the answer, then re-run this step with the answer folded into the revision request.
 
-## Step 3: Apply cutoff changes
+## Step 3: Apply changes, in this order: date-shift, then cutoff, then duration-change
+
+Combined requests can produce more than one `changes[]` entry (per `trip-revision.md` rule 6). Apply them in this fixed order regardless of the order they appear in `revision-plan.json`, so later steps always see a day list that is already shifted and already cut: `date-shift` first, `cutoff` second, `duration-change` third. This order matters because duration-change's "last existing day" math (Step 5) has to run against the trip as it stands after any shift or cutoff, not before.
+
+### 3a. Date-shift entries
+
+For each `changes[]` entry with `type: "date-shift"`: add `shift_days` to every day's existing `date`. No day is added or removed, `affected_days` covers every day.
+
+### 3b. Cutoff entries
 
 For each `changes[]` entry with `type: "cutoff"`:
-1. Remove every day in the itinerary after `cutoff_day`.
-2. For each city that now has zero remaining days, remove its entry from `stays[]` and remove any `intercity[]` leg that starts or ends in that city and whose destination city also has zero remaining days.
-3. Days at or before `cutoff_day` are untouched, copied as-is into the revised plan.
+1. Remove every day after `cutoff_day`. Days at or before `cutoff_day` are untouched otherwise, copied as-is into the revised plan.
+2. Identify each city that now has zero remaining days anywhere in the kept days, and remove its entry from `stays[]`.
+3. Remove every `intercity[]` leg whose position in the day sequence falls after `cutoff_day` (the leg's own day, not the cities it names, since the same two cities can appear in more than one leg on a multi-visit itinerary such as Tokyo, Kyoto, Tokyo). A leg at or before `cutoff_day` is kept even if one of its cities no longer has any days remaining after the cutoff, since the leg itself already happened.
 
-## Step 4: Apply date-shift and duration-change changes
+## Step 4: Apply duration-change entries
 
-For each `changes[]` entry with `type: "date-shift"` or `type: "duration-change"`:
-1. Compute the new `days[].date` for every affected day (shift: old date plus `shift_days`. duration-change extension: new days get the next consecutive dates after the last existing day. duration-change shortening: remove the trailing days named in `affected_days`).
-2. If `reverify.destination_research`, `reverify.logistics`, or `reverify.budget` is true for this entry, launch the named agent(s) in one message (same as `/plan-trip` Step 5's repair loop) with the prompt `Brief: trips/<slug>/00-brief.json. Revision: <reason from the revision-plan entry>. Affected days: <affected_days>. New dates: <the new dates for those days>. Update your file (01-destinations.md / 02-logistics.md / 03-budget.md) in place for the affected days only, leave every other day's content untouched, and say what you changed.` Wait for all of them.
-3. If none of the three are true, update the day dates directly with no agent re-run, venues and prices stay as they were.
-4. For a duration-change extension whose `target_city` is set, the new days belong to that city, added at the end of its existing stay in the day sequence.
+For each `changes[]` entry with `type: "duration-change"`:
+
+### 4a. Extension (`delta_days` positive)
+
+1. `target_city` names an existing city in the (already shifted/cut) itinerary, per `trip-revision.md` rule 4, never a new one.
+2. If `target_city` is the last city in the day sequence, the new days are appended after the current last day: dates are the next `delta_days` consecutive dates after that last day's date, day numbers continue the existing numbering, and they extend that city's `stays[].nights`.
+3. If `target_city` is not the last city, the new days are inserted immediately after that city's own last day in the sequence, not at the end of the trip. Doing this requires: (a) renumbering every day after the insertion point by `+delta_days`, (b) shifting the `date` of every day after the insertion point later by `delta_days` (each new date is the previous day's date plus one, continuing the sequence, the shift preserves the gap between consecutive days), (c) increasing `target_city`'s `stays[].nights` by `delta_days`, and (d) moving any `intercity[]` leg that departs from `target_city` so it still departs on the day immediately after the now-later last day of `target_city`'s stay.
+4. New days always get `reverify.destination_research: true`, `logistics: true`, `budget: true` per the classifier, so launch `destination-research`, `logistics`, and `budget` in one message (same as `/plan-trip` Step 5's repair loop) with the prompt `Brief: trips/<slug>/00-brief.json. Revision: <reason from the revision-plan entry>. Affected days: <affected_days, using the renumbered day numbers>. New dates: <the new dates for those days>. City: <target_city>. Update your file (01-destinations.md / 02-logistics.md / 03-budget.md) in place, adding content for these new days only, leave every other day's content untouched, and say what you changed.` Wait for all of them.
+
+### 4b. Shortening (`delta_days` negative)
+
+1. Remove the trailing days named in `affected_days` (the last `abs(delta_days)` days of the trip, or of `target_city`'s stay if `target_city` is set, per the classifier's `reason`).
+2. If this empties a city's remaining days entirely, apply the same cleanup as cutoff Step 3b.2-3: remove that city's `stays[]` entry and any `intercity[]` leg whose position falls after the new last day.
+3. `reverify.budget: true` always for a shortening, so launch `budget` (same repair-loop pattern as 4a step 4) to recompute the total. `destination_research` and `logistics` stay untouched, per the classifier, no new content is needed to remove days.
 
 ## Step 5: Re-synthesise
 
-Re-run `/plan-trip` Step 3's synthesis rules against the (possibly updated) `01-destinations.md`, `02-logistics.md`, `03-budget.md`, but only rewrite the days and budget lines that changed. Days untouched by Steps 3-4 keep their exact existing content. Recompute the Budget section's totals for the current day count and city set, same midpoint-of-band method as `/plan-trip` Step 3 rule 4. Write the result to `trips/<slug>/04-itinerary-draft.md`.
+Re-run `/plan-trip` Step 3's synthesis rules against the (possibly updated) `01-destinations.md`, `02-logistics.md`, `03-budget.md`, but only rewrite the days and budget lines that changed. Days untouched by Step 3 or Step 4 keep their exact existing content. Recompute the Budget section's totals for the current day count and city set, same midpoint-of-band method as `/plan-trip` Step 3 rule 4. Write the result to `trips/<slug>/04-itinerary-draft.md`.
 
 ## Step 6: Review
 

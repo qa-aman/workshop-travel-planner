@@ -1,5 +1,5 @@
-export type AgentId = "orchestrator" | "destination-research" | "logistics" | "budget" | "review";
-export const AGENT_IDS: AgentId[] = ["orchestrator", "destination-research", "logistics", "budget", "review"];
+export type AgentId = "orchestrator" | "destination-research" | "logistics" | "budget" | "review" | "trip-revision";
+export const AGENT_IDS: AgentId[] = ["orchestrator", "destination-research", "logistics", "budget", "review", "trip-revision"];
 
 export type AgentStatus = "waiting" | "running" | "revising" | "done" | "failed";
 

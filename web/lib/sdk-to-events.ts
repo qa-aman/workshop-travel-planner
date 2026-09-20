@@ -1,7 +1,7 @@
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 import type { AgentEvent, AgentId } from "./types";
 
-const KNOWN: AgentId[] = ["destination-research", "logistics", "budget", "review"];
+const KNOWN: AgentId[] = ["destination-research", "logistics", "budget", "review", "trip-revision"];
 const MCP_PREFIX = "mcp__travel-tools__";
 
 function contentOf(msg: unknown): unknown[] {

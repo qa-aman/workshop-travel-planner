@@ -143,7 +143,60 @@ workshop-travel-planner/
 4. No tests for UI glue or the orchestrator prompt beyond the sample run.
 5. Worker and orchestrator structure: scripts/worker_eval.py over any trips/<slug>/ folder (candidate counts, crowd tactics, sources, night split, FX format, day headings, itinerary.json schema, six review checks, parallel fan-out from the run log). Hygiene gate, run before handover.
 
-## 10. Success criteria
+## 10. Trip revision (added 20-09-2026)
+
+Brainstormed 20-09-2026, approved in chat, pending implementation plan.
+
+### 10.1 Problem
+
+A finished plan is not final. A user may change dates before departure, extend or shorten the trip, or, mid-trip, decide to end early or add days. The system needs one path that takes an existing `trips/<slug>/` and a natural-language change request, and produces an updated plan without breaking the link the user already has (same slug, same file).
+
+### 10.2 Decisions taken in brainstorm
+
+| Decision | Choice | Why |
+|---|---|---|
+| Scope this round | Date shift, duration change, mid-trip cutoff (end early) | The three concrete cases Aman named. Budget/likes/city changes deferred, distinct problem (re-deriving destination fit), not blocking the dates problem |
+| Versioning | Overwrite `trips/<slug>/` in place, same slug, append-only `06-revisions.json` log | TripIt and Wanderlog both edit a shared itinerary in place rather than forking a new one per edit, and this repo already does the same for its own specs (`changelog.md` logs changes into the one design doc, not spec-v2.md). A user shares one link; forking would break it |
+| Current-day tracking | Derived: today's real date vs `brief.start_date` + `days[].date`, no stored session state | No extra state to keep in sync. Requires every day to carry a real calendar date (see 11.3) |
+| New agent's job | Classifier, not a re-planner | `trip-revision` reads the old plan and the request, decides what changed and which days need re-verification. It never calls MCP tools or edits the itinerary, matching how `review` only produces a verdict and never fixes anything. The orchestrator still owns execution, reusing the existing Step 5 repair-loop mechanics (re-run only the named worker agents, for only the affected days) |
+| Re-verification on shift | Re-run the affected worker agents for affected days, not a mechanical date renumber | A shift across seasons changes weather; a shift of a few days may not, but the agent decides per case rather than the skill assuming either way |
+| Mid-trip cutoff | Drop future days, drop any city whose stay becomes empty and its now-unused inter-city leg, recompute budget for the shorter trip, keep past days untouched as history | The traveler already spent the dropped days' worth of nothing; the record of what happened stays, what didn't happen is removed rather than kept as clutter |
+| Combinations | Handled in one call | A user may say "push dates back a week and I might end two days early" in one sentence; the classifier can name more than one change type per request |
+| Review | Always re-runs after a revision | Same quality bar as a fresh plan. A date shift into a different season, or a cutoff that drops the only city with a must-do, are exactly the kind of thing review exists to catch |
+| Extension target city | Ask, never guess, if not named | Matches the existing "never invent a place, price or time" rule; the same discipline applies to "which city gets the extra days" |
+| Surfaces | Terminal and web from the start | CLAUDE.md's rule is one procedure in the skill file both surfaces call; splitting them now would create two copies to keep in sync |
+
+### 10.3 Prerequisite: real per-day dates
+
+`days[].date` exists in `itinerary.schema.json` but nothing ever populated it (`trips/sample-japan/itinerary.json` has every day's `date: null`). Revision depends on comparing today's real date against a day's real date, so `SKILL.md` Step 6.2 gains a rule: `days[N].date = brief.start_date + (day_number - 1)`, written DD-MM-YYYY, for every day of every plan going forward. `trips/sample-japan/` and any other committed trip get backfilled once so they stay revisable.
+
+### 10.4 New agent: `trip-revision`
+
+| Agent | Model | Tools | Input | Output contract |
+|---|---|---|---|---|
+| trip-revision | sonnet | Read | existing `trips/<slug>/itinerary.json` + the revision request | `revision-plan.json` (shape in `docs/contracts/revision.schema.json`): one or more change entries, each `{type: "date-shift"\|"duration-change"\|"cutoff", ...type-specific fields, affected_days: [...], reverify: {destination_research: bool, logistics: bool, budget: bool}}`. Never edits the itinerary, never calls MCP tools |
+
+### 10.5 New skill: `/revise-trip <slug> <request>`
+
+1. Read `trips/<slug>/00-brief.json` and `itinerary.json`. Compute today vs `brief.start_date` and each day's `date` to know if this is pre-trip or mid-trip, and, for a cutoff without a named day, which day the traveler is currently on.
+2. Run `trip-revision` -> `revision-plan.json`.
+3. For each `cutoff` entry: drop days after the cutoff day, drop any city whose stay becomes fully empty and its inter-city leg, keep days at or before the cutoff untouched.
+4. For each `date-shift` or `duration-change` entry: re-run only the worker agents the classifier named, for only the affected days, reusing the existing Step 5 repair-loop mechanics (one round, same as today).
+5. If the revision names a target city for new days, add them there; if extension is requested with no city named, stop and ask, per the existing "never invent" rule.
+6. Re-synthesise `04-itinerary-draft.md`, recompute the Budget section for the new day count and city set.
+7. Always re-run `review` on the revised draft.
+8. Overwrite `itinerary.md` and `itinerary.json` in place, same slug. Append one entry to `trips/<slug>/06-revisions.json`: timestamp, the request text, the change type(s) applied, days added/removed/kept, the review result. The log is append-only, never rewritten.
+9. Reply with: the slug, what changed, pass or fail, new total vs limit, path to the updated `itinerary.md`.
+
+### 10.6 Contracts
+
+New `docs/contracts/revision.schema.json` covers `revision-plan.json` (trip-revision's output) and each entry of `06-revisions.json` (the log). `itinerary.schema.json`'s `days[].date` stays nullable in the schema (an honest could-not-verify case can still exist) but is filled by convention per 11.3.
+
+### 10.7 Web
+
+`web/app/api/revise/route.ts`, a sibling of `web/app/api/plan/route.ts`, calls the same Agent SDK `query()` pattern pointed at `/revise-trip` instead of `/plan-trip`. No new procedure in code, per CLAUDE.md's existing rule that the procedure lives once, in the skill file.
+
+## 11. Success criteria
 
 1. The example request produces, in one run, an itinerary that passes all six review checks, with every place name traceable to a `search_places` result and the Tokyo to Kyoto leg traceable to a `get_rail_route` result.
 2. The same run works from the terminal (`/plan-trip`) and from the web page, using the same agent files.
