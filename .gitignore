@@ -10,3 +10,4 @@ trips/*
 !trips/sample-japan/
 .DS_Store
 .superpowers/
+.agents/
