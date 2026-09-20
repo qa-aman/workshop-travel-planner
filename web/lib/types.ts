@@ -25,7 +25,7 @@ export interface Day { day: number; date?: string | null; city: string; area: st
 export interface Stay { city: string; nights: number; area: string; why: string; est_nightly_usd?: number | null; examples: { name: string; rating?: number | null; price_level?: string | null }[] }
 export interface Intercity { from: string; to: string; mode: string; duration_min: number; fare_usd?: number | null; source: string }
 export interface BudgetLine { category: "stay" | "transport" | "food" | "activities" | "buffer"; usd: number; basis: string }
-export interface Budget { limit_usd: number; total_usd: number; within_budget: boolean; lines: BudgetLine[]; alternatives?: string[]; fx?: { rate: number | null; date: string } }
+export interface Budget { limit_usd: number; total_usd: number; within_budget: boolean; lines: BudgetLine[]; alternatives?: string[]; fx?: { rate: number | null; date: string; currency: string | null } }
 
 export interface Itinerary {
   slug: string; title: string; generated_on: string;

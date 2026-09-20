@@ -302,7 +302,8 @@
     ],
     "fx": {
       "rate": 157.89,
-      "date": "18-09-2026"
+      "date": "18-09-2026",
+      "currency": "JPY"
     }
   },
   "crowd_strategy": [

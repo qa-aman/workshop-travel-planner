@@ -33,7 +33,7 @@ Write `trips/<slug>/05-review.json` matching exactly this shape, then reply with
 1. `days_fit`: exactly `days` day headings, numbered 1..days, no day empty. Count every `## Day N` heading regardless of its content or any note in the heading text.
 2. `cities_included`: every city in the brief has at least one full day.
 3. `within_budget`: the draft's budget total is <= `budget_usd`. Recompute the total from the draft's budget lines yourself, do not trust the stated total.
-4. `matches_likes`: every day has at least one slot whose kind maps to a like (temples -> temple, food -> food). A day with none fails.
+4. `matches_likes`: every day has at least one slot whose `why it fits` text, name, or kind plausibly matches one of the brief's likes, whatever those likes are. A like of "food" maps to kind `food`. A like of "temples" maps to kind `temple` when the venue is an actual temple or shrine. Every other like (art, nightlife, architecture, and anything else) maps to kind `sight`, the generic non-food attraction kind, at a venue whose name or "why it fits" names that like. A day with no slot matching any like fails.
 5. `avoids_crowds`: every slot has a non-empty, concrete crowd tactic. "Avoid crowds" or "go early" alone is not concrete. Any missing or vague tactic fails.
 6. `travel_time_realistic`: no single day has more than 90 minutes of intra-city transit between slots, and the inter-city day allots the full inter-city duration plus 60 minutes. A day with two or more slots whose transit reads "could not verify" fails this check with owner logistics, because the 90 minute test cannot be applied.
 
@@ -42,5 +42,5 @@ Write `trips/<slug>/05-review.json` matching exactly this shape, then reply with
 1. `pass` is true only if all six checks pass.
 2. One failure entry per failing check. `owner` is the agent whose output caused it. Budget overage -> `budget`. Vague crowd tactic -> `destination-research`. Transit or day-count problems -> `logistics`. Structural problems in the draft itself -> `orchestrator`.
 3. Reasons cite numbers from the draft ("total $3,240 vs limit $3,000").
-4. Slots marked "could not verify" are a warning, not a fail, unless they are the only temple or food item on a day.
+4. Slots marked "could not verify" are a warning, not a fail, unless they are the only slot on a day matching one of the brief's likes.
 5. Never rewrite the plan. Never suggest places. No em dashes.

@@ -1,0 +1,35 @@
+{
+  "routes": [
+    {
+      "legs": [
+        {
+          "steps": [
+            {},
+            {},
+            {
+              "transitDetails": {
+                "transitLine": {
+                  "name": "Paris - Lyon TGV",
+                  "nameShort": "TGV INOUI"
+                }
+              }
+            },
+            {},
+            {},
+            {},
+            {},
+            {}
+          ]
+        }
+      ],
+      "distanceMeters": 427666,
+      "duration": "7226s",
+      "travelAdvisory": {
+        "transitFare": {
+          "currencyCode": "EUR",
+          "units": "115"
+        }
+      }
+    }
+  ]
+}

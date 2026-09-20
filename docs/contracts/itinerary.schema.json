@@ -61,7 +61,7 @@
         "required": ["from", "to", "mode", "duration_min", "source"],
         "properties": {
           "from": {"type": "string"}, "to": {"type": "string"}, "mode": {"type": "string"},
-          "duration_min": {"type": "integer"}, "fare_usd": {"type": ["number", "null"]},
+          "duration_min": {"type": ["integer", "null"]}, "fare_usd": {"type": ["number", "null"]},
           "source": {"enum": ["tool", "seed", "estimate", "could not verify"]}
         }
       }
@@ -75,7 +75,7 @@
         "within_budget": {"type": "boolean"},
         "lines": {"type": "array", "items": {"type": "object", "required": ["category", "usd", "basis"], "properties": {"category": {"enum": ["stay", "transport", "food", "activities", "buffer"]}, "usd": {"type": "number"}, "basis": {"type": "string"}}}},
         "alternatives": {"type": "array", "items": {"type": "string"}},
-        "fx": {"type": "object", "properties": {"rate": {"type": ["number", "null"]}, "date": {"type": "string"}}}
+        "fx": {"type": "object", "required": ["currency"], "properties": {"rate": {"type": ["number", "null"]}, "date": {"type": "string"}, "currency": {"type": ["string", "null"]}}}
       }
     },
     "crowd_strategy": {"type": "array", "items": {"type": "string"}},

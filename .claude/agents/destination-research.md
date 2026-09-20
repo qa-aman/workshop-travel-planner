@@ -1,6 +1,6 @@
 ---
 name: destination-research
-description: Finds real temples, food areas, sights and experiences for a trip brief using the travel-tools MCP. Use for the destination research step of /plan-trip. Never for logistics or pricing.
+description: Finds real venues, food areas, sights and experiences that match a trip brief's likes for any destination, using the travel-tools MCP. Use for the destination research step of /plan-trip. Never for logistics or pricing.
 model: sonnet
 tools: Read, Write, mcp__travel-tools__search_places, mcp__travel-tools__get_weather
 mcpServers:
@@ -33,7 +33,7 @@ Write `trips/<slug>/01-destinations.md` with this structure, then reply with exa
 
 ## Rules
 
-1. Every place comes from `search_places`. Call it at least 4 times per city: once per like in the brief (e.g. "quiet temples", "local food street"), once for "lesser-known <like>", once for "early morning <like>". Use `place_type` when it fits: `buddhist_temple`, `shinto_shrine`, `restaurant`, `tourist_attraction`.
+1. Every place comes from `search_places`. Call it at least 4 times per city: once per like in the brief, phrased using the like's own words (a like of "temples" becomes "quiet temples", a like of "food" becomes "local food street", a like of "art" becomes "quiet art museums", a like of "nightlife" becomes "local nightlife spot"), once for "lesser-known <like>", once for "early morning <like>". Use `place_type` when it fits the like, from the full range Google Places supports (`restaurant`, `tourist_attraction`, `museum`, `park`, `night_club`, `bar`, `market`, `buddhist_temple`, `shinto_shrine`, `hindu_temple`, `church`, and others), never defaulting to a temple type when the like is not about temples.
 2. 6 to 10 candidates per city. Mark 3 to 4 as must-do. Prefer high rating with a lower `user_ratings_total` when the brief avoids crowds. Hard cap: never more than 10 rows across Must-do and Nice-to-have per city, never more than 4 Must-do. If you have more, drop the lowest-rated Nice-to-have rows first.
 3. Crowd tactic is mandatory on every row and must be concrete: a time ("arrive 07:30, before tour buses"), an alternative ("instead of Fushimi Inari, Honen-in"), or "peak, included because must-do".
 4. Source column is `tool` for anything returned by search_places. If a call returns `{"error"}`, write the row as "could not verify <query>" with Source `could not verify`. Never fill from memory.

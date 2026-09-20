@@ -57,7 +57,7 @@ sequenceDiagram
     end
     D->>M: search_places x4+ per city, get_weather if dated
     L->>M: search_places (lodging) x2 per city, get_rail_route, get_walking_route per zone pair
-    B->>M: convert_currency(1, USD, JPY)
+    B->>M: convert_currency(1, USD, local currency)
     D-->>O: 01-destinations.md + 3 lines
     L-->>O: 02-logistics.md + 3 lines
     B-->>O: 03-budget.md + 3 lines
@@ -93,8 +93,8 @@ sequenceDiagram
 | Agent | Model | MCP tools | Writes | Returns to orchestrator |
 |---|---|---|---|---|
 | destination-research | Sonnet | `search_places`, `get_weather` | `01-destinations.md`: per city, 6 to 10 candidates tagged must-do or nice-to-have, each with area, why it fits, a concrete crowd tactic, rating, price level, source | 3 lines |
-| logistics | Sonnet | `search_places` (lodging), `get_walking_route`, `get_rail_route` | `02-logistics.md`: night split, 2 stay areas per city with 2 hotels each, Shinkansen segment with seeded fare, day skeleton by zone with walking minutes | 3 lines |
-| budget | Sonnet | `convert_currency` | `03-budget.md`: category split, price bands in USD and JPY, ordered cheaper alternatives | 3 lines |
+| logistics | Sonnet | `search_places` (lodging), `get_walking_route`, `get_rail_route` | `02-logistics.md`: night split, 2 stay areas per city with 2 hotels each, inter-city rail/transit segment with duration and fare (seeded for Japan, live Google Routes TRANSIT elsewhere), day skeleton by zone with walking minutes | 3 lines |
+| budget | Sonnet | `convert_currency` | `03-budget.md`: category split, price bands in USD and the destination's local currency (an ISO 4217 code the agent determines from the brief), ordered cheaper alternatives | 3 lines |
 
 Workers write a file and return three lines. The orchestrator's context stays small, and the UI has something to show the moment each worker finishes.
 
@@ -119,10 +119,11 @@ mcp/travel-tools/
     http.py                 get_json / post_json: return {error} instead of raising
     places.py               search_places -> Google Places Text Search (New)
     walking.py              get_walking_route -> Google Routes, WALK. Also api_key() helper
-    rail.py                 get_rail_route -> data/japan_rail.json, symmetric lookup
-    currency.py             convert_currency -> Frankfurter
+    rail.py                 get_rail_route -> data/japan_rail.json (seed, Japan), else live
+                             Google Routes TRANSIT (any other city pair), symmetric seed lookup
+    currency.py             convert_currency -> Frankfurter, any ISO 4217 pair
     weather.py              get_weather -> Open-Meteo
-  data/japan_rail.json      Shinkansen segments with fare, duration, source URL, read date
+  data/japan_rail.json      Japan rail segments with fare, duration, source URL, read date
   tests/                    pytest + respx fixtures, one live suite behind LIVE_API_TESTS=1
 ```
 
@@ -144,7 +145,7 @@ web/
   store/run-store.ts             Zustand: start(), apply(), loadTrip(), reset()
   components/RequestForm.tsx
   components/AgentTimeline.tsx   5 cards: status chip, tool calls, 3-line summary, review checklist
-  components/ItineraryView.tsx   day cards, stays, Shinkansen line, budget table, crowd strip
+  components/ItineraryView.tsx   day cards, stays, inter-city line, budget table, crowd strip
 ```
 
 ### 5.6 How the UI knows which agent did what
@@ -182,17 +183,17 @@ Every intermediate file is a real artifact, so the terminal user and the web use
 
 ## 7. Parallelism and the budget dependency
 
-The problem statement runs Destination, Logistics and Budget in parallel. Budget cannot price hotels it has not seen, so it produces **price bands per category** (nightly by area tier, Shinkansen fare, meals per day, temple entry) rather than a total. The orchestrator multiplies bands by the counts it actually schedules, using band midpoints, and the review recomputes that sum against the limit. The fan-out stays genuinely parallel and there is no hidden sequential dependency.
+The problem statement runs Destination, Logistics and Budget in parallel. Budget cannot price hotels it has not seen, so it produces **price bands per category** (nightly by area tier, inter-city fare, meals per day, attraction entry) rather than a total. The orchestrator multiplies bands by the counts it actually schedules, using band midpoints, and the review recomputes that sum against the limit. The fan-out stays genuinely parallel and there is no hidden sequential dependency.
 
 ## 8. Failure handling
 
 | Failure | Behaviour |
 |---|---|
 | Google key missing or invalid | Terminal: MCP server exits with code 2 and a stderr line, nothing runs half-way. Web: the route returns a 500 with a clear message, the page shows it, before `query()` ever starts. |
-| A tool call errors or returns empty | Tool returns `{error}`. The agent writes "could not verify X". Review treats it as a warning unless it is the only temple or food item on a day. |
+| A tool call errors or returns empty | Tool returns `{error}`. The agent writes "could not verify X". Review treats it as a warning unless it is the only slot on a day matching one of the brief's likes. |
 | Worker agent errors or times out | Orchestrator writes `## <section> unavailable`, continues. Review fails the related check, which triggers the single repair loop on that agent. |
 | Over budget after the repair loop | Itinerary ships with the overage in red and the budget agent's cheaper alternatives listed. Never silently trimmed. |
-| Routes transit unavailable (always, in Japan) | Designed out: walking minutes from the tool, rail from the seed, "could not verify" for metro or bus. |
+| Routes TRANSIT unavailable inside Japan (always) | Handled per destination: Japan routes use the seed file, every other route tries live TRANSIT first (verified working outside Japan), "could not verify" only when both are empty. Intra-city bus/metro transit has no tool for any destination, walking only. |
 | SSE connection drops | The run continues on disk. The page reloads from `?trip=<slug>` in the URL. |
 | Review disagrees with a fixture | `scripts/review_eval.sh` fails. Tighten the check wording in `review.md`, not the fixture. Two rounds max, then report. |
 
@@ -210,4 +211,4 @@ The problem statement runs Destination, Logistics and Budget in parallel. Budget
 
 ## 10. Out of scope for v1
 
-Booking, accounts, a list of past trips, embedded maps, PDF export, metro and bus timings inside Japan, hotel prices from a booking API.
+Booking, accounts, a list of past trips, embedded maps, PDF export, metro and bus timings for any destination (walking only), hotel prices from a booking API.

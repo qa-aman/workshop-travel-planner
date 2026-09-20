@@ -36,8 +36,9 @@ mcp = MCPServer("travel-tools")
 
 @mcp.tool()
 def search_places(query: str, city: str, place_type: str | None = None, max_results: int = 8) -> dict:
-    """Search real places (temples, food streets, hotels, neighbourhoods) via Google Places.
-    place_type examples: buddhist_temple, shinto_shrine, restaurant, lodging, tourist_attraction.
+    """Search real places (attractions, food areas, hotels, neighbourhoods, any city on earth) via Google Places.
+    place_type examples: tourist_attraction, restaurant, lodging, museum, park, night_club, market,
+    buddhist_temple, shinto_shrine (any Google Places type, pick whichever fits the query).
     Returns {"places": [...]} or {"error": "..."}. Report an error as "could not verify"."""
     return _search_places(query, city, place_type, max_results)
 
@@ -51,8 +52,13 @@ def get_walking_route(origin: str, destination: str) -> dict:
 
 @mcp.tool()
 def get_rail_route(origin_city: str, destination_city: str) -> dict:
-    """Shinkansen segment between two Japanese cities from seeded, source-cited JR Central fare data.
-    Returns train, duration_min, fare_jpy_reserved, fare_jpy_hikari, source_url, or {"error": "could not verify ..."}."""
+    """Inter-city rail/transit segment between any two cities. Checks a seeded, source-cited JR
+    Central fare table first (Japan only, needed because Google Routes TRANSIT reliably returns
+    no itinerary inside Japan), then falls back to a live Google Routes TRANSIT lookup for every
+    other city pair, which does return real transit data outside Japan.
+    Seed result: train, duration_min, fare_jpy_reserved, fare_jpy_hikari, source_url, source "seed".
+    Live result: line, duration_min, distance_m, fare_amount, fare_currency (fare may be null),
+    source "tool". Either path: {"error": "could not verify ..."} when nothing is found."""
     return _get_rail_route(origin_city, destination_city)
 
 

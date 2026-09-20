@@ -27,7 +27,7 @@ Generated on DD-MM-YYYY. Budget $<limit>. Likes: <likes>. Avoids: <avoids>.
 | stay | | <nights> x midpoint <band> |
 | transport | | train + <days> x local transit |
 | food | | <days> x midpoint |
-| activities | | <n> temple entries x midpoint |
+| activities | | <n> attraction/activity entries x midpoint |
 | buffer | | 10% |
 | **Total** | | vs limit $<limit> |
 

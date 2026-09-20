@@ -132,9 +132,10 @@ def eval_logistics(folder: Path, brief: dict) -> None:
 
 def eval_budget(folder: Path) -> None:
     md = (folder / "03-budget.md").read_text()
+    no_conversion = re.search(r"1 USD = 1 USD \(no conversion needed\)", md)
     fx = re.search(r"1 USD = (.+?) [A-Z]{3} on (\S+)", md)
-    ok = bool(fx) and (DDMMYYYY.fullmatch(fx.group(2).rstrip(".,)")) is not None or "could not verify" in fx.group(1))
-    check("budget.fx", ok, f"FX line: {fx.group(0) if fx else 'missing'}")
+    ok = bool(no_conversion) or (bool(fx) and (DDMMYYYY.fullmatch(fx.group(2).rstrip(".,)")) is not None or "could not verify" in fx.group(1)))
+    check("budget.fx", ok, f"FX line: {no_conversion.group(0) if no_conversion else (fx.group(0) if fx else 'missing')}")
     rows, hdr = section_tables(md, "Category split")
     shares = [int(s.rstrip("%")) for s in col(rows, hdr, "Share") if s.rstrip("%").isdigit()]
     check("budget.shares", sum(shares) == 100, f"category shares sum {sum(shares)}")
