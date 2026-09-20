@@ -18,14 +18,14 @@
     "avoids": [
       "crowds"
     ],
-    "start_date": null,
+    "start_date": "22-09-2026",
     "travellers": 1,
     "slug": "sample-japan"
   },
   "days": [
     {
       "day": 1,
-      "date": null,
+      "date": "22-09-2026",
       "city": "Tokyo",
       "area": "Nezu / Yanaka",
       "slots": [
@@ -66,7 +66,7 @@
     },
     {
       "day": 2,
-      "date": null,
+      "date": "23-09-2026",
       "city": "Tokyo",
       "area": "Nezu / Yanaka",
       "slots": [
@@ -107,7 +107,7 @@
     },
     {
       "day": 3,
-      "date": null,
+      "date": "24-09-2026",
       "city": "Tokyo to Kyoto",
       "area": "Transit day",
       "slots": [
@@ -148,7 +148,7 @@
     },
     {
       "day": 4,
-      "date": null,
+      "date": "25-09-2026",
       "city": "Kyoto",
       "area": "Shimogyo Ward",
       "slots": [
@@ -189,7 +189,7 @@
     },
     {
       "day": 5,
-      "date": null,
+      "date": "26-09-2026",
       "city": "Kyoto",
       "area": "Shimogyo Ward (departure)",
       "slots": [

@@ -2,11 +2,19 @@
   "request": "Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.",
   "destination": "Japan",
   "days": 5,
-  "cities": ["Tokyo", "Kyoto"],
+  "cities": [
+    "Tokyo",
+    "Kyoto"
+  ],
   "budget_usd": 3000,
-  "likes": ["food", "temples"],
-  "avoids": ["crowds"],
-  "start_date": null,
+  "likes": [
+    "food",
+    "temples"
+  ],
+  "avoids": [
+    "crowds"
+  ],
+  "start_date": "22-09-2026",
   "travellers": 1,
   "slug": "sample-japan"
 }
