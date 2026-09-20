@@ -37,7 +37,8 @@
           "crowd_tactic": "Arrive 07:30, before tour buses and school groups",
           "transit_min_from_prev": null,
           "est_cost_usd": 5.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=10361244767556222835"
         },
         {
           "when": "afternoon",
@@ -47,7 +48,8 @@
           "crowd_tactic": "Weekday, before 11:30 or after 14:00, avoid Saturday and Sunday lunch peak",
           "transit_min_from_prev": 102,
           "est_cost_usd": 22.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=10979141230727447234"
         },
         {
           "when": "evening",
@@ -57,7 +59,8 @@
           "crowd_tactic": "Go before 18:00, weekday evenings are quieter",
           "transit_min_from_prev": 18,
           "est_cost_usd": 22.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=1146276811127959512"
         }
       ]
     },
@@ -75,7 +78,8 @@
           "crowd_tactic": "Arrive 08:00, before tour groups",
           "transit_min_from_prev": null,
           "est_cost_usd": 5.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=9846179875119807780"
         },
         {
           "when": "afternoon",
@@ -85,7 +89,8 @@
           "crowd_tactic": "Visit off-peak, 15:00 to 17:00",
           "transit_min_from_prev": 120,
           "est_cost_usd": 22.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=10276194420627875328"
         },
         {
           "when": "evening",
@@ -95,7 +100,8 @@
           "crowd_tactic": "Early dinner, 17:30",
           "transit_min_from_prev": 111,
           "est_cost_usd": 22.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=5231569841113892392"
         }
       ]
     },
@@ -113,7 +119,8 @@
           "crowd_tactic": "n/a, not a venue",
           "transit_min_from_prev": 195,
           "est_cost_usd": 88.48,
-          "source": "seed"
+          "source": "seed",
+          "url": null
         },
         {
           "when": "afternoon",
@@ -123,7 +130,8 @@
           "crowd_tactic": "Instead of Kinkaku-ji, choose this quiet alternative",
           "transit_min_from_prev": 139,
           "est_cost_usd": 5.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=6320713090685638098"
         },
         {
           "when": "evening",
@@ -133,7 +141,8 @@
           "crowd_tactic": "Go before 18:00 to skip the dinner queue",
           "transit_min_from_prev": 139,
           "est_cost_usd": 45.0,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=2783494925524911278"
         }
       ]
     },
@@ -151,7 +160,8 @@
           "crowd_tactic": "Arrive 06:30, before tour buses, walk past the third torii cluster where crowds thin",
           "transit_min_from_prev": null,
           "est_cost_usd": 5.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=8870624639634301673"
         },
         {
           "when": "afternoon",
@@ -161,7 +171,8 @@
           "crowd_tactic": "Visit on a non-market weekday for solitude",
           "transit_min_from_prev": 49,
           "est_cost_usd": 5.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=15271193799445412112"
         },
         {
           "when": "evening",
@@ -171,7 +182,8 @@
           "crowd_tactic": "Early dinner, 17:30, weekday visit, avoid Friday and Saturday night crowds",
           "transit_min_from_prev": 65,
           "est_cost_usd": 45.0,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=10680744316999396392"
         }
       ]
     },
@@ -189,7 +201,8 @@
           "crowd_tactic": "Arrive at 08:00 opening",
           "transit_min_from_prev": null,
           "est_cost_usd": 5.5,
-          "source": "tool"
+          "source": "tool",
+          "url": "https://maps.google.com/?cid=16261116435795248450"
         },
         {
           "when": "afternoon",
@@ -199,7 +212,8 @@
           "crowd_tactic": "n/a, not a venue",
           "transit_min_from_prev": 108,
           "est_cost_usd": 9.0,
-          "source": "estimate"
+          "source": "estimate",
+          "url": null
         },
         {
           "when": "evening",
@@ -209,7 +223,8 @@
           "crowd_tactic": "n/a, not a venue",
           "transit_min_from_prev": 0,
           "est_cost_usd": 0.0,
-          "source": "estimate"
+          "source": "estimate",
+          "url": null
         }
       ]
     }
@@ -225,12 +240,14 @@
         {
           "name": "HOTEL GRAPHY NEZU",
           "rating": 4.3,
-          "price_level": null
+          "price_level": null,
+          "url": "https://maps.google.com/?cid=6955171263224555104"
         },
         {
           "name": "The Barn Tokyo",
           "rating": 4.8,
-          "price_level": null
+          "price_level": null,
+          "url": "https://maps.google.com/?cid=11672325580269703741"
         }
       ]
     },
@@ -244,12 +261,14 @@
         {
           "name": "KIORI Exec Muromachi Hotel",
           "rating": 4.8,
-          "price_level": null
+          "price_level": null,
+          "url": "https://maps.google.com/?cid=7758284965727017128"
         },
         {
           "name": "Onyado Nono Kyotoshichijo",
           "rating": 4.5,
-          "price_level": null
+          "price_level": null,
+          "url": "https://maps.google.com/?cid=4570594780403514887"
         }
       ]
     }

@@ -32,7 +32,8 @@
                 "crowd_tactic": {"type": "string"},
                 "transit_min_from_prev": {"type": ["integer", "null"]},
                 "est_cost_usd": {"type": ["number", "null"]},
-                "source": {"enum": ["tool", "seed", "estimate", "could not verify"]}
+                "source": {"enum": ["tool", "seed", "estimate", "could not verify"]},
+                "url": {"type": ["string", "null"]}
               }
             }
           }

@@ -173,7 +173,15 @@ export function ItineraryView() {
                       </Typography>
                       <Box sx={{ flex: 1 }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap" }}>
-                          <Typography variant="body1">{s.name}</Typography>
+                          <Typography variant="body1">
+                            {s.url ? (
+                              <Link href={s.url} target="_blank" rel="noopener noreferrer">
+                                {s.name}
+                              </Link>
+                            ) : (
+                              s.name
+                            )}
+                          </Typography>
                           <Typography variant="caption" color="text.secondary">
                             {s.kind}
                             {s.transit_min_from_prev != null ? `, ${s.transit_min_from_prev} min from previous` : ""}

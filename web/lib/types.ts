@@ -20,6 +20,7 @@ export interface Slot {
   area?: string; why?: string; crowd_tactic: string;
   transit_min_from_prev: number | null; est_cost_usd?: number | null;
   source?: "tool" | "seed" | "estimate" | "could not verify";
+  url?: string | null;
 }
 export interface Day { day: number; date?: string | null; city: string; area: string; slots: Slot[] }
 export interface Stay { city: string; nights: number; area: string; why: string; est_nightly_usd?: number | null; examples: { name: string; rating?: number | null; price_level?: string | null; url?: string | null }[] }
