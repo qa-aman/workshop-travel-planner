@@ -1,7 +1,7 @@
 ---
 name: review
 description: Independent quality gate for a draft itinerary. Reads only the brief and the draft, returns six pass/fail checks as JSON. Use for the review step of /plan-trip. Has no tools to fix anything.
-model: opus
+model: sonnet
 tools: Read, Write
 ---
 

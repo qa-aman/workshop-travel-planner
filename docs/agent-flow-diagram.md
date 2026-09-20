@@ -32,7 +32,7 @@ flowchart TD
 
     O3 --> R
 
-    subgraph GATE [Step 4 Review gate, Opus, no tools]
+    subgraph GATE [Step 4 Review gate, Sonnet, no tools]
         R[review<br>reads only brief and draft<br>six pass or fail checks<br>writes 05-review.json]
     end
 
@@ -147,7 +147,7 @@ flowchart LR
 | destination-research | Sonnet | search_places, get_weather | 00-brief.json | 01-destinations.md: 6 to 10 candidates per city, 3 to 4 must-do, crowd tactic and source on every row | 3 lines | plan days, pick hotels, price anything |
 | logistics | Sonnet | search_places (lodging), get_walking_route, get_rail_route | 00-brief.json | 02-logistics.md: one base area per city, 2 hotel examples per area, night split, Shinkansen with seeded fare, day skeleton with walking minutes | 3 lines | state a metro or bus time, pick temples, sum a budget |
 | budget | Sonnet | convert_currency | 00-brief.json, 02-logistics.md if present | 03-budget.md: category split, price bands USD and JPY, cuts if over, upgrades if under | 3 lines | total the itinerary, pick places |
-| review | Opus | Read, Write only | 00-brief.json, 04-itinerary-draft.md | 05-review.json: six checks, failures with owner and instruction | PASS or FAIL with ids | see worker files, rewrite the plan, suggest places |
+| review | Sonnet | Read, Write only | 00-brief.json, 04-itinerary-draft.md | 05-review.json: six checks, failures with owner and instruction | PASS or FAIL with ids | see worker files, rewrite the plan, suggest places |
 
 ## 4. The six review checks
 
@@ -172,7 +172,7 @@ sequenceDiagram
     participant L as logistics
     participant B as budget
     participant M as travel-tools MCP
-    participant R as review (Opus)
+    participant R as review (Sonnet)
 
     U->>O: request
     O->>O: 00-brief.json

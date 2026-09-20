@@ -61,13 +61,13 @@ Verified against official docs:
 | destination-research | sonnet | travel-tools: search_places, get_weather. Write | brief | `01-destinations.md`: per city 6-10 candidates tagged must-do or nice-to-have, each with name, area, why it fits the likes, crowd tactic (time of day, lesser-known alternative, or "peak, included because must-do"), Places rating, price level. Food areas listed separately. Facts come from tool results, not memory |
 | logistics | sonnet | travel-tools: search_places (hotels), get_walking_route, get_rail_route. Write | brief | `02-logistics.md`: 2 stay areas per city with 2 hotel examples each (name, rating, price level), night split across cities, inter-city Shinkansen with seeded minutes and fare, day-sequence skeleton grouped by area with walking minutes between anchors |
 | budget | sonnet | travel-tools: convert_currency. Read, Write | brief | `03-budget.md`: category split (stay, transport, food, activities, buffer), price bands per category in USD and JPY at today's rate, 2-3 "if over, cut here" alternatives. Every number labelled estimate or tool-verified |
-| review | opus | Read, Write (Write is needed for 05-review.json, independence is by prompt and by the absence of MCP tools) | draft itinerary + brief | `05-review.json`: six checks, each pass or fail with a one-line reason, `failures[]` naming the owning agent. Checks: fits the day count, includes every requested city, total within budget, matches likes, every item carries a crowd tactic, travel time realistic |
+| review | sonnet | Read, Write (Write is needed for 05-review.json, independence is by prompt and by the absence of MCP tools) | draft itinerary + brief | `05-review.json`: six checks, each pass or fail with a one-line reason, `failures[]` naming the owning agent. Checks: fits the day count, includes every requested city, total within budget, matches likes, every item carries a crowd tactic, travel time realistic |
 
 Rules that hold across agents:
 1. Review sees only the draft and the brief. It never sees worker reports and has no tools to fix anything. Independence by construction.
 2. Each worker writes its file and returns a 3-line summary to the orchestrator. Keeps orchestrator context small, gives the UI something to show the moment a worker finishes.
 3. A tool error or empty result becomes "could not verify X" in the report. Never filled from memory.
-4. Sonnet for workers and for the orchestrator, Opus for review only. Changed 19-09-2026 after the first dry run cost $6.41, of which $4.71 was Opus, most of it the orchestrator's synthesis turns. The orchestrator's job is mechanical merging against a template, the review is the only place judgement sits.
+4. Sonnet everywhere, including review. Changed 19-09-2026 after the first dry run cost $6.41, of which $4.71 was Opus, most of it the orchestrator's synthesis turns. Changed again 20-09-2026: review moved from Opus to Sonnet too, since the six checks are structural (day count, city coverage, arithmetic, keyword matching) rather than open judgement, and Opus was the last agent still off the Sonnet baseline.
 
 ## 5. MCP travel-tools
 

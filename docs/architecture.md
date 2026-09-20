@@ -102,7 +102,7 @@ Workers write a file and return three lines. The orchestrator's context stays sm
 
 | | |
 |---|---|
-| Where | `.claude/agents/review.md`, Opus |
+| Where | `.claude/agents/review.md`, Sonnet |
 | Tools | Read, Write. No MCP. Independence by prompt and by the absence of MCP tools, not by withholding Write, which is needed for `05-review.json`. |
 | Reads | `00-brief.json`, `04-itinerary-draft.md`, nothing else |
 | Writes | `05-review.json` |

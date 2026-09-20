@@ -16,7 +16,7 @@ Facts come from the `travel-tools` MCP server, never from memory.
 5. Prices are estimates unless a tool returned them. Say which.
 6. Decisions go in `docs/decisions.md` the moment they are made. Any deviation from the spec in `docs/superpowers/specs/` is written into the spec and logged in `docs/superpowers/specs/changelog.md` in the same commit, with the reason.
 7. Every correction from Aman is recorded in `docs/feedback.md` in the same turn, as a class of mistake with the check that prevents it. Read that file before starting work.
-8. Commits: lowercase imperative, under 72 chars, trailer `Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>`.
+8. Commits: lowercase imperative, under 72 chars, trailer matching whichever Claude model is running the session (the session's own system context states the exact line).
 
 ## How the system fits together
 
@@ -24,7 +24,7 @@ One request, five agents, one MCP server, artifacts on disk. The full picture is
 
 1. **Entry points.** Terminal: `/plan-trip "<request>"` (`.claude/skills/plan-trip/SKILL.md`). Web: `web/app/api/plan/route.ts` calls the Agent SDK `query()` with `cwd` = repo root and `settingSources: ["project"]`, so it runs the same skill, agents and `.mcp.json` as the terminal. There is one procedure, in the skill file. Do not duplicate it in code or here.
 2. **Fan-out.** The orchestrator (main session, Sonnet, start the terminal with `claude --model sonnet`) writes `trips/<slug>/00-brief.json`, then launches `destination-research`, `logistics` and `budget` (Sonnet) in one message so they run in parallel. Each writes its own file (`01-`, `02-`, `03-`) and returns three lines. The orchestrator synthesises `04-itinerary-draft.md` from the three files.
-3. **Gate.** `review` (Opus) reads only the brief and the draft, has no MCP tools, and writes `05-review.json` with six pass/fail checks. On fail the orchestrator re-runs only the agents named in `failures[]`, once, then ships `itinerary.md` and `itinerary.json` with warnings if still failing.
+3. **Gate.** `review` (Sonnet) reads only the brief and the draft, has no MCP tools, and writes `05-review.json` with six pass/fail checks. On fail the orchestrator re-runs only the agents named in `failures[]`, once, then ships `itinerary.md` and `itinerary.json` with warnings if still failing.
 4. **Facts.** `mcp/travel-tools/server.py` exposes five tools: `search_places` (Google Places Text Search), `get_walking_route` (Google Routes, WALK mode), `get_rail_route` (seeded `data/japan_rail.json` from the official JR Central fare table), `convert_currency` (Frankfurter), `get_weather` (Open-Meteo). Google Routes has no transit data for Japan, which is why rail is seeded and agents never state a metro or bus time. Every response is cached 24h in `mcp/travel-tools/.cache/`. Every tool returns `{"error": ...}` instead of raising.
 5. **Contracts.** JSON shapes for the brief, the review and the itinerary live in `docs/contracts/`. Agent files, the skill, the review fixtures and `web/lib/types.ts` all follow them. Change a shape there first.
 6. **Web.** `web/lib/sdk-to-events.ts` maps SDK messages to per-agent events using `parent_tool_use_id`. `web/store/run-store.ts` holds one run. Subagent output arrives per message, not per token, so the timeline updates at message granularity.

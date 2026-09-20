@@ -48,7 +48,7 @@ Routes API transit returns an empty response for every request inside Japan. Tes
 | destination-research | Sonnet | Tool calling and extraction. |
 | logistics | Sonnet | Tool calling and extraction. |
 | budget | Sonnet | Arithmetic over bands, one FX call. |
-| review | Opus | Independent judgement, no tools, six checks. |
+| review | Sonnet | Independent judgement, no tools, six checks. |
 
 ## 4. Environment and secrets
 
@@ -69,7 +69,7 @@ Verified 19-09-2026: the web route runs on the local Claude Code login with no A
 | Places Text Search | about 12 to 16 | 5,000 | about 300 |
 | Routes WALK | about 6 to 10 | 10,000 | about 1,000 |
 | Frankfurter, Open-Meteo | 1 to 3 | unlimited | n/a |
-| Claude tokens | 1 Sonnet session + 3 Sonnet workers + 1 Opus review, one optional repair loop | n/a | billed per run |
+| Claude tokens | 1 Sonnet session + 3 Sonnet workers + 1 Sonnet review, one optional repair loop | n/a | billed per run |
 
 Every API response is cached on disk for 24 hours (`mcp/travel-tools/.cache/`), weather 6 hours, so repeated demo runs of the same request cost zero API calls after the first.
 
