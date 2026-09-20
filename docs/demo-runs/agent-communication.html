@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>How the agents communicate</title>
+<style>
+  :root{
+    --bg:#F6F3EA; --ink:#152238; --ink-soft:#4A5568; --card:#FFFFFF; --line:#D8D2C5;
+    --amber:#E8A23D; --amber-dim:#F3D9AE; --violet:#7A5FB5; --green:#3C7A5B; --red:#BD4B2C;
+    --grey:#8A8D97; --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding-block:24px;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  .wrap{max-width:1040px;margin:0 auto;padding-inline:20px}
+  header{margin-bottom:22px}
+  h1{font-size:24px;font-weight:650;margin:0 0 6px}
+  .sub{color:var(--ink-soft);max-width:680px;font-size:14.5px}
+  .tabs{display:flex;gap:8px;margin:20px 0 18px;flex-wrap:wrap}
+  .tab{padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:13.5px;font-weight:600;color:var(--ink-soft)}
+  .tab.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-soft);margin:0 0 20px;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .stage{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;position:relative;transition:box-shadow .2s ease, border-color .2s ease}
+  .stage.active{border-color:var(--ink);box-shadow:0 0 0 3px rgba(21,34,56,0.08)}
+  .stage.dim{opacity:.4}
+  .stage-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .stage-num{font-family:var(--mono);font-size:12px;color:var(--grey);min-width:20px}
+  .stage-title{font-weight:650;font-size:14.5px}
+  .stage-mode{font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:999px;letter-spacing:.02em}
+  .mode-parallel{background:#EAF2ED;color:var(--green)}
+  .mode-seq{background:#F0EAFB;color:var(--violet)}
+  .mode-cond{background:#FDEFE2;color:#B0742A}
+  .stage-desc{color:var(--ink-soft);font-size:13.5px;margin-top:6px;max-width:760px}
+  .agent-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .agent-box{flex:1 1 150px;min-width:130px;border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;background:#FBFAF6}
+  .agent-box.dispatch{border-color:var(--amber);background:#FFF7EB}
+  .agent-box.orchestrator{border-color:var(--ink);background:#F0F1F4}
+  .agent-name{font-weight:650;font-size:12.5px}
+  .agent-role{font-size:11px;color:var(--ink-soft);margin-top:2px}
+  .files{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+  .file-chip{font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:6px;background:#EDEAE0;color:#4A4536;border:1px solid #DDD6C4}
+  .file-chip.write::before{content:'write  ';color:var(--amber);font-weight:700}
+  .file-chip.read::before{content:'read  ';color:var(--violet);font-weight:700}
+  .note{font-size:12px;color:var(--grey);margin-top:8px;font-style:italic}
+  .controls{display:flex;gap:8px;align-items:center;margin:18px 0}
+  button.ctl{padding:8px 14px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);font-weight:600;font-size:13px;cursor:pointer}
+  button.ctl:disabled{opacity:.35;cursor:default}
+  button.ctl.ghost{background:transparent;color:var(--ink)}
+  .progress{font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
+  .callout{background:#F0F1F4;border-left:3px solid var(--ink);border-radius:6px;padding:12px 14px;font-size:13px;color:var(--ink-soft);margin:18px 0}
+  .callout b{color:var(--ink)}
+  [hidden]{display:none!important}
+  @media(max-width:560px){.agent-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>How the agents in this repo talk to each other</h1>
+    <p class="sub">Every box below is one of the files in <code>.claude/agents/</code>. Click through the steps to see the order,
+    which agents run at the same time, and the file each one reads or writes to hand off its work. There is no direct
+    agent-to-agent call anywhere, every handoff goes through a file on disk plus a short text summary back to the orchestrator.</p>
+  </header>
+
+  <div class="callout">
+    <b>The one rule that explains everything below:</b> agents never call each other. The orchestrator (the main
+    Claude Code session) dispatches each subagent with the Agent tool, the subagent reads only the file paths it was
+    given, writes its own output file, and returns 2-3 lines of plain text. The orchestrator is the only thing that
+    ever reads more than one agent's output.
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-flow="plan">/plan-trip &mdash; planning a new trip</button>
+    <button class="tab" data-flow="revise">/revise-trip &mdash; changing an existing trip</button>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--green)"></span> runs in parallel with its neighbours</span>
+    <span><span class="dot" style="background:var(--violet)"></span> runs alone, after the previous step finishes</span>
+    <span><span class="dot" style="background:#B0742A"></span> only runs if a condition is met</span>
+    <span><span class="dot" style="background:var(--amber)"></span> file written this step</span>
+    <span><span class="dot" style="background:#7A5FB5"></span> file read this step</span>
+  </div>
+
+  <div class="controls">
+    <button class="ctl ghost" id="prev">&larr; back</button>
+    <button class="ctl" id="next">step through &rarr;</button>
+    <button class="ctl ghost" id="reset">show all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <div id="stages"></div>
+</div>
+
+<script>
+const PLAN_FLOW = [
+  {
+    title: "Orchestrator parses the request",
+    mode: "seq",
+    desc: "The main session (not a subagent) reads the natural-language request and writes the structured brief. No agent is dispatched yet.",
+    agents: [
+      { name: "Orchestrator", role: "main Claude Code session", kind: "orchestrator" }
+    ],
+    files: [ { name: "00-brief.json", op: "write" } ],
+    note: "Slug is decided here too: lowercase destination + cities + a 4-char hash."
+  },
+  {
+    title: "Fan-out: 3 workers launched in ONE message",
+    mode: "parallel",
+    desc: "The orchestrator dispatches all three at once via the Agent tool, so they run concurrently. Each reads only the brief and calls the travel-tools MCP server directly for facts, no worker ever reads another worker's file.",
+    agents: [
+      { name: "destination-research", role: "search_places, get_weather", kind: "dispatch" },
+      { name: "logistics", role: "search_places, get_walking_route, get_rail_route", kind: "dispatch" },
+      { name: "budget", role: "convert_currency", kind: "dispatch" }
+    ],
+    files: [
+      { name: "00-brief.json", op: "read" },
+      { name: "01-destinations.md", op: "write" },
+      { name: "02-logistics.md", op: "write" },
+      { name: "03-budget.md", op: "write" }
+    ],
+    note: "Each worker returns 3 lines of text to the orchestrator when done, that's the only thing that travels back besides the file."
+  },
+  {
+    title: "Orchestrator synthesises the draft",
+    mode: "seq",
+    desc: "Only the orchestrator ever reads all three worker files together. It merges them into one draft, following the itinerary template.",
+    agents: [ { name: "Orchestrator", role: "reads all 3 worker files, writes one draft", kind: "orchestrator" } ],
+    files: [
+      { name: "01-destinations.md", op: "read" }, { name: "02-logistics.md", op: "read" }, { name: "03-budget.md", op: "read" },
+      { name: "04-itinerary-draft.md", op: "write" }
+    ]
+  },
+  {
+    title: "Review: independent quality gate",
+    mode: "seq",
+    desc: "review sees only the brief and the draft, never the three worker files, and has no MCP tools. That's deliberate: it can only judge structure and arithmetic, not re-check facts, so it can't inherit a worker's blind spot.",
+    agents: [ { name: "review", role: "6 pass/fail checks, no tools to fix anything", kind: "dispatch" } ],
+    files: [ { name: "00-brief.json", op: "read" }, { name: "04-itinerary-draft.md", op: "read" }, { name: "05-review.json", op: "write" } ]
+  },
+  {
+    title: "Repair loop (only if review fails)",
+    mode: "cond",
+    desc: "Only the specific worker(s) named in 05-review.json's failures[] get re-dispatched, each with the exact instruction to fix. This runs at most once, ever, then the orchestrator ships the plan regardless.",
+    agents: [ { name: "e.g. logistics only", role: "re-run with a targeted fix instruction", kind: "dispatch" } ],
+    files: [ { name: "05-review.json", op: "read" }, { name: "02-logistics.md", op: "write" } ],
+    note: "Then Steps 3 and 4 (synthesise, review) run one more time on the same files."
+  },
+  {
+    title: "Finalise",
+    mode: "seq",
+    desc: "The orchestrator writes the two files a human or the web app actually opens. Every intermediate file above stays on disk too, so any handoff can be inspected after the run.",
+    agents: [ { name: "Orchestrator", role: "no subagent involved", kind: "orchestrator" } ],
+    files: [ { name: "itinerary.md", op: "write" }, { name: "itinerary.json", op: "write" } ]
+  }
+];
+
+const REVISE_FLOW = [
+  {
+    title: "Orchestrator loads the existing trip",
+    mode: "seq",
+    desc: "No agent dispatched yet. This only works on a trip that already exists on disk, from a prior /plan-trip run.",
+    agents: [ { name: "Orchestrator", role: "main session", kind: "orchestrator" } ],
+    files: [ { name: "00-brief.json", op: "read" }, { name: "itinerary.json", op: "read" } ]
+  },
+  {
+    title: "Classify the change",
+    mode: "seq",
+    desc: "trip-revision is a classifier, not a re-planner: Read-only, no MCP tools, same independence-by-construction as review. It decides what kind of change this is and which worker agents will need to re-run.",
+    agents: [ { name: "trip-revision", role: "date-shift / duration-change / cutoff, or ask", kind: "dispatch" } ],
+    files: [ { name: "itinerary.json", op: "read" }, { name: "revision-plan.json", op: "write" } ],
+    note: "If it can't tell (e.g. no city named for an extension, or a date is genuinely ambiguous), it lists needs_user_input and the orchestrator stops and asks. No agent ever guesses."
+  },
+  {
+    title: "Apply the change to the day list",
+    mode: "seq",
+    desc: "This is the orchestrator's own deterministic logic, not a subagent: shift dates, drop days after a cutoff (and any now-empty city's stay and inter-city leg), or insert/append new days for an extension.",
+    agents: [ { name: "Orchestrator", role: "no subagent, pure date/day-list arithmetic", kind: "orchestrator" } ],
+    files: [ { name: "revision-plan.json", op: "read" } ]
+  },
+  {
+    title: "Re-run only the affected workers, for only the affected days",
+    mode: "cond",
+    desc: "Only dispatched when the classifier's reverify flags say so, e.g. a date shift across seasons, or any brand-new day (an extension always needs real venues, not copied content). Launched together in one message when more than one applies, same fan-out pattern as /plan-trip.",
+    agents: [
+      { name: "destination-research", role: "only for new/affected days", kind: "dispatch" },
+      { name: "logistics", role: "only for new/affected days", kind: "dispatch" },
+      { name: "budget", role: "recompute totals", kind: "dispatch" }
+    ],
+    files: [ { name: "01-destinations.md", op: "write" }, { name: "02-logistics.md", op: "write" }, { name: "03-budget.md", op: "write" } ],
+    note: "A pure date-shift within the same season can skip this step entirely, dates just move, venues and prices stay."
+  },
+  {
+    title: "Re-synthesise",
+    mode: "seq",
+    desc: "Same merge logic as /plan-trip Step 3, but days untouched by the change keep their exact existing content, only the changed days and the budget totals get rewritten.",
+    agents: [ { name: "Orchestrator", role: "no subagent involved", kind: "orchestrator" } ],
+    files: [ { name: "01-destinations.md", op: "read" }, { name: "02-logistics.md", op: "read" }, { name: "03-budget.md", op: "read" }, { name: "04-itinerary-draft.md", op: "write" } ]
+  },
+  {
+    title: "Review, always",
+    mode: "seq",
+    desc: "The same independent gate as /plan-trip, run every single time, even for a change that needed no re-verification at all. A date shift into a different season is exactly the kind of thing this exists to catch.",
+    agents: [ { name: "review", role: "same 6 checks as a fresh plan", kind: "dispatch" } ],
+    files: [ { name: "00-brief.json", op: "read" }, { name: "04-itinerary-draft.md", op: "read" }, { name: "05-review.json", op: "write" } ]
+  },
+  {
+    title: "Finalise, in place",
+    mode: "seq",
+    desc: "Same slug, same files, overwritten. A revision never forks a new trip folder, the link the user already has keeps working. The change itself gets appended to a permanent, append-only log.",
+    agents: [ { name: "Orchestrator", role: "no subagent involved", kind: "orchestrator" } ],
+    files: [ { name: "itinerary.md", op: "write" }, { name: "itinerary.json", op: "write" }, { name: "06-revisions.json", op: "write" } ],
+    note: "06-revisions.json is never rewritten, only appended to, so every past revision stays on record."
+  }
+];
+
+let flow = PLAN_FLOW;
+let cursor = -1; // -1 means "show all, nothing focused"
+
+const stagesEl = document.getElementById("stages");
+const progressEl = document.getElementById("progress");
+
+function modeLabel(m){
+  return m === "parallel" ? "runs in parallel" : m === "cond" ? "conditional" : "runs alone";
+}
+function modeClass(m){
+  return m === "parallel" ? "mode-parallel" : m === "cond" ? "mode-cond" : "mode-seq";
+}
+
+function render(){
+  stagesEl.innerHTML = "";
+  flow.forEach((s, i) => {
+    const el = document.createElement("div");
+    el.className = "stage";
+    if (cursor !== -1) {
+      if (i === cursor) el.classList.add("active");
+      else if (i > cursor) el.classList.add("dim");
+    }
+    const agentsHtml = s.agents.map(a =>
+      `<div class="agent-box ${a.kind}"><div class="agent-name">${a.name}</div><div class="agent-role">${a.role}</div></div>`
+    ).join("");
+    const filesHtml = s.files.map(f => `<span class="file-chip ${f.op}">${f.name}</span>`).join("");
+    el.innerHTML = `
+      <div class="stage-head">
+        <span class="stage-num">${String(i+1).padStart(2,'0')}</span>
+        <span class="stage-title">${s.title}</span>
+        <span class="stage-mode ${modeClass(s.mode)}">${modeLabel(s.mode)}</span>
+      </div>
+      <div class="stage-desc">${s.desc}</div>
+      <div class="agent-row">${agentsHtml}</div>
+      <div class="files">${filesHtml}</div>
+      ${s.note ? `<div class="note">${s.note}</div>` : ""}
+    `;
+    stagesEl.appendChild(el);
+  });
+  progressEl.textContent = cursor === -1 ? `${flow.length} steps, showing all` : `step ${cursor+1} of ${flow.length}`;
+  document.getElementById("prev").disabled = cursor <= 0;
+  document.getElementById("next").disabled = cursor >= flow.length - 1 && cursor !== -1 ? false : cursor >= flow.length - 1;
+}
+
+document.getElementById("next").addEventListener("click", () => {
+  cursor = cursor === -1 ? 0 : Math.min(cursor + 1, flow.length - 1);
+  render();
+});
+document.getElementById("prev").addEventListener("click", () => {
+  if (cursor > 0) cursor--;
+  render();
+});
+document.getElementById("reset").addEventListener("click", () => {
+  cursor = -1;
+  render();
+});
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    flow = btn.dataset.flow === "plan" ? PLAN_FLOW : REVISE_FLOW;
+    cursor = -1;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
