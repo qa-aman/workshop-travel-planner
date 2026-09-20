@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Build Journey</title>
+<style>
+  :root{
+    --bg:#F6F3EA; --ink:#152238; --ink-soft:#4A5568; --card:#FFFFFF; --line:#D8D2C5;
+    --amber:#E8A23D; --amber-soft:#FBEFDA; --violet:#7A5FB5; --violet-soft:#F0EAFB;
+    --green:#3C7A5B; --green-soft:#EAF2ED; --red:#BD4B2C; --red-soft:#FBEAE3;
+    --navy:#152238; --navy-soft:#EDEFF3; --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;padding-block:0;background:var(--bg);color:var(--ink);font:15.5px/1.62 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  a{color:var(--violet)}
+  code{font-family:var(--mono);font-size:0.92em;background:#EDEAE0;padding:1px 5px;border-radius:4px}
+
+  /* Hero */
+  .hero{background:var(--navy);color:var(--bg);padding:56px 20px 44px}
+  .hero-inner{max-width:900px;margin:0 auto}
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin:0 0 10px}
+  h1{font-size:32px;font-weight:650;margin:0 0 14px;line-height:1.2}
+  .hero p{color:rgba(246,243,234,0.78);max-width:640px;font-size:16px;margin:0 0 8px}
+  .hero-stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:26px}
+  .stat{min-width:100px}
+  .stat b{display:block;font-size:26px;font-family:var(--mono);color:var(--amber)}
+  .stat span{font-size:12px;color:rgba(246,243,234,0.6)}
+  .hero-links{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap}
+  .hero-links a{display:inline-block;padding:8px 14px;border-radius:8px;border:1px solid rgba(246,243,234,0.3);color:var(--bg);text-decoration:none;font-size:13px}
+  .hero-links a:hover{border-color:var(--amber);color:var(--amber)}
+
+  /* Layout */
+  .layout{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:220px 1fr;gap:36px;padding:36px 20px 80px}
+  @media (max-width:820px){.layout{grid-template-columns:1fr}}
+  nav.toc{position:sticky;top:16px;align-self:start;font-size:13px;max-height:calc(100vh - 32px);overflow-y:auto}
+  @media (max-width:820px){nav.toc{position:static;max-height:none;border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--card)}}
+  nav.toc .toc-title{font-weight:650;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:8px}
+  nav.toc a{display:block;color:var(--ink-soft);text-decoration:none;padding:4px 0;border-left:2px solid transparent;padding-left:10px;margin-left:-1px}
+  nav.toc a:hover,nav.toc a.active{color:var(--ink);border-left-color:var(--amber)}
+  nav.toc .toc-sub a{padding-left:20px;font-size:12.3px}
+
+  main{min-width:0}
+  section{margin-bottom:52px;scroll-margin-top:16px}
+  .phase-label{font-family:var(--mono);font-size:12px;color:var(--amber);letter-spacing:.05em;text-transform:uppercase;margin:0 0 4px}
+  h2{font-size:23px;font-weight:650;margin:0 0 6px}
+  h3{font-size:16.5px;font-weight:650;margin:26px 0 8px}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px;padding-left:22px}
+  li{margin-bottom:5px}
+
+  /* Prompt quote card */
+  .prompt{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--violet);border-radius:8px;padding:16px 18px;margin:16px 0;position:relative}
+  .prompt-label{font-family:var(--mono);font-size:11px;color:var(--violet);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .prompt-label .ts{color:var(--ink-soft);text-transform:none;font-weight:400;letter-spacing:0}
+  .prompt-text{white-space:pre-wrap;font-size:14.5px;color:var(--ink)}
+  .prompt-text em.typo{font-style:normal;color:var(--ink-soft)}
+
+  /* Outcome / what happened box */
+  .outcome{background:var(--green-soft);border:1px solid #C7DECF;border-radius:8px;padding:14px 18px;margin:14px 0}
+  .outcome .label{font-family:var(--mono);font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+
+  .caught{background:var(--red-soft);border:1px solid #EFC9B8;border-radius:8px;padding:14px 18px;margin:14px 0}
+  .caught .label{font-family:var(--mono);font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+
+  .lesson{background:var(--amber-soft);border:1px solid #EFD5A6;border-radius:8px;padding:14px 18px;margin:14px 0}
+  .lesson .label{font-family:var(--mono);font-size:11px;color:#8A5A1C;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+
+  .filepath{font-family:var(--mono);font-size:12.5px;background:var(--navy-soft);color:var(--navy);padding:2px 8px;border-radius:5px;display:inline-block;margin:2px 0}
+
+  /* Commit strip */
+  .commit{display:flex;gap:12px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .commit .cdate{font-family:var(--mono);color:var(--ink-soft);min-width:130px;flex-shrink:0}
+  .commit .cmsg{color:var(--ink)}
+  .commit-group{margin:14px 0}
+
+  details.commit-log{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 16px;margin:16px 0}
+  details.commit-log summary{cursor:pointer;padding:12px 0;font-weight:650;font-size:14px}
+  details.commit-log[open] summary{border-bottom:1px solid var(--line)}
+  .commit-body{max-height:500px;overflow-y:auto;padding:8px 0 12px}
+
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--navy-soft);font-weight:650}
+
+  .divider{height:1px;background:var(--line);margin:44px 0}
+
+  .flow-steps{display:flex;flex-direction:column;gap:0;margin:16px 0;counter-reset:step}
+  .flow-step{display:flex;gap:14px;padding:12px 0;border-left:2px solid var(--line);padding-left:18px;position:relative}
+  .flow-step::before{counter-increment:step;content:counter(step);position:absolute;left:-13px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--navy);color:var(--bg);font-family:var(--mono);font-size:12px;display:flex;align-items:center;justify-content:center}
+  .flow-step .ft{font-weight:650;font-size:14px}
+  .flow-step .fd{font-size:13.5px;color:var(--ink-soft);margin-top:2px}
+
+  .pill-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+  .pill{font-family:var(--mono);font-size:11.5px;padding:4px 10px;border-radius:999px;background:var(--navy-soft);color:var(--navy);border:1px solid var(--line)}
+
+  footer{text-align:center;padding:40px 20px 60px;color:var(--ink-soft);font-size:12.5px}
+
+  [hidden]{display:none!important}
+  img{max-width:100%}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <p class="kicker">NextLeap Workshop &middot; Build Journal</p>
+    <h1>How the AI Travel Planner actually got built</h1>
+    <p>Not a polished case study written after the fact. This is reconstructed directly from the session transcripts (JSONL files) and the git history: every real prompt typed, in order, alongside what Claude Code actually did with it, what broke, what got caught, and what changed as a result.</p>
+    <p>Two features shipped this way: the original 5-agent travel planner, and a trip-revision capability added the next day, in direct response to using the first one for real and hitting its limits.</p>
+    <div class="hero-stats">
+      <div class="stat"><b>72</b><span>git commits</span></div>
+      <div class="stat"><b>64</b><span>human prompts, start to finish</span></div>
+      <div class="stat"><b>6</b><span>agents (5 planning + 1 revision)</span></div>
+      <div class="stat"><b>~2 days</b><span>19&ndash;20 Sep 2026</span></div>
+    </div>
+    <div class="hero-links">
+      <a href="agent-communication.html">Agent communication diagram &rarr;</a>
+      <a href="https://github.com/qa-aman/workshop-travel-planner" target="_blank" rel="noopener">GitHub repo &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <a href="#how-to-read">How to read this</a>
+  <a href="#phase1">1. Problem &rarr; Brainstorm</a>
+  <a href="#phase2">2. Spec &rarr; Plan</a>
+  <a href="#phase3">3. Subagent-driven build</a>
+  <a href="#phase4">4. The web app &amp; the model question</a>
+  <a href="#phase5">5. Shipping v1</a>
+  <a href="#phase6">6. A screenshot breaks the story</a>
+  <a href="#phase7">7. Fixing what real use exposed</a>
+  <a href="#phase8">8. Second feature: trip revision</a>
+  <a href="#phase9">9. Quality gate on the new feature</a>
+  <a href="#phase10">10. Using it for real: Marseille</a>
+  <a href="#lessons">Patterns worth stealing</a>
+  <a href="#commits">Full commit log</a>
+</nav>
+
+<main>
+
+<section id="how-to-read">
+  <p class="phase-label">Before you start</p>
+  <h2>How to read this document</h2>
+  <p>Every purple-bordered box below is <strong>Aman's own words, quoted directly</strong> from the session transcript &mdash; typos and all, because that is genuinely how the instructions arrived. Green boxes are what happened as a direct result. Red boxes are something that broke or got caught along the way. Amber boxes are the transferable lesson &mdash; the thing worth remembering past this one project.</p>
+  <p>The point of showing it this way, rather than a cleaned-up summary, is that the real skill on display in this project was never "write a spec" or "call an API." It was a repeating loop: <strong>state the goal, let the system work, look at the real output, catch what's wrong, fix the cause not the symptom, and write down why.</strong> That loop is visible in almost every section below.</p>
+</section>
+
+<section id="phase1">
+  <p class="phase-label">Phase 1 &middot; 19-09-2026, morning</p>
+  <h2>The problem statement, and a hard rule about brainstorming first</h2>
+  <p>The project started from a workshop problem statement, pasted in full. It described a 5-agent system (Orchestrator, Destination Research, Logistics, Budget, Review) for a hypothetical <code>"Plan a 5-day trip to Japan"</code> request. Nothing was built yet.</p>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman, opening message <span class="ts">19-09-2026 08:45</span></div>
+    <div class="prompt-text">I'm sharing the problem statement. Based on this problem statement, we need to create a product. Let's brainstorm first before doing an implementation plan, and let's brainstorm how we can do this technically. What is possible? Feel free to ask questions if you have any doubt before creating any documentation.
+
+user askuserquestion tool to ask doubts until we are on the same pge..</div>
+  </div>
+
+  <p>That second line is the instruction that shaped the entire project's working style: <strong>use the structured question tool, not assumptions, and don't stop until aligned.</strong> Claude Code's brainstorming process (a built-in skill called <code>superpowers:brainstorming</code>) is built exactly for this &mdash; it hard-blocks writing any spec or code until the human has approved a design in chat.</p>
+
+  <p>The brainstorm covered runtime choice (Claude Code native agents vs. hand-rolled orchestration), how agents should get facts, hosting, and the review pattern. Two follow-ups reshaped the plan mid-brainstorm:</p>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">19-09-2026 08:55</span></div>
+    <div class="prompt-text">We also want to build front end for this... also
+
+rather than looking and checking for web search, are there any APIs available that we can use to do it?</div>
+  </div>
+
+  <div class="outcome">
+    <div class="label">What happened</div>
+    The plan pivoted from "agents use web search for facts" to "agents call named MCP tools backed by real APIs": Google Places Text Search, Google Routes, Frankfurter (currency), Open-Meteo (weather). This is a fundamentally different architecture &mdash; named tools with typed JSON responses are deterministic and can be unit-tested; web search results cannot. A Next.js front end with a live agent timeline was added to the scope in the same message.
+  </div>
+
+  <div class="lesson">
+    <div class="label">Pattern worth stealing</div>
+    A one-line redirect from the human, asked early, changed the entire data-fetching architecture before a single line of code existed. This is the value of the brainstorming gate: the question "are there real APIs?" is far cheaper to answer before Task 1 than after Task 9.
+  </div>
+</section>
+
+<section id="phase2">
+  <p class="phase-label">Phase 2 &middot; 19-09-2026, morning</p>
+  <h2>Spec, then a plan, then the discipline files</h2>
+  <p>Once the design was agreed in chat, Claude Code wrote it to a spec document (<span class="filepath">docs/superpowers/specs/19-09-2026-travel-planner-multi-agent-design.md</span>), reviewed section by section.</p>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">19-09-2026 09:13</span></div>
+    <div class="prompt-text">spec looks fine, go ahead with the implementation plan and create implementation-plan.md file</div>
+  </div>
+
+  <p>Before any implementation started, three process files got set up &mdash; and this is worth dwelling on, because it is the single biggest reason the project stayed coherent across two days and dozens of subagent dispatches.</p>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">19-09-2026 09:30</span></div>
+    <div class="prompt-text">with the development of this, which is sub-agent-driven development, let's create decisions.md separately. Package creation and decision aggregation development are done.
+
+Whenever we make any changes apart from the spec, we need to modify the spec file. We also need to have a changelog.md file under the spec folder itself so that we know when the changes have happened and why the changes have happened, and for what reasons.</div>
+  </div>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">19-09-2026 09:38</span></div>
+    <div class="prompt-text">create feedback.md file
+
+whenever I correct you if you make any mistakes, all of those points need to be added as part of the feedback.md so that, in the future, we will not make those mistakes again. This is something you need to make sure of: whenever I correct you, it needs to be added. Whenever any development or anything that we do, this point should be taken care of.</div>
+  </div>
+
+  <div class="lesson">
+    <div class="label">Pattern worth stealing</div>
+    Three files, three jobs, never merged: <code>decisions.md</code> records every choice a reasonable engineer could have made differently, with the reasoning. <code>changelog.md</code> records every place the shipped code drifted from the approved spec, and why. <code>feedback.md</code> records every correction Aman gave, as a reusable class with a check that prevents it recurring. By the end of the project <code>decisions.md</code> had reached <strong>D-036</strong>. A future session (or a fresh subagent with zero memory of this conversation) can read these three files and understand exactly what happened and why, without ever reading the chat transcript.
+  </div>
+</section>
+
+<section id="phase3">
+  <p class="phase-label">Phase 3 &middot; 19-09-2026, mid-morning</p>
+  <h2>16 tasks, one subagent per task, and a reviewer that actually finds things</h2>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">19-09-2026 09:36</span></div>
+    <div class="prompt-text">go ahead, start with subagent-driven execution from task 1</div>
+  </div>
+
+  <p>This invoked a specific Claude Code pattern (<code>superpowers:subagent-driven-development</code>): for each task in the plan, dispatch a fresh implementer subagent with only that task's brief (never the whole plan, never the conversation history), let it write code test-first, then dispatch a <strong>separate, independent</strong> reviewer subagent that sees only the diff and the brief &mdash; never the implementer's reasoning. If the reviewer finds something, the implementer fixes it, and the reviewer checks again. This repeated for all 16 tasks.</p>
+
+  <p>The controlling instructions from Aman during this phase were short and mostly sequencing:</p>
+  <div class="pill-row">
+    <span class="pill">"continue with task 3"</span>
+    <span class="pill">"can u check it again"</span>
+    <span class="pill">"MAKE SURE TO USE /frontend-design:frontend-design skill to build the UI"</span>
+    <span class="pill">"continue with task 7 once task 6 is done"</span>
+    <span class="pill">"continue with task 10 once task 9 is done"</span>
+  </div>
+  <p>The actual engineering rigor came from the review loop itself, running without needing Aman to inspect every diff. Three real examples from the transcript:</p>
+
+  <div class="caught">
+    <div class="label">Caught by the independent reviewer, Task 2</div>
+    The implementer's own report said tests ran on CPython 3.14.3, not the 3.12 the spec named as a floor (<code>requires-python = "&gt;=3.12"</code>). The reviewer flagged this as unmet even though the tests were green &mdash; "the reported GREEN evidence verified behavior on 3.14.3, not the Python version the spec names." Fixed by adding a <code>.python-version</code> file pinning 3.12, re-tested, re-reviewed, confirmed.
+  </div>
+
+  <div class="caught">
+    <div class="label">Caught by the independent reviewer, Task 3</div>
+    A commit trailer used <code>Claude Haiku 4.5</code> where the spec's global constraint named <code>Claude Opus 5 (1M context)</code>. Small, but the reviewer called it out as "an explicit binding constraint... not a stylistic choice the implementer gets to override unilaterally."
+  </div>
+
+  <div class="caught">
+    <div class="label">Caught by the independent reviewer, Tasks 4 and 5 (the same class of bug, twice)</div>
+    A test asserting "no HTTP call was made on a bad date" had no mock active and no assertion that would actually catch a real network call &mdash; it only proved an error was returned, not that the code took the right path to get there. The reviewer named this precisely: "the test would pass identically whether or not a real network call were attempted." Fixed by monkeypatching the HTTP function to raise if it were ever called at all, turning the test into something that would genuinely fail if the guard clause moved.
+  </div>
+
+  <div class="lesson">
+    <div class="label">Pattern worth stealing</div>
+    A green test suite is not evidence of a correct guarantee &mdash; it's only evidence the assertions written happened to pass. The reviewer's real job across all three catches above was asking "what would make this test pass even if the property it claims to prove were false?" That question is answerable by a reviewer with zero context, precisely because it never sees the implementer's intent, only the artifact.
+  </div>
+
+  <h3>Two mid-build course corrections</h3>
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">19-09-2026 10:17</span></div>
+    <div class="prompt-text">are there any evals file that u have created?</div>
+  </div>
+  <div class="outcome">
+    <div class="label">What happened</div>
+    None existed yet. Aman's follow-up &mdash; <em>"yes, add task 11b for worker and orchestrator evals"</em> &mdash; inserted a new task mid-plan: a mechanical structural check (<code>scripts/worker_eval.py</code>) that runs over any completed trip folder and checks candidate counts, crowd tactics, sources, FX formatting, day headings, and the JSON schema, independent of whether the itinerary text "reads well."
+  </div>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">19-09-2026 10:28</span></div>
+    <div class="prompt-text">chaneg the opus model to sonnet for orchestrator agent</div>
+  </div>
+  <div class="outcome">
+    <div class="label">What happened</div>
+    The first dry run had already been costed: $6.41, of which $4.71 was Opus, most of it the orchestrator's synthesis turns &mdash; a mechanical merge-against-a-template task that Sonnet handles fine. Logged as D-019. The review agent followed the same logic to Sonnet the next day, once its six checks were shown to be structural rather than requiring deep judgement.
+  </div>
+</section>
+
+<section id="phase4">
+  <p class="phase-label">Phase 4 &middot; 19-09-2026, mid-morning</p>
+  <h2>Gemini, Vertex, and why the answer stayed "no"</h2>
+  <p>Partway through, Aman asked a sequence of questions that are worth showing in full because the reasoning matters more than the answer:</p>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman, four messages across 15 minutes</div>
+    <div class="prompt-text">rather than using anthropic api key, can we use gemini api key? any resotriction ?
+
+give me the handover plan if I want to move to vertex from this... create a md file for this what are the changes required and whether I can do this in claude code or not.
+
+but we are running this product on the local server,I will not push this to any cloud...then whether I can use gemini api or not..we will be creating the UI for this...and running the local server...on my system that is part of task 12 onwards..so whether it weil cause any issue if I use gemini api or not?? it will be open URL,. no login we need for this product.
+
+but why cant we create the local server so there is no depednency on claude code</div>
+  </div>
+
+  <div class="outcome">
+    <div class="label">What happened</div>
+    The answer stayed no, and the reasoning was written down rather than just stated: the Agent SDK that powers this whole system runs Claude Code, which only ever calls Claude models &mdash; via Claude's own platform, Bedrock, Google Cloud's Agent Platform, or Foundry. A Gemini key cannot substitute, local server or not, because the constraint is the runtime, not the hosting location. Rather than leave it there, a full handover document (<span class="filepath">docs/standalone-server-handover.md</span>) was written covering exactly what a Phase 2 rebuild on a provider-agnostic server would need &mdash; roughly 70% of the existing code (tools, contracts, prompts, fixtures, UI) would carry over. v1 stayed on Claude Code; the standalone path was documented, not built, and explicitly deferred.
+  </div>
+
+  <div class="lesson">
+    <div class="label">Pattern worth stealing</div>
+    "Why not X" deserves a real, sourced answer even when the answer is no &mdash; and when the underlying tension is real (wanting model flexibility later), write the escape hatch down instead of debating it in chat. The handover doc meant this question never had to be re-litigated.
+  </div>
+</section>
+
+<section id="phase5">
+  <p class="phase-label">Phase 5 &middot; 19-09-2026 evening &ndash; 20-09-2026 morning</p>
+  <h2>Shipping v1, hitting the usage limit, and picking back up</h2>
+  <p>Build continued through the web app tasks (the Next.js UI, the live agent timeline, the SSE streaming route), a committed sample run (<span class="filepath">trips/sample-japan/</span>), and a handover check. One session interruption is worth showing because of how cleanly it recovered:</p>
+
+  <div class="prompt">
+    <div class="prompt-label">System message, after a usage limit reset <span class="ts">19-09-2026 13:21</span></div>
+    <div class="prompt-text">Your claude.ai usage limit has reset. Continue the task you were working on when the limit was reached; do not repeat work that is already complete.</div>
+  </div>
+  <p>Because progress lived in <code>decisions.md</code>, the plan file's checked-off tasks, and git commits &mdash; not just in conversation memory &mdash; picking back up cost nothing. The session also ran <code>/compact</code> twice across the two days (Claude Code's built-in context-summarization), and both times the resulting summary was detailed enough that work continued without re-explaining anything.</p>
+  <p>The first version shipped to GitHub as a public repo on branch <code>build</code>, with a request to also produce a standalone HTML "run log" of a real request for the workshop cohort to study without needing to run anything themselves &mdash; a preference that shaped every later "make a document" request in this project:</p>
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">20-09-2026 05:55</span></div>
+    <div class="prompt-text">Don't create an interactive walkthrough, but create an independent HTML file and save it in this particular repository only so that it can be committed, and give it to the learners.</div>
+  </div>
+  <div class="lesson">
+    <div class="label">Pattern worth stealing</div>
+    A plain, self-contained, committed HTML file beats a hosted interactive artifact for handing something to a workshop cohort &mdash; no external dependency, works offline, lives in the repo history, reviewable in a PR. This exact page is built to that same instruction.
+  </div>
+</section>
+
+<section id="phase6">
+  <p class="phase-label">Phase 6 &middot; 20-09-2026, early morning</p>
+  <h2>A screenshot breaks the "it's done" story</h2>
+  <p>Once the app was running, Aman used it for real &mdash; and immediately found the gap that no amount of code review had caught: the system worked, but only for Japan.</p>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman, with a screenshot of the logistics agent card <span class="ts">20-09-2026 06:02</span></div>
+    <div class="prompt-text">why its checking Japan only... as a user, I can give different destinations and different parameters, so the agents in this particular program should not be specific to any city, any destination, or any parameter. It must be dynamic, and I can give it, and it should be able to handle it. do the check, if anything static., Then make it dynamic...
+
+/goal check if anything static ... destinations or any static parameters available as part of the agents and any tools, calls, or MCP servers that need to be made dynamic. A user can give any parameters for the itinerary plan that need to be handled.
+1. Once you find out the issues, fix it.
+2. Review the issues.
+3. Review the fix.
+4. With the sub-agent, verify with the QA agent.
+5. Until and unless there are no issues identified that are blockers and critical, do the fixes.
+6. Once the issues are finalized, stop it and give me the final result.</div>
+  </div>
+
+  <p>That six-step instruction became the template for every non-trivial fix for the rest of the project: audit, fix, review, review the fix, independent QA, repeat until nothing blocking remains, then stop and report.</p>
+
+  <div class="caught">
+    <div class="label">What the audit found</div>
+    <code>get_rail_route</code> genuinely only ever checked Japan &mdash; but the deeper cause was more interesting than "someone forgot a city": Google Routes' TRANSIT mode had been probed live weeks earlier and found to return an empty result for every request <em>inside Japan specifically</em> (verified: identical request to London worked). The fix at the time was a seeded lookup table for Japan rail fares. But nobody had ever added the fallback for everywhere else &mdash; so the tool silently reported "could not verify" for every non-Japan route, even though the live TRANSIT API worked fine outside Japan the whole time. Two independent QA passes then found two more real gaps: the web UI hardcoded the literal string "JPY" in the currency display regardless of destination, and the review agent's "matches likes" rule only recognized "temple" as a kind, biasing every non-Japan trip's evaluation.
+  </div>
+
+  <div class="lesson">
+    <div class="label">Pattern worth stealing</div>
+    The bug was never really "Japan-only." It was <em>"the fallback path for every other case was never written,"</em> which is a much more common and much less visible failure &mdash; code that works perfectly for the one example everyone tested against, and silently degrades for everything else. The fix was verified live against a second real destination (Paris, Lyon) before it was trusted, not just unit-tested against a mock.
+  </div>
+</section>
+
+<section id="phase7">
+  <p class="phase-label">Phase 7 &middot; 20-09-2026, early morning</p>
+  <h2>Real screenshots, three more fixes</h2>
+  <p>In the same sitting, two more concrete complaints landed, each with a screenshot attached:</p>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman, with a screenshot of the itinerary table <span class="ts">20-09-2026 06:27</span></div>
+    <div class="prompt-text">1. in this the table format is not proper.. improve it. - itenerary.md file
+2. in this itinerary.md file, also add the source link of hotels and from where the estimated price per USD is coming. That's something which you need to add. Also, whenever a user asks for any itinerary plan and if the dates are not provided, then you need to ask for the dates upfront so that you can plan the itinerary accordingly. Those are the mandatory steps.</div>
+  </div>
+
+  <div class="caught">
+    <div class="label">Root cause, not just the symptom</div>
+    The visible bug was one broken table. The actual cause &mdash; missing the GFM header-separator row (<code>|---|---|---|</code>) required immediately after a markdown table's header row &mdash; was traced through three layers: the output file, the agent's own template, and the shared skill template all four agents draw from. It was fixed at the template layer, in all four agent files at once, not patched in the one visible file.
+  </div>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">20-09-2026 06:42</span></div>
+    <div class="prompt-text">you are mentioning any places. For example, in this file, you are mentioning the Eiffel Tower and other places [...] All of this must have a hyperlink so that the user can check and see these places.</div>
+  </div>
+
+  <div class="outcome">
+    <div class="label">What happened</div>
+    The Google Places API call had been returning a real Maps link (<code>maps_url</code>) for every place all along &mdash; it was simply never surfaced in any agent's markdown output. The fix generalized the hyperlink from "hotels only" (the literal ask) to every venue named anywhere in an itinerary, updating the schema, the destination-research agent, the synthesis mapping rules, and the web UI together, then applying it retroactively to the already-committed sample-Japan reference file, since that's what workshop learners actually open.
+  </div>
+</section>
+
+<section id="phase8">
+  <p class="phase-label">Phase 8 &middot; 20-09-2026, later morning</p>
+  <h2>A second feature: revising a trip after the fact</h2>
+  <p>Once v1 was solid, Aman raised a genuinely new capability &mdash; and immediately set a hard rule about how to approach it.</p>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">20-09-2026 09:12</span></div>
+    <div class="prompt-text">One major chaneg we want to do as following..
+
+If a user had the plan ready but there was a change in the dates, then this entire project should accept the change in dates and should adjust the plan accordingly. Maybe even in the middle of the trip, if a user wanted to end the trip early or extend the trip, there should be one agent which tackles such user queries and adjusts the travel plan accordingly.
+
+As of now, we are just doing the brainstorming related to the change that I am asking you to do. Ask me as many questions as possible until and unless we are not on the same page. Once we agree, then only will we start the building part.</div>
+  </div>
+
+  <p>What followed was a genuine back-and-forth &mdash; multiple rounds of structured questions (using the same AskUserQuestion tool from Phase 1) covering: does a revision apply before departure only, or mid-trip too; how does the system know what day the traveler is on; what change types are in scope this round; and, deliberately left open for Claude Code to research and recommend rather than ask about: how should a revised trip be versioned on disk. That last one was answered by checking what TripIt and Wanderlog actually do (edit in place, one shareable link, never fork per edit) and noting this repo already follows the identical pattern for its own specs.</p>
+
+  <div class="flow-steps">
+    <div class="flow-step"><div class="ft">Brainstorm, four rounds of AskUserQuestion</div><div class="fd">Scope: date shift, duration change, mid-trip cutoff. Deferred: budget/likes changes (a different problem). Versioning: overwrite in place, append-only log &mdash; researched, not guessed.</div></div>
+    <div class="flow-step"><div class="ft">Spec amendment, same file</div><div class="fd"><em>"But do we write in the same spec... or create a new spec itself?"</em> &mdash; answered by precedent already set in this exact repo: one living design doc per system, amendments appended, never forked into spec-v2.md.</div></div>
+    <div class="flow-step"><div class="ft">Implementation plan, 11 tasks</div><div class="fd">A new classifier agent (<code>trip-revision</code>, read-only, no travel tools &mdash; decides what changed, never edits anything itself), a new <code>/revise-trip</code> skill that reuses the existing three worker agents rather than duplicating their logic, a new JSON contract, fixture-based tests, and both a terminal and web entry point.</div></div>
+    <div class="flow-step"><div class="ft">Built task by task, same discipline as Phase 3</div><div class="fd">Each task's own verification command run and confirmed before moving to the next &mdash; schema validation, structural eval, pytest, tsc, vitest, and a real headless run of the new eval script against three fixtures.</div></div>
+  </div>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman, approving the plan <span class="ts">20-09-2026 09:48</span></div>
+    <div class="prompt-text">lets go ahead and build this.. using /feature-dev:feature-dev</div>
+  </div>
+</section>
+
+<section id="phase9">
+  <p class="phase-label">Phase 9 &middot; 20-09-2026, mid-morning</p>
+  <h2>Three reviewers, in parallel, before calling it done</h2>
+  <p>Rather than one reviewer, this round used three independent code-reviewer subagents dispatched in parallel, each briefed on a different lens: simplicity and duplication, correctness and bugs, and adherence to this project's own conventions and the approved spec.</p>
+
+  <table>
+    <tr><th>Reviewer</th><th>What it found</th></tr>
+    <tr><td>Simplicity / DRY</td><td>The new web API route duplicated ~85% of the existing plan route, including the trickiest part (SSE disconnect handling) &mdash; the extraction done on one side of the codebase was never mirrored on the other.</td></tr>
+    <tr><td>Correctness / bugs</td><td>Three real logic gaps: extending a non-last city in the itinerary had contradictory date math; a city name was never checked against the itinerary's actual cities before being trusted; and a multi-visit itinerary (same city twice) could leave a stale, unreachable inter-city leg after a cutoff. Also: the new agent was never registered in the web UI's event-attribution list, so its work would have silently shown up as generic orchestrator activity.</td></tr>
+    <tr><td>Conventions / spec fidelity</td><td>A semicolon slipped into the new agent's own prompt file &mdash; violating a rule that file itself states, a repeat of an exact defect class fixed once before. Also: the spec's new subsections were numbered wrong, colliding with an existing section.</td></tr>
+  </table>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman, after the consolidated findings <span class="ts">20-09-2026 10:02</span></div>
+    <div class="prompt-text">fix all 8</div>
+  </div>
+
+  <div class="outcome">
+    <div class="label">What happened</div>
+    All eight were fixed in one pass, re-verified with the full test suite, and one reviewer suggestion was deliberately <strong>rejected</strong> rather than blindly applied: a suggested permission-flag change would have quietly broken the eval script's ability to write files, because this exact project had already discovered (and documented, as D-022) a real quirk in how Claude Code's permission system checks path-scoped rules. Applying every review comment without cross-checking prior decisions would have reintroduced a bug that had already been fixed once.
+  </div>
+
+  <p>A follow-up closed a real coverage gap in the new tests &mdash; three more fixtures (a round-trip city, a non-terminal city extension, an unknown city) were added specifically because the first three fixtures never exercised the bugs the review round had just found:</p>
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">20-09-2026 10:08</span></div>
+    <div class="prompt-text">lets go ahread as per recommendation and fix those</div>
+  </div>
+
+  <div class="lesson">
+    <div class="label">Pattern worth stealing</div>
+    Multiple reviewers with different lenses, dispatched in parallel, found different classes of problem that a single reviewer likely would have missed one of. And a review finding is a recommendation, not an order &mdash; it should be checked against what the project already knows, not applied on faith.
+  </div>
+</section>
+
+<section id="phase10">
+  <p class="phase-label">Phase 10 &middot; 20-09-2026, late morning</p>
+  <h2>Using the new feature for real, immediately</h2>
+  <p>The very next thing Aman did with the finished trip-revision feature was use it on his own real, already-planned France trip &mdash; not a test fixture.</p>
+
+  <div class="prompt">
+    <div class="prompt-label">Aman <span class="ts">20-09-2026 10:24</span></div>
+    <div class="prompt-text">Yeah, sure. I'm on a 3-day trip from Ahmedabad to France, and I would like to extend it to 2 more days. Adjust my travel plan and let me know what could be the places that I can visit in the next 2 days.</div>
+  </div>
+
+  <p>This single request surfaced things no amount of fixture testing had: the existing France trip had no real dates on file at all (it predated the date-backfill work), the classifier correctly refused to guess them, and once real dates were supplied, the request named <strong>Marseille</strong> &mdash; a city that was never part of the original trip. The classifier, exactly as designed, refused to invent a new city stop.</p>
+
+  <div class="caught">
+    <div class="label">A real scope gap, found by dogfooding, not by review</div>
+    The original design had explicitly deferred "adding a new city to an existing trip" as out of scope. Faced with an actual user wanting exactly that, the right call was to widen the scope on the spot: if the city is <em>explicitly named</em> by the user, trust it and append it at the end of the trip with full re-verification, rather than reflexively refusing. Logged as a scope amendment (D-036) to the same spec section, with the reasoning: refusing an explicit instruction is a worse failure than the caution the deferral was meant to prevent.
+  </div>
+
+  <div class="caught">
+    <div class="label">A fabricated number, caught before it shipped</div>
+    While verifying walking times for the new Marseille day, the routing tool returned "17 minutes" between two stops. That number implied roughly 16.6 km/h on foot &mdash; physically impossible, and Ch&acirc;teau d'If is in fact an island fort reachable only by ferry. Rather than report it, the number was rejected and the leg was honestly marked "could not verify," with a note that a ferry crossing needs to be booked separately. The final itinerary also carried an honest warning that the worst-case budget (if every unverified fare landed at the top of its estimated band) would exceed the $3,000 limit by $164 &mdash; not hidden, shown plainly with the mitigation already on file.
+  </div>
+
+  <div class="lesson">
+    <div class="label">Pattern worth stealing</div>
+    Every fix in this entire project that mattered was found by looking at a real output, not by reasoning about the code in the abstract &mdash; a screenshot of a broken table, a real French trip exposing a Japan-only assumption, and finally the new revision feature immediately meeting a request its own designer hadn't scoped for. A system is only as good as its last real use, and the discipline throughout was to treat that as information, write it down, and fix the actual cause.
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="lessons">
+  <p class="phase-label">Summary</p>
+  <h2>Patterns worth stealing for your own project</h2>
+  <ol>
+    <li><strong>Brainstorm before you build, with a hard gate.</strong> No spec, no code, until the human has approved a design in chat. A one-line redirect asked early ("are there real APIs?") is nearly free; asked after Task 9 it is a rewrite.</li>
+    <li><strong>Three files, three jobs, never merged.</strong> A decision log (why we chose X over Y), a spec changelog (where the shipped code drifted from the approved design and why), and a feedback log (every correction, generalized into a reusable check). A future session with zero memory of the conversation can pick up exactly where it left off by reading these.</li>
+    <li><strong>An independent reviewer sees the artifact, never the reasoning.</strong> The reviewer that caught the Python pin, the commit trailer, and the "test doesn't prove what it claims" bugs never saw the implementer's intent &mdash; only the diff and the brief. That's what let it ask "what would make this pass even if the property were false?" instead of trusting the story.</li>
+    <li><strong>A review finding is a recommendation, not an order.</strong> One suggested fix was correctly rejected because it contradicted something this project had already verified and documented. Blind compliance with every review comment would have reintroduced a fixed bug.</li>
+    <li><strong>Multiple reviewers with different lenses beat one generalist reviewer.</strong> Simplicity, correctness, and convention-fidelity each found things the others missed, dispatched in parallel rather than sequentially.</li>
+    <li><strong>A green test suite proves the assertions passed, not that the guarantee holds.</strong> The recurring "does this test actually prove what it claims" catch appeared at least three separate times across this project, on different code.</li>
+    <li><strong>Nothing beats using the real thing.</strong> Every substantive fix in this project traced back to a real screenshot, a real second destination, or a real personal trip &mdash; never to abstract code review alone.</li>
+    <li><strong>Root-cause, don't patch the visible symptom.</strong> A broken table in one file turned out to be a missing template rule shared by four agent files. A "Japan-only" bug turned out to be a missing fallback path that had simply never been written for anywhere else.</li>
+    <li><strong>When you widen scope mid-build, say so, in the same place the original scope was written.</strong> The Marseille extension wasn't just coded &mdash; the spec section that had explicitly deferred it was amended, with the reasoning for the change on record next to the original decision.</li>
+  </ol>
+</section>
+
+<div class="divider"></div>
+
+<section id="commits">
+  <p class="phase-label">Reference</p>
+  <h2>The full commit history</h2>
+  <p>Every commit below is real, pulled directly from <code>git log</code>, oldest first. Read top to bottom and you can watch the exact order things were built in &mdash; scaffold, then MCP tools one at a time with tests, then agents, then the web app, then the sample run, then two days later the destination-agnostic fixes, then the entire trip-revision feature.</p>
+  <details class="commit-log">
+    <summary>72 commits, 19&ndash;20 September 2026 (click to expand)</summary>
+    <div class="commit-body" id="commit-log-body"></div>
+  </details>
+</section>
+
+</main>
+</div>
+
+<footer>
+  Built from this project's own session transcripts and git history. Every quoted prompt above is verbatim.
+</footer>
+
+<script>
+const COMMITS = [
+["19-09-2026 14:39","add travel planner multi-agent design spec"],
+["19-09-2026 14:57","add implementation plan, tech stack and architecture docs"],
+["19-09-2026 14:58","close worker-failure gap in plan-trip step and fix punctuation"],
+["19-09-2026 15:02","add decision log and spec changelog, wire discipline into plan"],
+["19-09-2026 15:08","add repo scaffold, env template and mcp registration"],
+["19-09-2026 15:10","augment claude.md with architecture and commands, add feedback log"],
+["19-09-2026 15:12","add travel-tools mcp package with cache and http helpers"],
+["19-09-2026 15:15","add convert_currency tool backed by frankfurter"],
+["19-09-2026 15:16","pin travel-tools to python 3.12"],
+["19-09-2026 15:17","add get_weather tool backed by open-meteo"],
+["19-09-2026 15:23","add search_places tool backed by google places text search"],
+["19-09-2026 15:24","strengthen weather bad-date test to prove no http call"],
+["19-09-2026 15:26","fix places area fallback and prove missing key skips http"],
+["19-09-2026 15:29","bind ui tasks to the frontend-design skill"],
+["19-09-2026 15:29","add walking route and seeded japan rail tools"],
+["19-09-2026 15:30","stop tracking .env"],
+["19-09-2026 15:30","log .env incident as d-014"],
+["19-09-2026 15:32","add brief, review and itinerary json contracts"],
+["19-09-2026 15:34","add travel-tools mcp server with fail-fast key check"],
+["19-09-2026 15:36","add destination, logistics, budget and review agents"],
+["19-09-2026 15:38","add convert_currency error rule to budget agent"],
+["19-09-2026 15:41","add plan-trip orchestrator skill and itinerary template"],
+["19-09-2026 15:48","add task 11b worker and orchestrator evals to the plan"],
+["19-09-2026 15:59","switch orchestrator to sonnet, log d-019"],
+["19-09-2026 15:59","set sonnet orchestrator in plan route options and dry run"],
+["19-09-2026 16:01","tighten plan-trip mapping, repair prompt and budget headroom"],
+["19-09-2026 16:14","log d-021 on web auth providers"],
+["19-09-2026 16:18","add vertex handover plan"],
+["19-09-2026 16:18","add review agent fixtures and headless eval script"],
+["19-09-2026 16:20","refine d-021 for local single-user auth, add no-key check to task 13"],
+["19-09-2026 16:23","scaffold next.js app with types and sdk event mapper"],
+["19-09-2026 16:24","scope review eval writes to trips and fix missing-kyoto fixture"],
+["19-09-2026 16:27","add standalone server handover and agent flow diagram, log d-023"],
+["19-09-2026 16:33","add worker and orchestrator structural eval"],
+["19-09-2026 16:53","add plan and trips api routes streaming agent events"],
+["19-09-2026 16:59","keep plan run alive on client disconnect, drop slug fallback"],
+["19-09-2026 17:07","add run store, request form and agent timeline"],
+["19-09-2026 17:14","mark loaded runs done, separate revising state, drop transpile config"],
+["19-09-2026 17:20","add itinerary view with days, stays, budget and crowd strip"],
+["19-09-2026 17:24","render zero-minute transits in itinerary view"],
+["19-09-2026 17:29","tighten slug, candidate cap and slot fill rules"],
+["19-09-2026 19:37","add sample japan run and handover check"],
+["19-09-2026 19:42","ban semicolons in agent output and harden six-days fixture"],
+["19-09-2026 19:59","fix source mapping, slot timing and transit rules"],
+["19-09-2026 20:01","surface errors, failed state and reload by url in web app"],
+["19-09-2026 20:04","align docs with the code as built, amend success criterion"],
+["19-09-2026 20:37","regenerate sample japan run and handover check"],
+["20-09-2026 11:21","move review agent from opus to sonnet"],
+["20-09-2026 11:23","fix FX regex to accept any currency, not just JPY"],
+["20-09-2026 11:27","add france trip run-log demo page for workshop learners"],
+["20-09-2026 11:56","make the travel planner destination-agnostic"],
+["20-09-2026 12:04","fix broken markdown tables, add hotel and FX source links, require dates upfront"],
+["20-09-2026 12:17","add real Google Maps links to every venue, not just hotels"],
+["20-09-2026 14:39","ignore .agents/ directory"],
+["20-09-2026 15:19","backfill real per-day dates, prerequisite for trip revision"],
+["20-09-2026 15:20","add revision.schema.json contract with tests"],
+["20-09-2026 15:20","add trip-revision classifier agent"],
+["20-09-2026 15:21","add /revise-trip skill"],
+["20-09-2026 15:21","add trip-revision eval fixtures"],
+["20-09-2026 15:23","add revision_eval.sh, fix missing frontmatter on revise-trip skill"],
+["20-09-2026 15:24","add revision types"],
+["20-09-2026 15:25","add /api/revise route with tests, wire vitest path alias"],
+["20-09-2026 15:25","extract shared SSE streaming, add revise action"],
+["20-09-2026 15:26","add revise trip form to the web app"],
+["20-09-2026 15:27","document trip revision in claude.md, architecture, changelog, decisions"],
+["20-09-2026 15:37","add trip-revision implementation plan"],
+["20-09-2026 15:37","fix 8 review findings in trip revision: date math, city validation, cutoff legs, DRY route extraction"],
+["20-09-2026 15:51","add 3 more trip-revision eval fixtures: round-trip cutoff, non-terminal and unknown-city extension"],
+["20-09-2026 16:01","allow revision to extend a trip into a new, explicitly named city"],
+["20-09-2026 16:02","log D-036: new-city extension scope widening"],
+["20-09-2026 16:04","add interactive html visualization of agent communication"],
+["20-09-2026 16:21","ignore videos/ directory"],
+];
+const body = document.getElementById("commit-log-body");
+body.innerHTML = COMMITS.map(([d,m]) => `<div class="commit"><span class="cdate">${d}</span><span class="cmsg">${m}</span></div>`).join("");
+
+// active TOC highlight
+const links = [...document.querySelectorAll("nav.toc a")];
+const sections = links.map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+function onScroll(){
+  let idx = 0;
+  const y = window.scrollY + 100;
+  sections.forEach((s, i) => { if (s.offsetTop <= y) idx = i; });
+  links.forEach(a => a.classList.remove("active"));
+  if (links[idx]) links[idx].classList.add("active");
+}
+document.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+</script>
+</body>
+</html>
