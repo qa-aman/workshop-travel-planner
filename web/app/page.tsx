@@ -5,6 +5,7 @@ import { AgentTimeline } from "@/components/AgentTimeline";
 import { ErrorBanner } from "@/components/ErrorBanner";
 import { ItineraryView } from "@/components/ItineraryView";
 import { RequestForm } from "@/components/RequestForm";
+import { ReviseForm } from "@/components/ReviseForm";
 import { useRunStore } from "@/store/run-store";
 
 export default function Page() {
@@ -37,6 +38,7 @@ export default function Page() {
         <ErrorBanner />
         <AgentTimeline />
         <ItineraryView />
+        <ReviseForm />
       </Container>
     </>
   );
