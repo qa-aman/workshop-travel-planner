@@ -34,12 +34,14 @@ One request, five agents, one MCP server, artifacts on disk. The full picture is
 | Task | Command |
 |---|---|
 | Plan a trip from the terminal | `claude --model sonnet` then `/plan-trip Plan a 5-day trip to Japan. Tokyo + Kyoto. $3,000 budget. Love food and temples, hate crowds.` |
+| Revise a trip from the terminal | `claude --model sonnet` then `/revise-trip <slug> push the trip back by a week` |
 | MCP unit tests (offline, fixtures) | `cd mcp/travel-tools && uv run pytest -q` |
 | One MCP test | `cd mcp/travel-tools && uv run pytest tests/test_places.py::test_search_places_maps_fields -q` |
 | MCP live smoke (spends real calls) | `set -a && source .env && set +a && cd mcp/travel-tools && LIVE_API_TESTS=1 uv run pytest tests/test_live.py -q` |
 | Run the MCP server by hand | `uv run --project mcp/travel-tools python mcp/travel-tools/server.py` (reads the Google key from the environment or repo `.env`) |
 | Check Claude Code sees the server | `claude mcp list` |
 | Review agent eval (runs `claude -p` five times) | `./scripts/review_eval.sh` |
+| Trip-revision eval (runs `claude -p` three times) | `./scripts/revision_eval.sh` |
 | Structural eval of a run | `uv run --project mcp/travel-tools --with jsonschema python scripts/worker_eval.py trips/<slug>` |
 | Web dev server | `cd web && npm run dev` then http://localhost:3000 |
 | Web unit tests | `cd web && npm test` |
@@ -62,3 +64,5 @@ Environment: `.env` at repo root holds `GOOGLE_MAPS_API_KEY` (code also accepts 
 ## Orchestration
 
 The planning procedure lives in `.claude/skills/plan-trip/SKILL.md`. Both the terminal (`/plan-trip`) and the web app (Agent SDK) run that procedure. Do not duplicate it here. Agent contracts are in `docs/contracts/`.
+
+Revising an existing trip (date shift, duration change, mid-trip cutoff) is a separate procedure in `.claude/skills/revise-trip/SKILL.md`, run the same way on both surfaces (`/revise-trip <slug> <request>` in the terminal, `web/app/api/revise/route.ts` for the web app). It classifies the change with the `trip-revision` agent, then re-runs only the affected worker agents for the affected days, reusing `/plan-trip`'s repair-loop mechanics. A revision overwrites `trips/<slug>/` in place, same slug, and appends to `trips/<slug>/06-revisions.json`, it never forks a new trip folder. See spec section 10.

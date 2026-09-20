@@ -163,6 +163,18 @@ A second `running` after `done` for the same agent is rendered as `revising`, wh
 
 Constraint from the SDK docs: token-level stream events are emitted for the main session only. Subagent output arrives as complete messages. The timeline therefore updates at message granularity, not per token. See [streaming output](https://code.claude.com/docs/en/agent-sdk/streaming-output).
 
+### 5.7 Trip revision
+
+| | |
+|---|---|
+| Where | `.claude/skills/revise-trip/SKILL.md` (procedure), `.claude/agents/trip-revision.md` (classifier) |
+| Trigger | `/revise-trip <slug> <request>` in the terminal, `POST /api/revise {slug, request}` from the web app |
+| Flow | Load `itinerary.json` -> classify with `trip-revision` (Read only, no MCP tools, same independence-by-construction as review) -> apply cutoff/shift/duration changes -> re-run only the named worker agents for only the affected days, reusing the existing repair-loop mechanics -> re-synthesise -> always re-review -> overwrite `trips/<slug>/` in place, append one entry to `06-revisions.json` |
+| Contract | `docs/contracts/revision.schema.json`: `RevisionPlan` (the classifier's output) and `RevisionLogEntry` (one row of the append-only log) |
+| Hard rule | Never forks a new trip folder. Same slug in, same slug out |
+
+See spec section 10 for the full design and the decisions behind it (D-032).
+
 ## 6. Data flow and artifacts
 
 ```
@@ -206,6 +218,8 @@ The problem statement runs Destination, Logistics and Budget in parallel. Budget
 | Review agent | 5 drafts: clean, over budget, missing Kyoto, six days, no crowd tactics | `scripts/review_eval.sh` runs the agent headless and diffs pass/fail per check |
 | SDK to UI mapping | Agent attribution, tool-call naming, summary on tool_result, step detection, failed status on is_error | Vitest, 8 tests |
 | Worker and orchestrator structure | Candidate counts, crowd tactics, sources, source-to-md match, no semicolons, night split, FX format, day headings, itinerary.json schema, six review checks, parallel fan-out | `scripts/worker_eval.py` over `trips/<slug>/`, pytest wraps it in `scripts/tests` |
+| Trip-revision classifier | 3 fixtures: date shift, duration change with a named city, mid-trip cutoff. Checks the classified change type and its key fields | `scripts/revision_eval.sh` runs the agent headless and diffs against `tests/revision-fixtures/*/expected.json` |
+| revision.schema.json | RevisionPlan and RevisionLogEntry shapes, valid and invalid instances | `scripts/tests/test_revision_schema.py` |
 | End to end | Three agents running at once, tool calls visible, six review lines, budget colour, reload from JSON | Browser drive recorded in `docs/handover-check.md` |
 | Not tested | UI glue, orchestrator prose beyond the sample run | by decision |
 
