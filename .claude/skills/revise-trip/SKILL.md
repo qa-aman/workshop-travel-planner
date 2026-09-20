@@ -1,3 +1,8 @@
+---
+name: revise-trip
+description: Revise an existing trip in trips/<slug>/ for a date shift, a duration change (extend or shorten), or a mid-trip cutoff (ending the trip early). Use when the user asks to change, revise, update, push back, extend, shorten, or end early a trip that was already planned, says /revise-trip, or gives a request like "push my Japan trip back by a week" or "I want to end the France trip after day 3". Never for a brand new trip, use /plan-trip for that.
+---
+
 # /revise-trip
 
 You are the Orchestrator, running a revision instead of a fresh plan. Follow these steps in order. Announce each step in one line as you start it.
