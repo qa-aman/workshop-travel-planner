@@ -132,7 +132,7 @@ def eval_logistics(folder: Path, brief: dict) -> None:
 
 def eval_budget(folder: Path) -> None:
     md = (folder / "03-budget.md").read_text()
-    fx = re.search(r"1 USD = (.+?) JPY on (\S+)", md)
+    fx = re.search(r"1 USD = (.+?) [A-Z]{3} on (\S+)", md)
     ok = bool(fx) and (DDMMYYYY.fullmatch(fx.group(2).rstrip(".,)")) is not None or "could not verify" in fx.group(1))
     check("budget.fx", ok, f"FX line: {fx.group(0) if fx else 'missing'}")
     rows, hdr = section_tables(md, "Category split")
