@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TripRevision",
+  "$defs": {
+    "RevisionChange": {
+      "type": "object",
+      "required": ["type", "affected_days", "reverify", "reason"],
+      "properties": {
+        "type": {"enum": ["date-shift", "duration-change", "cutoff"]},
+        "shift_days": {"type": "integer", "description": "date-shift only. Positive moves the trip later, negative earlier."},
+        "delta_days": {"type": "integer", "description": "duration-change only. Positive extends, negative shortens."},
+        "target_city": {"type": ["string", "null"], "description": "duration-change only, required when delta_days > 0. Null means the classifier could not tell which city gets the extra days and the skill must ask."},
+        "cutoff_day": {"type": "integer", "minimum": 1, "description": "cutoff only. The last day number the traveler completes."},
+        "affected_days": {"type": "array", "items": {"type": "integer", "minimum": 1}},
+        "reverify": {
+          "type": "object",
+          "required": ["destination_research", "logistics", "budget"],
+          "properties": {
+            "destination_research": {"type": "boolean"},
+            "logistics": {"type": "boolean"},
+            "budget": {"type": "boolean"}
+          }
+        },
+        "reason": {"type": "string"}
+      }
+    },
+    "RevisionPlan": {
+      "type": "object",
+      "required": ["slug", "today", "changes", "needs_user_input"],
+      "properties": {
+        "slug": {"type": "string"},
+        "today": {"type": "string", "pattern": "^\\d{2}-\\d{2}-\\d{4}$"},
+        "changes": {"type": "array", "items": {"$ref": "#/$defs/RevisionChange"}},
+        "needs_user_input": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field", "question"],
+            "properties": {"field": {"type": "string"}, "question": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "RevisionLogEntry": {
+      "type": "object",
+      "required": ["timestamp", "request", "changes_applied", "days_before", "days_after", "review_pass"],
+      "properties": {
+        "timestamp": {"type": "string", "pattern": "^\\d{2}-\\d{2}-\\d{4} \\d{2}:\\d{2}$"},
+        "request": {"type": "string"},
+        "changes_applied": {"type": "array", "items": {"$ref": "#/$defs/RevisionChange"}},
+        "days_before": {"type": "integer", "minimum": 1},
+        "days_after": {"type": "integer", "minimum": 1},
+        "review_pass": {"type": "boolean"}
+      }
+    }
+  }
+}
