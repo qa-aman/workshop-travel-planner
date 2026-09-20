@@ -196,6 +196,12 @@ New `docs/contracts/revision.schema.json` covers `revision-plan.json` (trip-revi
 
 `web/app/api/revise/route.ts`, a sibling of `web/app/api/plan/route.ts`, calls the same Agent SDK `query()` pattern pointed at `/revise-trip` instead of `/plan-trip`. No new procedure in code, per CLAUDE.md's existing rule that the procedure lives once, in the skill file.
 
+### 10.8 Amendment 20-09-2026: extension to a new city
+
+10.2's "Scope this round" row deferred city changes as "a distinct problem (re-deriving destination fit)". Running the system on a real trip (`trips/france-paris-lyon-0000/`, Paris + Lyon) exposed the deferral as too narrow: a real user asked to extend the trip into Marseille, a city not in the original brief, and `trip-revision.md` rule 4 correctly refused (per its "never treat an unlisted city as a new stay to create" wording) and asked for one of the two existing cities instead. That is the right behaviour for an *unnamed* city (still "never guess"), but wrong for an *explicitly named* one: the user did not need a guess, they stated exactly what they wanted, and refusing an explicit instruction is a worse failure than the deferral was meant to prevent.
+
+Scope widened: a duration-change extension's `target_city` may now name a city outside the current itinerary. `trip-revision.md` rule 4 no longer treats an unlisted city as automatically out of scope, it only asks the user when no city is named at all and the itinerary already has more than one city, matching how it already asks for an unnamed city among existing ones. `revise-trip/SKILL.md` Step 4a gains a branch: a `target_city` not already in `stays[]` is appended at the end of the trip (never inserted mid-sequence, since nothing in the request states a position), gets a new `stays[]` entry sized to `delta_days` nights, a new `intercity[]` leg from the current last city, and the same full `destination-research`/`logistics`/`budget` re-verification any new day already gets. Still deferred, and still out of scope: budget-only and likes-only revisions, which are a genuinely different problem (re-deriving fit against a brief that itself changed, not just adding days to an existing fit).
+
 ## 11. Success criteria
 
 1. The example request produces, in one run, an itinerary that passes all six review checks, with every place name traceable to a `search_places` result and the Tokyo to Kyoto leg traceable to a `get_rail_route` result.
