@@ -6,10 +6,46 @@ const emptyAgents = () =>
 
 interface Actions {
   start: (request: string) => Promise<void>;
+  revise: (slug: string, request: string) => Promise<void>;
   apply: (e: AgentEvent) => void;
   loadTrip: (slug: string) => Promise<void>;
   reset: () => void;
   initFromUrl: () => void;
+}
+
+async function streamAgentEvents(
+  url: string,
+  body: Record<string, string>,
+  apply: (e: AgentEvent) => void,
+  onFail: (message: string) => void,
+): Promise<void> {
+  try {
+    const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    if (!res.ok || !res.body) {
+      let message = `HTTP ${res.status}`;
+      try {
+        const respBody = (await res.json()) as { error?: string };
+        if (respBody?.error) message = respBody.error;
+      } catch {
+        // body was not JSON, keep the HTTP status message
+      }
+      onFail(message);
+      return;
+    }
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const parts = buf.split("\n\n");
+      buf = parts.pop() ?? "";
+      for (const p of parts) if (p.startsWith("data: ")) apply(JSON.parse(p.slice(6)) as AgentEvent);
+    }
+  } catch (err) {
+    onFail(err instanceof Error ? err.message : String(err));
+  }
 }
 
 export const useRunStore = create<RunState & Actions>((set, get) => ({
@@ -51,34 +87,16 @@ export const useRunStore = create<RunState & Actions>((set, get) => ({
   start: async (request) => {
     get().reset();
     set({ phase: "running" });
-    try {
-      const res = await fetch("/api/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request }) });
-      if (!res.ok || !res.body) {
-        let message = `HTTP ${res.status}`;
-        try {
-          const body = (await res.json()) as { error?: string };
-          if (body?.error) message = body.error;
-        } catch {
-          // body was not JSON, keep the HTTP status message
-        }
-        set({ phase: "error", error: message, agents: { ...get().agents, orchestrator: { ...get().agents.orchestrator, status: "failed" } } });
-        return;
-      }
-      const reader = res.body.getReader();
-      const dec = new TextDecoder();
-      let buf = "";
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += dec.decode(value, { stream: true });
-        const parts = buf.split("\n\n");
-        buf = parts.pop() ?? "";
-        for (const p of parts) if (p.startsWith("data: ")) get().apply(JSON.parse(p.slice(6)) as AgentEvent);
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+    await streamAgentEvents("/api/plan", { request }, get().apply, (message) => {
       set({ phase: "error", error: message, agents: { ...get().agents, orchestrator: { ...get().agents.orchestrator, status: "failed" } } });
-    }
+    });
+  },
+
+  revise: async (slug, request) => {
+    set({ phase: "running" });
+    await streamAgentEvents("/api/revise", { slug, request }, get().apply, (message) => {
+      set({ phase: "error", error: message, agents: { ...get().agents, orchestrator: { ...get().agents.orchestrator, status: "failed" } } });
+    });
   },
 
   initFromUrl: () => {
