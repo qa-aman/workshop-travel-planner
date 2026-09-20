@@ -35,6 +35,21 @@ export interface Itinerary {
   crowd_strategy: string[]; review: Review; warnings?: string[];
 }
 
+export interface RevisionChange {
+  type: "date-shift" | "duration-change" | "cutoff";
+  shift_days?: number;
+  delta_days?: number;
+  target_city?: string | null;
+  cutoff_day?: number;
+  affected_days: number[];
+  reverify: { destination_research: boolean; logistics: boolean; budget: boolean };
+  reason: string;
+}
+export interface RevisionLogEntry {
+  timestamp: string; request: string; changes_applied: RevisionChange[];
+  days_before: number; days_after: number; review_pass: boolean;
+}
+
 export interface RunState {
   phase: "idle" | "running" | "done" | "error";
   agents: Record<AgentId, { status: AgentStatus; toolCalls: { tool: string; args: Record<string, unknown> }[]; text: string; summary: string[] }>;
